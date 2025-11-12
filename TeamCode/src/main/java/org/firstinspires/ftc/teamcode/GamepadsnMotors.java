@@ -36,6 +36,5 @@ public class GamepadsnMotors extends OpMode {
             //bench.setMotorSpeed(0.0);
             test_motor.setPower(0.0);
         }
-
     }
 }
