@@ -40,6 +40,7 @@ public class Controls extends LinearOpMode {
 
             telemetry.addLine("Motor initialized.");
             telemetry.update();
+
             waitForStart();
 
         while (opModeIsActive()) {
