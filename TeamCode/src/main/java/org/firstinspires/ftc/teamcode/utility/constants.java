@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.utility;
 
 public class constants {
-    public static double transfer = 0.166;
-    public static double offset = 0.05;
+    public static double transfer = 0.083;
+    public static double offset = 0.03;
     public static double blueangle = 0.25;
 
-    public static int shake = 5;
+    public static int shake = 10;
 
     public enum INTAKE {
         TAKEIN,

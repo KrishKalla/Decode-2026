@@ -24,14 +24,14 @@ public class spindex {
     public void preset(constants.SPINDEX preset) {
         switch (preset) {
             case SPIN:
-                spindexServo.setPosition(0.333*spinindex);
+                spindexServo.setPosition(0.333/2*spinindex);
                 spinindex++;
                 if(spinindex == 3) {
                     spinindex = 0;
                 }
                 break;
             case PUSH:
-                spindexServo.setPosition(constants.transfer + spinindex*0.333);
+                spindexServo.setPosition(constants.transfer + spinindex*0.333/2);
                 spinindex++;
                 if(spinindex == 3) {
                     spinindex = 0;
