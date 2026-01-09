@@ -17,7 +17,7 @@ public class intake {
     public intake() {state = "PRESET";}
 
     public void init(HardwareMap map) {
-        motor = map.get(DcMotor.class, "motorIntake");
+        motor = map.get(DcMotor.class, "Intake");
         reset();
     }
 
@@ -28,8 +28,11 @@ public class intake {
                 motor.setPower(1.0);
                 break;
             case OFF:
-                state = "OFF";
-                motor.setPower(0.0);
+                reset();
+                break;
+            case REJECT:
+                state = "REJECT";
+                motor.setPower(-1.0);
                 break;
             case RESET:
                 reset();

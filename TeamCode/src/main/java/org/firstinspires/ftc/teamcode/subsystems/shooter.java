@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
-import static org.firstinspires.ftc.teamcode.utility.constants.SHOOTER.SHOOT;
+import org.firstinspires.ftc.teamcode.utility.constants;
 import androidx.annotation.NonNull;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -15,7 +15,7 @@ public class shooter {
     public shooter() {state = "PRESET";}
 
     public void init(HardwareMap map) {
-        motor = map.get(DcMotor.class, "shooterMotor");
+        motor = map.get(DcMotor.class, "Shooter");
         reset();
     }
 
@@ -23,11 +23,11 @@ public class shooter {
         switch (preset) {
             case SHOOTFAR:
                 state = "SHOOTFAR";
-                motor.setPower(0.67);
+                motor.setPower(0.67); // tune manually
                 break;
             case SHOOTSHORT:
                 state = "SHOOTSHORT";
-                motor.setPower(0.41);
+                motor.setPower(0.41); // tune manually
                 break;
             case OFF:
                 state = "OFF";

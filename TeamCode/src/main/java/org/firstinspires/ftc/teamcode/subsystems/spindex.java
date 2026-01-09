@@ -1,36 +1,61 @@
 package org.firstinspires.ftc.teamcode.subsystems;
-import static org.firstinspires.ftc.teamcode.utility.constants;
+import org.firstinspires.ftc.teamcode.utility.constants;
 
 import androidx.annotation.NonNull;
 
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.utility.constants;
-
 public class spindex {
     private String state;
-    private DcMotor motor;
+    private Servo spindexServo;
+    private Servo blueServo;
+
+    private int spinindex;
 
     public spindex() {state = "PRESET";}
-
+// drivetrain bottomLeft and topLeft
     public void init(HardwareMap map) {
-        motor = map.get(DcMotor.class, "shooterMotor");
+        spindexServo = map.get(Servo.class, "Spindex");
+        blueServo = map.get(Servo.class, "Transfer");
         reset();
     }
 
     public void preset(constants.SPINDEX preset) {
         switch (preset) {
             case SPIN:
+                spindexServo.setPosition(0.333*spinindex);
+                spinindex++;
+                if(spinindex == 3) {
+                    spinindex = 0;
+                }
                 break;
             case PUSH:
-                break;
-            case OFF:
-                state = "OFF";
-                motor.setPower(0.0);
+                spindexServo.setPosition(constants.transfer + spinindex*0.333);
+                spinindex++;
+                if(spinindex == 3) {
+                    spinindex = 0;
+                }
+                blueServo.setPosition(blueServo.getPosition() + constants.blueangle);
+                // shake shit
+                spindexServo.setPosition(spindexServo.getPosition() - constants.offset);
+                for(int i = 0; i < (constants.shake - 1); i++) {
+                    if((i % 2) == 0) {
+                        spindexServo.setPosition(spindexServo.getPosition() + 2 * constants.offset);
+                    }
+                    else {
+                        spindexServo.setPosition(spindexServo.getPosition() - 2 * constants.offset);
+                    }
+                }
+
+                if((constants.shake - 1) % 2 == 0) {
+                    spindexServo.setPosition(spindexServo.getPosition() - constants.offset);
+                }
+                if((constants.shake - 1) % 2 == 1) {
+                    spindexServo.setPosition(spindexServo.getPosition() + constants.offset);
+                }
+
+                blueServo.setPosition(blueServo.getPosition() - constants.blueangle);
                 break;
             case RESET:
                 reset();
@@ -41,12 +66,12 @@ public class spindex {
     @Override
     @NonNull
     public String toString() {
-        return "MOTOR POWER: " + String.valueOf(motor.getPower());
+        return "SPINDEX POS: " + String.valueOf(spindexServo.getPosition());
     }
 
     private void reset() {
         state = "RESET";
-        motor.setPower(0);
+        spindexServo.setPosition(0);
         state = "OFF";
     }
 }
