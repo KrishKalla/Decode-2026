@@ -53,7 +53,7 @@ public class Control3 extends LinearOpMode {
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-        //comment
+        //comment c
         // Wait for the game to start
         waitForStart();
 
