@@ -7,6 +7,11 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.HeadingInterpolator;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.subsystems.intake;
+import org.firstinspires.ftc.teamcode.subsystems.shooter;
+import org.firstinspires.ftc.teamcode.subsystems.spindex;
+import org.firstinspires.ftc.teamcode.utility.constants;
+
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 
@@ -26,17 +31,19 @@ public class tele extends OpMode {
     private boolean slowMode = false;
     private double slowModeMultiplier = 0.5;
 
+    private spindex spindex = new spindex();
+    private intake intake = new intake();
+    private shooter shooter = new shooter();
+
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
-
-        pathChain = () -> follower.pathBuilder() //Lazy Curve Generation
-                .addPath(new Path(new BezierLine(follower::getPose, new Pose(45, 98))))
-                .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(45), 0.8))
-                .build();
+        spindex.init(hardwareMap);
+        intake.init(hardwareMap);
+        shooter.init(hardwareMap);
     }
 
     @Override
@@ -59,7 +66,7 @@ public class tele extends OpMode {
 
             //This is the normal version to use in the TeleOp
             if (!slowMode) follower.setTeleOpDrive(
-                    -gamepad1.left_stick_y,
+                    gamepad1.left_stick_y,
                     -gamepad1.left_stick_x,
                     -gamepad1.right_stick_x,
                     true // Robot Centric
@@ -67,42 +74,64 @@ public class tele extends OpMode {
 
                 //This is how it looks with slowMode on
             else follower.setTeleOpDrive(
-                    -gamepad1.left_stick_y * slowModeMultiplier,
+                    gamepad1.left_stick_y * slowModeMultiplier,
                     -gamepad1.left_stick_x * slowModeMultiplier,
                     -gamepad1.right_stick_x * slowModeMultiplier,
                     true // Robot Centric
             );
         }
 
-        //Automated PathFollowing
-        if (gamepad1.aWasPressed()) {
-            follower.followPath(pathChain.get());
-            automatedDrive = true;
+        if (gamepad1.squareWasPressed()) {
+            spindex.preset(constants.SPINDEX.SPIN);
         }
 
-        //Stop automated following if the follower is done
-        if (automatedDrive && (gamepad1.bWasPressed() || !follower.isBusy())) {
-            follower.startTeleopDrive();
-            automatedDrive = false;
+        if (gamepad1.crossWasPressed()) {
+            spindex.preset(constants.SPINDEX.PUSH);
         }
 
-        //Slow Mode
-        if (gamepad1.rightBumperWasPressed()) {
-            slowMode = !slowMode;
+        if (gamepad1.right_trigger > 0.2) {
+            intake.preset(constants.INTAKE.TAKEIN);
         }
 
-        //Optional way to change slow mode strength
-        if (gamepad1.xWasPressed()) {
-            slowModeMultiplier += 0.25;
+        if (gamepad1.left_trigger > 0.2) {
+            intake.preset(constants.INTAKE.REJECT);
         }
 
-        //Optional way to change slow mode strength
-        if (gamepad2.yWasPressed()) {
-            slowModeMultiplier -= 0.25;
+        if(gamepad1.dpad_down) {
+            shooter.preset(constants.SHOOTER.SHOOTFAR);
         }
+
+        else if (gamepad1.right_bumper) {
+            shooter.preset(constants.SHOOTER.SHOOTSHORT);
+        }
+
+        else if (gamepad1.dpad_up) {
+            shooter.preset(constants.SHOOTER.SHOOTSHORT);
+        }
+
+        else if(gamepad1.left_bumper){
+            shooter.preset(constants.SHOOTER.OFF);
+        }
+
+        else if (gamepad1.dpad_left) {
+            shooter.modulate(-1);
+        }
+
+        else if (gamepad1.dpad_right) {
+            shooter.modulate(1);
+        }
+
+        else {
+            intake.preset(constants.INTAKE.OFF);
+        }
+
+
 
         telemetryM.debug("position", follower.getPose());
         telemetryM.debug("velocity", follower.getVelocity());
         telemetryM.debug("automatedDrive", automatedDrive);
+        telemetry.addData("spindex Position", spindex.spindexServo.getPosition());
+        telemetry.addData("spinindex", spindex.spinindex);
+        telemetry.update();
     }
 }

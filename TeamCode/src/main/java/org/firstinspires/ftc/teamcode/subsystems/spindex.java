@@ -8,10 +8,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class spindex {
     private String state;
-    private Servo spindexServo;
+    public Servo spindexServo;
     private Servo blueServo;
 
-    private int spinindex;
+    public int spinindex;
 
     public spindex() {state = "PRESET";}
 // drivetrain bottomLeft and topLeft
@@ -55,7 +55,7 @@ public class spindex {
                     spindexServo.setPosition(spindexServo.getPosition() + constants.offset);
                 }
 
-                blueServo.setPosition(blueServo.getPosition() - constants.blueangle);
+                blueServo.setPosition(blueServo.getPosition() - 2* constants.blueangle);
                 break;
             case RESET:
                 reset();

@@ -5,6 +5,8 @@ public class constants {
     public static double offset = 0.03;
     public static double blueangle = 0.25;
 
+    public static double modulationConstant = 0.05;
+
     public static int shake = 10;
 
     public enum INTAKE {

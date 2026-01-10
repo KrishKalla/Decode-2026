@@ -16,6 +16,7 @@ public class shooter {
 
     public void init(HardwareMap map) {
         motor = map.get(DcMotor.class, "Shooter");
+        motor.setDirection(DcMotorSimple.Direction.REVERSE);
         reset();
     }
 
@@ -37,6 +38,10 @@ public class shooter {
                 reset();
                 break;
         }
+    }
+
+    public void modulate(int direction) {
+        motor.setPower(motor.getPower() + direction * constants.modulationConstant);
     }
     @Override
     @NonNull
