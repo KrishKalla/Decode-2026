@@ -18,7 +18,7 @@ CALIB_W, CALIB_H = 1280, 960  # <--- change to whatever res you used to calibrat
 camera_matrix_calib = np.array([[950.0,   0.0, 640.0],
                                 [  0.0, 950.0, 480.0],
                                 [  0.0,   0.0,   1.0]], dtype=np.float32)
-dist_coeffs         = np.array([0.01, -0.02, 0.0, 0.0, 0.0], dtype=np.float32)
+dist_coeffs = np.array([0.01, -0.02, 0.0, 0.0, 0.0], dtype=np.float32)
 
 # Optional: restrict to certain tag IDs
 ACCEPT_IDS = None  # e.g., {1,2,3}
