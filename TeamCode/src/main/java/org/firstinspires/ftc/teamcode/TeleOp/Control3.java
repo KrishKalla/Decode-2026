@@ -125,7 +125,7 @@ public class Control3 extends LinearOpMode {
                 backRightDrive.setPower(forwardPower);
             }
 
-            // Send telemetry to Driver Station
+            // Send telemetry to Driver Statione
             telemetry.addData("Forward power: ", forwardPower);
             telemetry.addData("Backward power: ", backwardPower);
             telemetry.addData("strafe Negative motor: ", nLnR);
