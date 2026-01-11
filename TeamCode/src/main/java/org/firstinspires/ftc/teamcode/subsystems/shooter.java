@@ -24,15 +24,22 @@ public class shooter {
         switch (preset) {
             case SHOOTFAR:
                 state = "SHOOTFAR";
+                motor.setDirection(DcMotorSimple.Direction.REVERSE);
                 motor.setPower(0.67); // tune manually
                 break;
             case SHOOTSHORT:
                 state = "SHOOTSHORT";
-                motor.setPower(0.41); // tune manually
+                motor.setDirection(DcMotorSimple.Direction.REVERSE);
+                motor.setPower(0.51); // tune manually
                 break;
             case OFF:
                 state = "OFF";
                 motor.setPower(0.0);
+                break;
+            case REVERSE:
+                state= "REVERSE";
+                motor.setDirection(DcMotorSimple.Direction.FORWARD);
+                motor.setPower(0.2);
                 break;
             case RESET:
                 reset();
@@ -51,6 +58,7 @@ public class shooter {
 
     private void reset() {
         state = "RESET";
+        motor.setDirection(DcMotorSimple.Direction.FORWARD);
         motor.setPower(0);
         state = "OFF";
     }

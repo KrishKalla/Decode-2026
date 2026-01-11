@@ -94,7 +94,11 @@ public class tele extends OpMode {
         }
 
         if (gamepad1.left_trigger > 0.2) {
-            intake.preset(constants.INTAKE.REJECT);
+            shooter.preset(constants.SHOOTER.REVERSE);
+        }
+
+        else if (gamepad1.left_trigger <= 0.2) {
+            shooter.preset(constants.SHOOTER.OFF);
         }
 
         if(gamepad1.dpad_down) {
@@ -119,6 +123,13 @@ public class tele extends OpMode {
 
         else if (gamepad1.dpad_right) {
             shooter.modulate(1);
+        }
+
+        else if (gamepad1.right_stick_y > 0.75) {
+            spindex.spinRight();
+        }
+        else if (gamepad1.right_stick_y < -0.75) {
+            spindex.spinLeft();
         }
 
         else {

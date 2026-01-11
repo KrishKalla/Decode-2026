@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.utility;
 
 public class constants {
-    public static double transfer = 0.083;
+    public static double transfer = 0.225;
+    public static double standard = 0.09;
     public static double offset = 0.03;
     public static double blueangle = 0.25;
 
@@ -19,6 +20,7 @@ public class constants {
     public enum SHOOTER {
         SHOOTFAR,
         SHOOTSHORT,
+        REVERSE,
         OFF,
         RESET
     }
