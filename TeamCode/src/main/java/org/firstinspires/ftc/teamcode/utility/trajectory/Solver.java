@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.utility.trajectory;
 import org.firstinspires.ftc.teamcode.utility.trajectory.constantsTrajectory;
-
+//TODO: spin decay + add varying v while keeping hoodLength constant
 public class Solver {
     private static double v0;
     private static double h2;
