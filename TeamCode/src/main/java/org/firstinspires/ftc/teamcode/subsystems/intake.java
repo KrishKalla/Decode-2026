@@ -89,8 +89,8 @@ public class intake {
 
     private void setDirection(int direction) {
         if (direction == -1) {
-            motorL.setDirection(flip(motorL.getDirection()));
-            motorR.setDirection(flip(motorR.getDirection()));
+            motorL.setDirection(flip(defaultL));
+            motorR.setDirection(flip(defaultR));
         }
 
         else {
