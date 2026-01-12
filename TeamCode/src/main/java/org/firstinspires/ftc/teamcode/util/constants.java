@@ -6,6 +6,11 @@ import com.bylazar.configurables.annotations.Configurable;
 @Configurable
 public class constants {
 
+    //General Constants
+    public static double ROBOT_MASS = 15; //kg
+    public static double FORWARD_OFFSET = 5;
+    public static double LATERAL_OFFSET = 0.5;
+
     //Intake Constants
     public static boolean REVERSED = false;
     public static double INTAKE_POWER = 0.8;
