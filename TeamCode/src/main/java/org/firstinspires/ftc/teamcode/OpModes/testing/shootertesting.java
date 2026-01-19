@@ -9,6 +9,7 @@ import com.pedropathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter;
+import org.firstinspires.ftc.teamcode.subsystems.turret;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
 import org.firstinspires.ftc.teamcode.util.constants;
 
@@ -22,6 +23,8 @@ public class shootertesting extends OpMode {
     private boolean automatedDrive;
     private TelemetryManager telemetry;
     private shooter shooter = new shooter();
+
+    private turret turret = new turret();
 
     private int alliance = 0;
     private LLHandler llhandler;
@@ -39,19 +42,25 @@ public class shootertesting extends OpMode {
 
     public void loop() {
         telemetry.update();
-        shooter.hoodPreset(constants.HOOD.MANUAL);
         shooter.setHood(1);
         shooter.updateBatteryVoltage();
         double shit = shooter.calculate();
         shooter.motorLeft.setPower(shit);
         shooter.motorRight.setPower(shit);
+        turret.update();
         if(gamepad1.right_bumper) {
             shooter.flywheelPreset(constants.FLYWHEEL.ON);
+            shooter.hoodPreset(constants.HOOD.MANUAL);
         }
         if(gamepad1.left_bumper) {
             shooter.flywheelPreset(constants.FLYWHEEL.OFF);
             shooter.hoodPreset(constants.HOOD.RESET);
         }
-
+        if(gamepad1.triangle) {
+            turret.preset(constants.TURRET.AUTO);
+        }
+        if(gamepad1.square) {
+            turret.preset(constants.TURRET.RESET);
+        }
     }
 }
