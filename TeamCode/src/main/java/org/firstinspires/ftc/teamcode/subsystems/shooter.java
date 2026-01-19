@@ -15,8 +15,8 @@ import org.firstinspires.ftc.teamcode.util.LUT;
 import org.firstinspires.ftc.teamcode.util.constants;
 
 public class shooter {
-    private DcMotorEx motorLeft;
-    private DcMotorEx motorRight;
+    public DcMotorEx motorLeft;
+    public DcMotorEx motorRight;
     private Servo left;
     private Servo right;
     private LLHandler handler;
@@ -125,7 +125,7 @@ public class shooter {
         }
     }
 
-    private double calculate() {
+    public double calculate() {
         pidf.setP(constants.shooter.kP);
         pidf.setI(constants.shooter.kI);
         pidf.setD(constants.shooter.kD);
@@ -150,7 +150,7 @@ public class shooter {
         return power;
     }
 
-    private void updateBatteryVoltage () {
+    public void updateBatteryVoltage () {
         if (battery == null) return;
 
         if (timer.seconds() >= 0.15) {
@@ -170,7 +170,7 @@ public class shooter {
         }
     }
 
-    private void setHood ( double pos){
+    public void setHood ( double pos){
         left.setPosition(pos);
         right.setPosition(pos);
     }
