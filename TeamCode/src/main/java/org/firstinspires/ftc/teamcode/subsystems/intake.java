@@ -36,7 +36,7 @@ public class intake {
         servoL = map.get(Servo.class, "extensionL");
         servoR = map.get(Servo.class, "extensionR");
 
-        if (constants.REVERSED) {
+        if (constants.intake.REVERSED) {
             motorL.setDirection(DcMotorEx.Direction.REVERSE);
             servoL.setDirection(Servo.Direction.REVERSE);
         } else {
@@ -53,7 +53,7 @@ public class intake {
             case ON:
                 intakeState = "ON";
                 setDirection(1);
-                setPower(constants.INTAKE_POWER);
+                setPower(constants.intake.INTAKE_POWER);
                 setExtension(constants.INTAKE_EXTENSION.EXTENDED);
                 break;
             case OFF:
@@ -65,7 +65,7 @@ public class intake {
             case REJECT:
                 intakeState = "REJECT";
                 setDirection(-1);
-                setPower(constants.INTAKE_POWER);
+                setPower(constants.intake.INTAKE_POWER);
                 setExtension(constants.INTAKE_EXTENSION.RETRACTED);
                 break;
         }
