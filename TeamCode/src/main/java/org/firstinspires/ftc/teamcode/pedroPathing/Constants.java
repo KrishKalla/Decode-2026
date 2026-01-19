@@ -11,10 +11,11 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
+import org.firstinspires.ftc.teamcode.util.constants;
 
 public class Constants {
-    public static FollowerConstants followerConstants = new FollowerConstants().mass(25);
+    public static FollowerConstants followerConstants = new FollowerConstants()
+            .mass(constants.ROBOT_MASS);
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
@@ -27,21 +28,22 @@ public class Constants {
             .rightFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightRearMotorDirection(DcMotorSimple.Direction.REVERSE);
 
-    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
-
     public static PinpointConstants localizerConstants = new PinpointConstants()
-            .forwardPodY(-5)
-            .strafePodX(0.5)
+            .forwardPodY(constants.FORWARD_OFFSET)
+            .strafePodX(constants.LATERAL_OFFSET)
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
             .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
+    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
+
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
-                .pinpointLocalizer(localizerConstants)
+                .pathConstraints(pathConstraints)
                 .mecanumDrivetrain(driveConstants)
+                .pinpointLocalizer(localizerConstants)
                 .build();
     }
 }
