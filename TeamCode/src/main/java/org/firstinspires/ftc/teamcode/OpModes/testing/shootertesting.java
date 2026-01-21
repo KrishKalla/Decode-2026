@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpModes.testing;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.bylazar.configurables.annotations.Configurable;
@@ -19,12 +20,12 @@ import org.firstinspires.ftc.teamcode.util.constants;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "total shooter testing")
+@TeleOp(name = "shooter testing")
 @Config
 public class shootertesting extends OpMode {
     private boolean automatedDrive;
     private shooter shooter;
-
+    ;
     public static double MANUALHOOD = 0.165;
 
     private int alliance = 1;
@@ -32,7 +33,7 @@ public class shootertesting extends OpMode {
 
     public void init() {
         shooter = new shooter();
-        telemetry = new JoinedTelemetry(PanelsTelemetry.INSTANCE.getFtcTelemetry(), telemetry);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         llhandler = new LLHandler(hardwareMap, alliance);
         shooter.init(hardwareMap, llhandler);
     }
@@ -57,6 +58,9 @@ public class shootertesting extends OpMode {
             shooter.flywheelPreset(constants.FLYWHEEL.OFF);
             shooter.hoodPreset(constants.HOOD.RESET);
         }
+        telemetry.addLine(shooter.toString());
+        telemetry.addData("RPM: ", shooter.getRPM());
+        telemetry.addData("POWER: ", shit);
         telemetry.update();
     }
 }

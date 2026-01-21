@@ -129,11 +129,9 @@ public class shooter {
         pidf.setD(constants.shooter.kD);
         pidf.setF(constants.shooter.kF);
 
-        double tpsL = motorLeft.getVelocity();
-        double tpsR = motorRight.getVelocity();
+        double rpmL = motorLeft.getVelocity();
+        double rpmR = motorRight.getVelocity();
 
-        double rpmL = tpsL / constants.TICKS_PER_REV * 60;
-        double rpmR = tpsR / constants.TICKS_PER_REV * 60;
         rpm = (rpmL + rpmR) / 2;
 
         pidf.updateError(constants.shooter.TARGET_RPM - rpm);
@@ -189,6 +187,14 @@ public class shooter {
                 "RPM: " + rpm + "\n" +
                 "Power: " + power + "\n" +
                 "Voltage: " + voltage;
+    }
+
+    public double getPower() {
+        return power;
+    }
+
+    public double getRPM() {
+        return ((motorLeft.getVelocity() + motorRight.getVelocity())/2);
     }
 
 }

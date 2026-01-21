@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.util;
 import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
 
-@Configurable
 @Config
 public class constants {
 
@@ -11,7 +10,7 @@ public class constants {
     public static double ROBOT_MASS = 15; //kg
     public static double FORWARD_OFFSET = 5; //in
     public static double LATERAL_OFFSET = 0.5; //in
-    public static double NOMINAL_VOLTAGE = 12.0;
+    public static double NOMINAL_VOLTAGE = 13.0;
     public static double LIMELIGHT_HEIGHT = 10; //in
     public static double LIMELIGHT_MOUNT_ANGLE = 45 * (Math.PI/180); //deg --> rad
     public static double APRIL_TAG_HEIGHT = 38.75 - 9.25; //in
@@ -45,6 +44,7 @@ public class constants {
 
 
     //Turret Constants
+    @Config
     public static class turret {
         public static double SERVO_DEG_RANGE = 355; // needs to be reprogrammed to 270
         public static double GEAR_MULTIPLIER = 4.0 / 3.0;
@@ -63,12 +63,13 @@ public class constants {
 
 
     //Shooter Constants
+    @Config
     public static class shooter {
-       public static double kP = 0.00080;
+       public static double kP = 0.00115;
        public static double kI = 0;
-       public static double kD = 0.00002;
-       public static double kF = 0.00020;
-       public static double TARGET_RPM = 5000;
+       public static double kD = 0.00011;
+       public static double kF = 0.00045;
+       public static double TARGET_RPM = 1800;
        public static double alpha = 0.225;
        public static double step = 0.05;
        public static double MIN_ANGLE = 0.165;
