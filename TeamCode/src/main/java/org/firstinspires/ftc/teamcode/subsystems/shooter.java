@@ -50,8 +50,6 @@ public class shooter {
 
         left = map.get(Servo.class, "leftHood");
         right = map.get(Servo.class, "rightHood");
-        left.setDirection(Servo.Direction.REVERSE);
-
         this.handler = handler;
         pidf = new PIDFController(new PIDFCoefficients(constants.shooter.kP, constants.shooter.kI, constants.shooter.kD, constants.shooter.kF));
 

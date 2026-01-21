@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.OpModes.testing;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.telemetry.JoinedTelemetry;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
@@ -16,19 +19,20 @@ import org.firstinspires.ftc.teamcode.util.constants;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp
-@Configurable
+@TeleOp(name = "total shooter testing")
+@Config
 public class shootertesting extends OpMode {
     private boolean automatedDrive;
-    private TelemetryManager telemetry;
     private shooter shooter;
+
+    public static double MANUALHOOD = 0.165;
 
     private int alliance = 1;
     private LLHandler llhandler;
 
     public void init() {
         shooter = new shooter();
-        telemetry = PanelsTelemetry.INSTANCE.getTelemetry();
+        telemetry = new JoinedTelemetry(PanelsTelemetry.INSTANCE.getFtcTelemetry(), telemetry);
         llhandler = new LLHandler(hardwareMap, alliance);
         shooter.init(hardwareMap, llhandler);
     }
@@ -40,7 +44,7 @@ public class shootertesting extends OpMode {
 
     public void loop() {
         telemetry.update();
-        shooter.setHood(constants.MANUALHOOD);
+        shooter.setHood(MANUALHOOD);
         shooter.updateBatteryVoltage();
         double shit = shooter.calculate();
         shooter.motorLeft.setPower(shit);
@@ -53,9 +57,6 @@ public class shootertesting extends OpMode {
             shooter.flywheelPreset(constants.FLYWHEEL.OFF);
             shooter.hoodPreset(constants.HOOD.RESET);
         }
-
-        shooter.
-        telemetry.addLine(shooter.toString() );
         telemetry.update();
     }
 }

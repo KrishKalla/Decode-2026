@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
 
 @Configurable
+@Config
 public class constants {
 
     //General Constants
@@ -69,6 +71,7 @@ public class constants {
        public static double TARGET_RPM = 5000;
        public static double alpha = 0.225;
        public static double step = 0.05;
+       public static double MIN_ANGLE = 0.165;
     }
 
     public enum HOOD {
@@ -76,8 +79,6 @@ public class constants {
         MANUAL,
         AUTO
     }
-
-    public static double MANUALHOOD = 0.67;
 
     public enum FLYWHEEL {
         OFF,
