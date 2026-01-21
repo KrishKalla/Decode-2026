@@ -77,6 +77,8 @@ public class constants {
         AUTO
     }
 
+    public static double MANUALHOOD = 0.67;
+
     public enum FLYWHEEL {
         OFF,
         ON

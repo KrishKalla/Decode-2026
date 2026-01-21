@@ -44,13 +44,13 @@ public class shooter {
     public void init(HardwareMap map, LLHandler handler) {
         motorLeft = map.get(DcMotorEx.class, "leftShooter");
         motorRight = map.get(DcMotorEx.class, "rightShooter");
-        motorRight.setDirection(DcMotorEx.Direction.REVERSE);
+        motorLeft.setDirection(DcMotorEx.Direction.REVERSE);
         motorLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         motorRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         left = map.get(Servo.class, "leftHood");
         right = map.get(Servo.class, "rightHood");
-        right.setDirection(Servo.Direction.REVERSE);
+        left.setDirection(Servo.Direction.REVERSE);
 
         this.handler = handler;
         pidf = new PIDFController(new PIDFCoefficients(constants.shooter.kP, constants.shooter.kI, constants.shooter.kD, constants.shooter.kF));

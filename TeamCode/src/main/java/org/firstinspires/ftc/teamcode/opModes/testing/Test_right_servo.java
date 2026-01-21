@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opModes.testing;
+package org.firstinspires.ftc.teamcode.OpModes.testing;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;

@@ -21,14 +21,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class shootertesting extends OpMode {
     private boolean automatedDrive;
     private TelemetryManager telemetry;
-    private shooter shooter = new shooter();
-
-    private turret turret = new turret();
+    private shooter shooter;
 
     private int alliance = 1;
     private LLHandler llhandler;
 
     public void init() {
+        shooter = new shooter();
         telemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         llhandler = new LLHandler(hardwareMap, alliance);
         shooter.init(hardwareMap, llhandler);
@@ -41,12 +40,11 @@ public class shootertesting extends OpMode {
 
     public void loop() {
         telemetry.update();
-        shooter.setHood(1);
+        shooter.setHood(constants.MANUALHOOD);
         shooter.updateBatteryVoltage();
         double shit = shooter.calculate();
         shooter.motorLeft.setPower(shit);
         shooter.motorRight.setPower(shit);
-        turret.update();
         if(gamepad1.right_bumper) {
             shooter.flywheelPreset(constants.FLYWHEEL.ON);
             shooter.hoodPreset(constants.HOOD.MANUAL);
@@ -55,11 +53,9 @@ public class shootertesting extends OpMode {
             shooter.flywheelPreset(constants.FLYWHEEL.OFF);
             shooter.hoodPreset(constants.HOOD.RESET);
         }
-        if(gamepad1.triangle) {
-            turret.preset(constants.TURRET.AUTO);
-        }
-        if(gamepad1.square) {
-            turret.preset(constants.TURRET.RESET);
-        }
+
+        shooter.
+        telemetry.addLine(shooter.toString() );
+        telemetry.update();
     }
 }
