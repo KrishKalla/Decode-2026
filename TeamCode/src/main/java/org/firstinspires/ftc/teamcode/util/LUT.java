@@ -50,7 +50,7 @@ public class LUT {
 
     public static double D41 = 4.0, A41 = 1.0;
 
-
+    // change ts to a regression algo
     public static double get(double d) {
         double[] D = {
                 D1,D2,D3,D4,D5,D6,D7,D8,D9,D10,

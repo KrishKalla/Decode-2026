@@ -19,14 +19,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp
 @Configurable
 public class shootertesting extends OpMode {
-
     private boolean automatedDrive;
     private TelemetryManager telemetry;
     private shooter shooter = new shooter();
 
     private turret turret = new turret();
 
-    private int alliance = 0;
+    private int alliance = 1;
     private LLHandler llhandler;
 
     public void init() {
