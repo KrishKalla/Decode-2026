@@ -16,11 +16,11 @@ public class turret {
     private LLHandler handler;
     private DcMotorEx encoder;
 
-    private double truePos;
+    public double truePos;
     private double calculatedTarget = 0.0;
     private double previousError = 0.0;
 
-    private String state;
+    public String state;
 
     public turret() {}
 
@@ -47,6 +47,10 @@ public class turret {
                 state = "MANUAL";
                 break;
         }
+    }
+
+    public double getCalculatedTarget() {
+        return calculatedTarget;
     }
 
     public double update() {
