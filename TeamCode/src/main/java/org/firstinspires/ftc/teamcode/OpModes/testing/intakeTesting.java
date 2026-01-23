@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-@TeleOp(name = "Intake test", group = "Op_Tests")
+@TeleOp(name = "Intake Small Test", group = "Op_Tests")
 @Config
 public class intakeTesting extends LinearOpMode {
 
@@ -14,8 +14,8 @@ public class intakeTesting extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        DcMotorEx leftShooter = hardwareMap.get(DcMotorEx.class, "leftIntake");
-        DcMotorEx rightShooter = hardwareMap.get(DcMotorEx.class, "rightIntake");
+        DcMotorEx leftShooter = hardwareMap.get(DcMotorEx.class, "intakeL");
+        DcMotorEx rightShooter = hardwareMap.get(DcMotorEx.class, "intakeR");
         leftShooter.setDirection(DcMotorEx.Direction.REVERSE);
         leftShooter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         rightShooter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
