@@ -110,6 +110,10 @@ public class intake {
                 : DcMotorEx.Direction.FORWARD;
     }
 
+    public String toString() {
+        return "DIRECTION: " + motorL.getDirection() + "\n" + "POWER: " + motorL.getPower() + "\n" + "STATE: " + getIntakeState();
+    }
+
     public String getIntakeState() {
         return intakeState;
     }

@@ -41,6 +41,7 @@ public class turret {
                 calculatedTarget = 180.0;
                 state = "START";
                 break;
+
             case AUTO:
                 break;
             case MANUAL:
