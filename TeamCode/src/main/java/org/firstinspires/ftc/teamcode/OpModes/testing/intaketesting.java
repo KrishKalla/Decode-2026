@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.util.constants;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "turret testing")
+@TeleOp(name = "intake testing")
 @Config
 public class intaketesting extends OpMode {
     private intake intake;
