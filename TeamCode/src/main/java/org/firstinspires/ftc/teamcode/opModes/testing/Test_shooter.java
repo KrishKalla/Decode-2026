@@ -20,6 +20,7 @@ public class Test_shooter extends LinearOpMode {
         leftShooter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         rightShooter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
+        //telemetry.update();
 
         waitForStart();
 
@@ -27,6 +28,22 @@ public class Test_shooter extends LinearOpMode {
 
             leftShooter.setPower(power);
             rightShooter.setPower(power);
+
+//            double tpsLeft  = leftShooter.getVelocity();
+//            double tpsRight = rightShooter.getVelocity();
+//
+//            double rpmLeft  = (tpsLeft  / constants.TICKS_PER_REV) * 60.0;
+//            double rpmRight = (tpsRight / constants.TICKS_PER_REV) * 60.0;
+//            double rpmAvg   = (rpmLeft + rpmRight) / 2.0;
+//
+//            telemetry.addData("Set Power", power);
+//
+//            telemetry.addLine("=== Encoder Data ===");
+//            telemetry.addData("Left RPM", rpmLeft);
+//            telemetry.addData("Right RPM", rpmRight);
+//            telemetry.addData("Avg RPM", rpmAvg);
+//
+//            telemetry.update();
         }
     }
 }
