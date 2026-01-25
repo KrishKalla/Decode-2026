@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -21,8 +20,7 @@ public class intake {
     private boolean extended;
 
     public intake(){
-        intakeState = "INSTANTIATED";
-        extended = false;
+
     }
 
     public void init(HardwareMap map) {
@@ -35,6 +33,7 @@ public class intake {
 
         servoL = map.get(Servo.class, "extensionL");
         servoR = map.get(Servo.class, "extensionR");
+        servoR.setDirection(Servo.Direction.REVERSE);
 
         if (constants.intake.REVERSED) {
             motorL.setDirection(DcMotorEx.Direction.REVERSE);
@@ -46,9 +45,11 @@ public class intake {
 
         defaultL = motorL.getDirection();
         defaultR = motorR.getDirection();
+
+        extended = false;
     }
 
-    public void setIntake(constants.INTAKE state) {
+    public void setIntake(constants.INTAKE_PRESETS state) {
         switch(state) {
             case ON:
                 intakeState = "ON";

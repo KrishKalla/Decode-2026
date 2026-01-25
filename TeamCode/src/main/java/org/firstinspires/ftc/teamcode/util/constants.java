@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.util;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.bylazar.configurables.annotations.Configurable;
 
 @Config
 public class constants {
@@ -18,20 +17,23 @@ public class constants {
     public static double TICKS_PER_REV = 8192;
 
     //Intake Constants
+    @Config
     public static class intake {
         public static boolean REVERSED = false;
         public static double INTAKE_POWER = 0.8;
     }
 
-    public enum INTAKE {
+    public enum INTAKE_PRESETS {
         ON,
         OFF,
         REJECT
     }
 
+    @Config
     public enum INTAKE_EXTENSION {
-        RETRACTED(0, 1),
-        EXTENDED(1, 0);
+
+        RETRACTED(0.65, 0.65),
+        EXTENDED(0.97, 0.96);
 
         public final double left;
         public final double right;
@@ -55,7 +57,7 @@ public class constants {
         public static double step = 0.05;
     }
 
-    public enum TURRET {
+    public enum TURRET_PRESETS {
         RESET,
         MANUAL,
         AUTO
@@ -72,7 +74,7 @@ public class constants {
        public static double TARGET_RPM = 1650;
        public static double alpha = 0.225;
        public static double step = 0.05;
-       public static double MIN_ANGLE = 0.165;
+       public static double MIN_ANGLE = 0.2;
     }
 
     public enum HOOD {

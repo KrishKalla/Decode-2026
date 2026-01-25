@@ -26,7 +26,7 @@ public class shootertesting extends OpMode {
     private boolean automatedDrive;
     private shooter shooter;
     ;
-    public static double MANUALHOOD = 0.165;
+    public static double MANUALHOOD = 0.2;
 
     private int alliance = 1;
     private LLHandler llhandler;

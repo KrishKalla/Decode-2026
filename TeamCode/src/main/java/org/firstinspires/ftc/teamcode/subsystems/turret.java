@@ -34,7 +34,7 @@ public class turret {
         state = "INIT";
     }
 
-    public void preset(constants.TURRET preset) {
+    public void preset(constants.TURRET_PRESETS preset) {
         switch (preset) {
             case RESET:
                 setServoPos(0.5);

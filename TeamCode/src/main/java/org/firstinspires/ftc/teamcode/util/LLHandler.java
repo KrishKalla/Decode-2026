@@ -71,4 +71,8 @@ public class LLHandler {
     public String toString() {
         return handler;
     }
+
+    public LLResult getResult() {
+        return result;
+    }
 }

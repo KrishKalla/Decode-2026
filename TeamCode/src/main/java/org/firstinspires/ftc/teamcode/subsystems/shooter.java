@@ -44,7 +44,7 @@ public class shooter {
     public void init(HardwareMap map, LLHandler handler) {
         motorLeft = map.get(DcMotorEx.class, "leftShooter");
         motorRight = map.get(DcMotorEx.class, "rightShooter");
-        motorLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        motorRight.setDirection(DcMotorEx.Direction.REVERSE);
         motorLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         motorRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 

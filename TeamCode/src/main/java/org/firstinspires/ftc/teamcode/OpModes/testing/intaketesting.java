@@ -28,15 +28,16 @@ public class intaketesting extends OpMode {
 
     public void loop() {
         if(gamepad1.right_bumper) {
-            intake.setIntake(constants.INTAKE.ON);
+            intake.setIntake(constants.INTAKE_PRESETS.ON);
         }
         if(gamepad1.left_bumper) {
-            intake.setIntake(constants.INTAKE.REJECT);
+            intake.setIntake(constants.INTAKE_PRESETS.REJECT);
         }
         if(gamepad1.triangle) {
-            intake.setIntake(constants.INTAKE.OFF);
+            intake.setIntake(constants.INTAKE_PRESETS.OFF);
         }
         telemetry.addLine(intake.toString());
         telemetry.update();
     }
 }
+//676767 - Han
