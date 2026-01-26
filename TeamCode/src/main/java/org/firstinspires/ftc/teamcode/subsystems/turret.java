@@ -21,12 +21,16 @@ public class turret {
     private double previousError = 0.0;
 
     public String state;
+    public boolean tracking;
+    public boolean reset = false;
 
     public turret() {}
 
     public void init(HardwareMap map, LLHandler handler) {
         left = map.get(Servo.class, "turretLeft");
         right = map.get(Servo.class, "turretRight");
+        left.setPosition(0.5);
+        right.setPosition(0.5);
         this.handler = handler;
         if(constants.turret.IS_USING_ENCODER) {
             encoder = map.get(DcMotorEx.class, "turretEncoder");
@@ -38,13 +42,16 @@ public class turret {
         switch (preset) {
             case RESET:
                 setServoPos(0.5);
-                calculatedTarget = 180.0;
-                state = "START";
+                calculatedTarget = 0.0;
+                state = "RESET";
+                reset = true;
                 break;
 
             case AUTO:
+                reset = false;
                 break;
             case MANUAL:
+                reset = false;
                 state = "MANUAL";
                 break;
         }
@@ -55,13 +62,14 @@ public class turret {
     }
 
     public double update() {
+        handler.poll();
         this.previousError = handler.getLatestResult()[3];
         if (previousError == -1001) {
-            state = "MISSING";
+            tracking = false;
             previousError = 0;
         }
         else {
-            state = "TRACKING";
+            tracking = true;
             if (Math.abs(previousError) < constants.turret.deadband) {
                 previousError = 0;
             }
@@ -75,7 +83,7 @@ public class turret {
         }
 
         calculatedTarget += constants.turret.kP * previousError;
-        calculatedTarget = ((calculatedTarget %360)+360)%360;
+        calculatedTarget = ((calculatedTarget + 120) % 240 + 240) % 240 - 120;
         double pos = (calculatedTarget /constants.turret.GEAR_MULTIPLIER)/constants.turret.SERVO_DEG_RANGE;
         setServoPos(pos);
         return pos;
@@ -96,6 +104,7 @@ public class turret {
     @Override
     public String toString() {
         return "Turret State: " + state + "\n" +
+                "Tracking: " + tracking + "\n" +
                 "Calculated Target: " + calculatedTarget + "\n";
     }
 }

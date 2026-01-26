@@ -80,8 +80,8 @@ public class v1 extends OpMode {
         llhandler.alliance(alliance);
         llhandler.start();
         r.run();
-        intake.setIntake(constants.INTAKE.OFF);
-        turret.preset(constants.TURRET.RESET);
+        intake.setIntake(constants.INTAKE_PRESETS.OFF);
+        turret.preset(constants.TURRET_PRESETS.RESET);
         shooter.hoodPreset(constants.HOOD.RESET);
         shooter.flywheelPreset(constants.FLYWHEEL.ON);
         //might need to change a bit here depending on how stuff works, not sure yet
@@ -98,11 +98,11 @@ public class v1 extends OpMode {
         );
 
         if (gamepad1.right_trigger > 0.3) {
-            intake.setIntake(constants.INTAKE.ON);
+            intake.setIntake(constants.INTAKE_PRESETS.ON);
         }
 
         if (gamepad1.left_trigger > 0.3) {
-            intake.setIntake(constants.INTAKE.REJECT);
+            intake.setIntake(constants.INTAKE_PRESETS.REJECT);
         }
 
 
@@ -129,22 +129,22 @@ public class v1 extends OpMode {
         }
 
         if (gamepad1.cross) {
-            turret.preset(constants.TURRET.AUTO);
+            turret.preset(constants.TURRET_PRESETS.AUTO);
         }
         if (gamepad1.triangle) {
-            turret.preset(constants.TURRET.RESET);
+            turret.preset(constants.TURRET_PRESETS.RESET);
         }
         if (gamepad1.dpad_right) {
-            turret.preset(constants.TURRET.MANUAL);
+            turret.preset(constants.TURRET_PRESETS.MANUAL);
             turret.manual(-1);
         }
         if (gamepad1.dpad_right) {
-            turret.preset(constants.TURRET.MANUAL);
+            turret.preset(constants.TURRET_PRESETS.MANUAL);
             turret.manual(1);
         }
 
         else {
-            intake.setIntake(constants.INTAKE.OFF);
+            intake.setIntake(constants.INTAKE_PRESETS.OFF);
         }
 
 

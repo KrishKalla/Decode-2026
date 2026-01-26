@@ -15,6 +15,9 @@ public class constants {
     public static double APRIL_TAG_HEIGHT = 38.75 - 9.25; //in
     public static double APRIL_TAG_WIDTH = 6.5; //in
     public static double TICKS_PER_REV = 8192;
+    public static double STALL_CURRENT = 4.5;
+    public static double STALL_VELOCITY = 1000;
+    public static double STALL_TIME = 250;
 
     //Intake Constants
     @Config
@@ -26,14 +29,15 @@ public class constants {
     public enum INTAKE_PRESETS {
         ON,
         OFF,
-        REJECT
+        REJECT,
+        TRANSFERING
     }
 
     @Config
     public enum INTAKE_EXTENSION {
 
         RETRACTED(0.65, 0.65),
-        EXTENDED(0.97, 0.96);
+        EXTENDED(0.96, 0.98);
 
         public final double left;
         public final double right;
@@ -71,10 +75,12 @@ public class constants {
        public static double kI = 0;
        public static double kD = 0.00003;
        public static double kF = 0.000412;
-       public static double TARGET_RPM = 1650;
+       public static double TARGET_RPM = 0;
        public static double alpha = 0.225;
        public static double step = 0.05;
-       public static double MIN_ANGLE = 0.2;
+       public static double MIN_ANGLE = 0.18;
+       public static double PASSTHROUGH = 0.76;
+       public static double STOP = 0.4;
     }
 
     public enum HOOD {

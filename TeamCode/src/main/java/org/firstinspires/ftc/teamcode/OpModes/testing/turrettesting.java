@@ -32,7 +32,6 @@ public class turrettesting extends OpMode {
     }
 
     public void loop() {
-
         turret.update();
         if(turret.state.equals("AUTO")) {
             turret.update();
@@ -41,12 +40,12 @@ public class turrettesting extends OpMode {
             turret.state = "AUTO";
         }
         if(gamepad1.left_bumper) {
-            turret.state = "RESET";
             turret.preset(constants.TURRET_PRESETS.RESET);
         }
         telemetry.addLine(turret.toString());
         telemetry.addData("Calculated Target: ", turret.getCalculatedTarget());
 //        telemetry.addData("True position", turret.truePos);
+        telemetry.addData("LLHANDLER", llhandler.toString());
         telemetry.addData("LLResult", llhandler.getResult());
         telemetry.addData("handler results", Arrays.toString(llhandler.getLatestResult()));
         telemetry.update();

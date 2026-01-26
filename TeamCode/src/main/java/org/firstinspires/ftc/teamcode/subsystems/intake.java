@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.util.constants;
 
 public class intake {
@@ -18,6 +20,8 @@ public class intake {
 
     private String intakeState;
     private boolean extended;
+    private boolean stalled = false;
+    private ElapsedTime stallTimer;
 
     public intake(){
 
@@ -25,6 +29,7 @@ public class intake {
 
     public void init(HardwareMap map) {
         intakeState = "INIT";
+        stallTimer = new ElapsedTime();
 
         motorL = map.get(DcMotorEx.class, "intakeL");
         motorL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -69,6 +74,12 @@ public class intake {
                 setPower(constants.intake.INTAKE_POWER);
                 setExtension(constants.INTAKE_EXTENSION.RETRACTED);
                 break;
+            case TRANSFERING:
+                intakeState = "TRANSFERING";
+                setDirection(1);
+                setPower(constants.intake.INTAKE_POWER);
+                setExtension(constants.INTAKE_EXTENSION.RETRACTED);
+                break;
         }
     }
 
@@ -105,6 +116,27 @@ public class intake {
         motorR.setPower(d);
     }
 
+    public void stallDetection() {
+        double vel = (motorL.getVelocity() + motorR.getVelocity())/2;
+        double current = (motorL.getCurrent(CurrentUnit.AMPS) + motorR.getCurrent(CurrentUnit.AMPS))/2;
+
+        boolean highCurrent = current > constants.STALL_CURRENT;
+        boolean lowVel = vel < constants.STALL_VELOCITY;
+
+        if (highCurrent && lowVel) {
+            stallTimer.reset();
+            if (stallTimer.seconds() > constants.STALL_TIME) {
+                stalled = true;
+            }
+        } else {
+            stalled = false;
+        }
+
+        if (stalled) {
+            setIntake(constants.INTAKE_PRESETS.OFF);
+        }
+    }
+
     private DcMotorEx.Direction flip(DcMotorEx.Direction dir) {
         return (dir == DcMotorEx.Direction.FORWARD)
                 ? DcMotorEx.Direction.REVERSE
@@ -112,7 +144,10 @@ public class intake {
     }
 
     public String toString() {
-        return "DIRECTION: " + motorL.getDirection() + "\n" + "POWER: " + motorL.getPower() + "\n" + "STATE: " + getIntakeState();
+        return "DIRECTION: " + motorL.getDirection() + "\n" +
+                "POWER: " + motorL.getPower() + "\n" +
+                "STATE: " + getIntakeState() + "\n" +
+                "CURRECT: " + (motorL.getCurrent(CurrentUnit.AMPS) + motorR.getCurrent(CurrentUnit.AMPS))/2;
     }
 
     public String getIntakeState() {

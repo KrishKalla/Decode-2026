@@ -19,6 +19,7 @@ public class shooter {
     public DcMotorEx motorRight;
     private Servo left;
     private Servo right;
+    private Servo stopper;
     private LLHandler handler;
     private VoltageSensor battery;
     private PIDFController pidf;
@@ -33,9 +34,10 @@ public class shooter {
     private double maxVoltageCompensation = 1.25;
     private double minVoltageCompensation = 0.90;
 
-    private String hoodState;
+    public String hoodState;
     private String hoodTrackingState;
     private boolean flywheelState;
+    private boolean stopped = true;
 
     public shooter() {
 
@@ -52,6 +54,8 @@ public class shooter {
         right = map.get(Servo.class, "rightHood");
         this.handler = handler;
         pidf = new PIDFController(new PIDFCoefficients(constants.shooter.kP, constants.shooter.kI, constants.shooter.kD, constants.shooter.kF));
+
+        stopper = map.get(Servo.class, "stopper");
 
         timer = new ElapsedTime();
         timer.reset();
@@ -73,7 +77,7 @@ public class shooter {
     public void hoodPreset(constants.HOOD preset) {
         switch (preset) {
             case RESET:
-                setHood(0);
+                setHood(constants.shooter.MIN_ANGLE);
                 hoodState = "RESET";
                 break;
             case MANUAL:
@@ -176,12 +180,23 @@ public class shooter {
         right.setPosition(Math.max(0, Math.min(1, right.getPosition() + direction * constants.shooter.step)));
     }
 
+    public void setStopper(boolean isStopped) {
+        if (!isStopped) {
+            stopper.setPosition(constants.shooter.PASSTHROUGH);
+            stopped = false;
+        } else {
+            stopper.setPosition(constants.shooter.STOP);
+            stopped = true;
+        }
+    }
+
     @NonNull
     @Override
     public String toString() {
-        return "Flywheel State: " + flywheelState + "\n" +
+        return  "Flywheel State: " + flywheelState + "\n" +
                 "Hood State: " + hoodState + "\n" +
                 "Hood Tracking State: " + hoodTrackingState +
+                "Stopper: " + stopped + "\n" +
                 "EMA: " + ema + "\n" +
                 "Hood Position: " + left.getPosition() + "\n" +
                 "RPM: " + rpm + "\n" +
