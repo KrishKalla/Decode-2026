@@ -79,6 +79,7 @@ public class shootertesting extends OpMode {
         telemetry.addLine(shooter.toString());
         telemetry.addData("RPM: ", shooter.getRPM());
         telemetry.addData("POWER: ", shit);
+        telemetry.addLine(intake.toString());
         telemetry.update();
     }
 }

@@ -6,18 +6,16 @@ import com.acmerobotics.dashboard.config.Config;
 public class constants {
 
     //General Constants
-    public static double ROBOT_MASS = 15; //kg
-    public static double FORWARD_OFFSET = 5; //in
-    public static double LATERAL_OFFSET = 0.5; //in
+    public static double ROBOT_MASS = 10; //kg
+    public static double FORWARD_OFFSET = 2.9331; //in
+    public static double LATERAL_OFFSET = 6.6535; //in
     public static double NOMINAL_VOLTAGE = 13.0;
-    public static double LIMELIGHT_HEIGHT = 10; //in
-    public static double LIMELIGHT_MOUNT_ANGLE = 45 * (Math.PI/180); //deg --> rad
+    public static double LIMELIGHT_HEIGHT = 0.41; //deg
+    public static double LIMELIGHT_MOUNT_ANGLE = 17.45128; //deg --> rad
     public static double APRIL_TAG_HEIGHT = 38.75 - 9.25; //in
     public static double APRIL_TAG_WIDTH = 6.5; //in
     public static double TICKS_PER_REV = 8192;
-    public static double STALL_CURRENT = 4.5;
-    public static double STALL_VELOCITY = 1000;
-    public static double STALL_TIME = 250;
+    public static double STALL_CURRENT = 2;
 
     //Intake Constants
     @Config
@@ -79,7 +77,7 @@ public class constants {
        public static double alpha = 0.225;
        public static double step = 0.05;
        public static double MIN_ANGLE = 0.18;
-       public static double PASSTHROUGH = 0.76;
+       public static double PASSTHROUGH = 0.72;
        public static double STOP = 0.4;
     }
 

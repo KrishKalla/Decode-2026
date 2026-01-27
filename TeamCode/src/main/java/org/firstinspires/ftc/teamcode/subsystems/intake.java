@@ -116,27 +116,6 @@ public class intake {
         motorR.setPower(d);
     }
 
-    public void stallDetection() {
-        double vel = (motorL.getVelocity() + motorR.getVelocity())/2;
-        double current = (motorL.getCurrent(CurrentUnit.AMPS) + motorR.getCurrent(CurrentUnit.AMPS))/2;
-
-        boolean highCurrent = current > constants.STALL_CURRENT;
-        boolean lowVel = vel < constants.STALL_VELOCITY;
-
-        if (highCurrent && lowVel) {
-            stallTimer.reset();
-            if (stallTimer.seconds() > constants.STALL_TIME) {
-                stalled = true;
-            }
-        } else {
-            stalled = false;
-        }
-
-        if (stalled) {
-            setIntake(constants.INTAKE_PRESETS.OFF);
-        }
-    }
-
     private DcMotorEx.Direction flip(DcMotorEx.Direction dir) {
         return (dir == DcMotorEx.Direction.FORWARD)
                 ? DcMotorEx.Direction.REVERSE
@@ -147,7 +126,7 @@ public class intake {
         return "DIRECTION: " + motorL.getDirection() + "\n" +
                 "POWER: " + motorL.getPower() + "\n" +
                 "STATE: " + getIntakeState() + "\n" +
-                "CURRECT: " + (motorL.getCurrent(CurrentUnit.AMPS) + motorR.getCurrent(CurrentUnit.AMPS))/2;
+                "CURRENT: " + (motorL.getCurrent(CurrentUnit.AMPS) + motorR.getCurrent(CurrentUnit.AMPS))/2;
     }
 
     public String getIntakeState() {
