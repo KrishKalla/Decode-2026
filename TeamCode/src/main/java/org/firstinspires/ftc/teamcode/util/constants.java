@@ -73,6 +73,7 @@ public class constants {
        public static double kI = 0;
        public static double kD = 0.00003;
        public static double kF = 0.000412;
+       public static double VARIABLE_P = 0.01;
        public static double TARGET_RPM = 0;
        public static double alpha = 0.225;
        public static double step = 0.05;

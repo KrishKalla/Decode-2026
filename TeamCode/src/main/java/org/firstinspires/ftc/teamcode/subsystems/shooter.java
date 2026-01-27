@@ -140,6 +140,9 @@ public class shooter {
 
         pidf.updateError(constants.shooter.TARGET_RPM - rpm);
         pidf.updateFeedForwardInput(constants.shooter.TARGET_RPM);
+        if (constants.shooter.TARGET_RPM - rpm > 100) {
+            pidf.setP(constants.shooter.VARIABLE_P);
+        }
         double power = pidf.run();
 
         double scale = constants.NOMINAL_VOLTAGE / voltage;
