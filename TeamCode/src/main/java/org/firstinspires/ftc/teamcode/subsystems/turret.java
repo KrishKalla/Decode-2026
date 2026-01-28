@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -29,14 +28,13 @@ public class turret {
     public void init(HardwareMap map, LLHandler handler) {
         left = map.get(Servo.class, "turretLeft");
         right = map.get(Servo.class, "turretRight");
-        left.setPosition(0.5);
-        right.setPosition(0.5);
         this.handler = handler;
         if(constants.turret.IS_USING_ENCODER) {
             encoder = map.get(DcMotorEx.class, "turretEncoder");
         }
         state = "INIT";
     }
+
 
     public void preset(constants.TURRET_PRESETS preset) {
         switch (preset) {
@@ -100,7 +98,6 @@ public class turret {
         right.setPosition(Math.max(0, Math.min(1, right.getPosition() + direction * constants.turret.step)));
     }
 
-    @NonNull
     @Override
     public String toString() {
         return "Turret State: " + state + "\n" +

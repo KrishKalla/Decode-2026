@@ -20,10 +20,10 @@ public class Constants {
             .mass(constants.ROBOT_MASS)
             .forwardZeroPowerAcceleration(-60.0)
             .lateralZeroPowerAcceleration(-65.9)
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.175, 0, 0.0133, 0.055))
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.1, 0, 0.004, 0.04))
             .headingPIDFCoefficients(new PIDFCoefficients(1, 0, 0.01, 0.04))
             .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.003, 0, 0, 0.6, 0.09))
-
+            .centripetalScaling(0.0)
             ;
 
     public static MecanumConstants driveConstants = new MecanumConstants()
@@ -37,7 +37,8 @@ public class Constants {
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
             .xVelocity(84.1)
-            .yVelocity(62.4);
+            .yVelocity(62.4)
+            ;
     public static PinpointConstants localizerConstants = new PinpointConstants()
             .forwardPodY(constants.FORWARD_OFFSET)
             .strafePodX(constants.LATERAL_OFFSET)
