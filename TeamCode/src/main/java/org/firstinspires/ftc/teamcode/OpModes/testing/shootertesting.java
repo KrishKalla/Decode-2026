@@ -24,6 +24,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @Config
 public class shootertesting extends OpMode {
     public static boolean ON = false;
+    public static boolean STOPPER = false;
     private boolean automatedDrive;
     private shooter shooter;
     private intake intake;
@@ -53,14 +54,20 @@ public class shootertesting extends OpMode {
         double shit = shooter.calculate();
         shooter.motorLeft.setPower(shit);
         shooter.motorRight.setPower(shit);
-        if (gamepad1.right_trigger > 0.3 || ON) {
+        if (gamepad1.right_trigger > 0.3 | ON) {
             intake.setIntake(constants.INTAKE_PRESETS.ON);
         }
         if (gamepad1.left_trigger > 0.3) {
             intake.setIntake(constants.INTAKE_PRESETS.REJECT);
         }
-        if (gamepad1.dpad_down || !ON) {
+        if (gamepad1.dpad_down | !ON) {
             intake.setIntake(constants.INTAKE_PRESETS.OFF);
+        }
+        if (STOPPER) {
+            shooter.setStopper(true);
+        }
+        if (!STOPPER) {
+            shooter.setStopper(false);
         }
         if(gamepad1.right_bumper) {
             shooter.flywheelPreset(constants.FLYWHEEL.ON);

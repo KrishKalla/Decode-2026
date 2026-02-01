@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 
 import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.control.PIDFController;
+import com.pedropathing.localization.PoseTracker;
+import com.pedropathing.math.MathFunctions;
+import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -13,6 +16,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
 import org.firstinspires.ftc.teamcode.util.LUT;
 import org.firstinspires.ftc.teamcode.util.constants;
+import org.firstinspires.ftc.teamcode.util.shooterConstants;
 
 public class shooter {
     public DcMotorEx motorLeft;
@@ -24,6 +28,7 @@ public class shooter {
     private VoltageSensor battery;
     private PIDFController pidf;
     private ElapsedTime timer;
+    private PoseTracker poseTracker;
 
     private double previousDistance;
     private double ema = -101;
@@ -72,6 +77,11 @@ public class shooter {
 
         hoodState = "INIT";
         flywheelState = false;
+    }
+
+    public void init(HardwareMap map, LLHandler handler, PoseTracker dt) {
+        poseTracker = dt;
+        init(map, handler);
     }
 
     public void hoodPreset(constants.HOOD preset) {
@@ -140,7 +150,7 @@ public class shooter {
 
         pidf.updateError(constants.shooter.TARGET_RPM - rpm);
         pidf.updateFeedForwardInput(constants.shooter.TARGET_RPM);
-        if (constants.shooter.TARGET_RPM - rpm > 100) {
+        if (constants.shooter.TARGET_RPM - rpm > constants.shooter.SHOT_LOAD) {
             pidf.setP(constants.shooter.VARIABLE_P);
         }
         double power = pidf.run();
@@ -213,6 +223,10 @@ public class shooter {
 
     public double getRPM() {
         return ((motorLeft.getVelocity() + motorRight.getVelocity())/2);
+    }
+
+    public double mToIn(double meters) {
+        return meters * 39.3700787;
     }
 
 }

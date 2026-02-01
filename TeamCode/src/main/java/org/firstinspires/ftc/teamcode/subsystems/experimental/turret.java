@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems.experimental;
 
-import static java.lang.Math.clamp;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.localization.PoseTracker;
@@ -36,6 +34,8 @@ public class turret {
     private int zeroTicks = 0;
     private double turretTargetDeg = 0.0;
 
+    public static double ENCODER_DIRECTION = -1.0;
+
     public turret() {}
 
 
@@ -43,16 +43,15 @@ public class turret {
         left = map.get(Servo.class, "turretLeft");
         right = map.get(Servo.class, "turretRight");
         this.handler = handler;
-        encoder = map.get(DcMotorEx.class, "turretEncoder");
+        encoder = map.get(DcMotorEx.class, "frontLeft");
         poseTracker = tracker;
 
         left.setPosition(0.5);
         right.setPosition(0.5);
 
-        zeroTurret();
-
         timer = new ElapsedTime();
-        timer.reset();
+
+        zeroTurret();
     }
 
     public void zeroTurret() {
@@ -82,7 +81,7 @@ public class turret {
     public double getCurrentTurretAngle() {
         int currentTicks = encoder.getCurrentPosition();
         int deltaTicks = currentTicks - zeroTicks;
-        return deltaTicks/TICKS_PER_TURRET_DEGREE;
+        return deltaTicks * TICKS_PER_TURRET_DEGREE * ENCODER_DIRECTION;
     }
 
     public double calculateTurretAngleToGoal(Pose goalPose) {
@@ -135,6 +134,10 @@ public class turret {
     public double getError() {
         double currentAngle = getCurrentTurretAngle();
         return normalizeAngle(turretTargetDeg - currentAngle);
+    }
+
+    public double clamp(double pos, double low, double high) {
+        return (Math.max(low, Math.min(high, pos)));
     }
 
 }

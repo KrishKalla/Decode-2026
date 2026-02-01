@@ -1,7 +1,9 @@
-package org.firstinspires.ftc.teamcode.OpModes.TeleOp;
+package org.firstinspires.ftc.teamcode.opModes.TeleOp;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -19,6 +21,7 @@ import org.firstinspires.ftc.teamcode.util.constants;
 public class v1 extends OpMode {
     private Follower follower;
     public static Pose startingPose;
+    private TelemetryManager telemetryM;
 
     private intake intake;
     private turret turret;
@@ -33,6 +36,7 @@ public class v1 extends OpMode {
         follower  = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
         follower.update();
+        telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         intake = new intake();
@@ -80,7 +84,6 @@ public class v1 extends OpMode {
         turret.preset(constants.TURRET_PRESETS.RESET);
         shooter.hoodPreset(constants.HOOD.RESET);
         shooter.flywheelPreset(constants.FLYWHEEL.ON);
-        shooter.setStopper(true);
         //might need to change a bit here depending on how stuff works, not sure yet
     }
 
@@ -97,12 +100,11 @@ public class v1 extends OpMode {
         if (gamepad1.right_trigger > 0.3) {
             intake.setIntake(constants.INTAKE_PRESETS.ON);
         }
-        else if (gamepad1.left_trigger > 0.3) {
+
+        if (gamepad1.left_trigger > 0.3) {
             intake.setIntake(constants.INTAKE_PRESETS.REJECT);
         }
-        else{
-            intake.setIntake(constants.INTAKE_PRESETS.OFF);
-        }
+
 
         if (gamepad1.right_bumper) {
             shooter.flywheelPreset(constants.FLYWHEEL.ON);
@@ -132,20 +134,17 @@ public class v1 extends OpMode {
         if (gamepad1.triangle) {
             turret.preset(constants.TURRET_PRESETS.RESET);
         }
-//        if (gamepad1.dpad_right) {
-//            turret.preset(constants.TURRET_PRESETS.MANUAL);
-//            turret.manual(-1);
-//        }
-//        if (gamepad1.dpad_left) {
-//            turret.preset(constants.TURRET_PRESETS.MANUAL);
-//            turret.manual(1);
-//        }
-
-        if (gamepad1.dpad_left) {
-            shooter.setStopper(false);
+        if (gamepad1.dpad_right) {
+            turret.preset(constants.TURRET_PRESETS.MANUAL);
+            turret.manual(-1);
         }
         if (gamepad1.dpad_right) {
-            shooter.setStopper(true);
+            turret.preset(constants.TURRET_PRESETS.MANUAL);
+            turret.manual(1);
+        }
+
+        else {
+            intake.setIntake(constants.INTAKE_PRESETS.OFF);
         }
 
 
@@ -157,10 +156,12 @@ public class v1 extends OpMode {
         telemetry.addLine(turret.toString());
         telemetry.addLine(shooter.toString());
 
+        telemetryM.update();
         telemetry.update();
     }
 
     public void addTelemetry(String info, Object value) {
+        telemetryM.debug(info, value);
         telemetry.addData(info, value);
     }
 }
