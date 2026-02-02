@@ -69,11 +69,9 @@ public class constants {
     //Shooter Constants
     @Config
     public static class shooter {
-       public static double kP = 0.0012;
-       public static double kI = 0;
-       public static double kD = 0.00003;
-       public static double kF = 0.00045;
-       public static double VARIABLE_P = .65;
+       public static double kP = 0;
+       public static double kS = 0.0045;
+       public static double kV = 0;
        public static double TARGET_RPM = 800;
        public static double alpha = 0.225;
        public static double step = 0.02;

@@ -58,7 +58,6 @@ public class shooter {
         left = map.get(Servo.class, "leftHood");
         right = map.get(Servo.class, "rightHood");
         this.handler = handler;
-        pidf = new PIDFController(new PIDFCoefficients(constants.shooter.kP, constants.shooter.kI, constants.shooter.kD, constants.shooter.kF));
 
         stopper = map.get(Servo.class, "stopper");
 
@@ -138,22 +137,19 @@ public class shooter {
     }
 
     public double calculate() {
-        pidf.setP(constants.shooter.kP);
-        pidf.setI(constants.shooter.kI);
-        pidf.setD(constants.shooter.kD);
-        pidf.setF(constants.shooter.kF);
 
         double rpmL = motorLeft.getVelocity();
         double rpmR = motorRight.getVelocity();
 
         rpm = (rpmL + rpmR) / 2;
 
-        pidf.updateError(constants.shooter.TARGET_RPM - rpm);
-        pidf.updateFeedForwardInput(constants.shooter.TARGET_RPM);
-        if (constants.shooter.TARGET_RPM - rpm > constants.shooter.SHOT_LOAD) {
-            pidf.setP(constants.shooter.VARIABLE_P);
-        }
-        double power = pidf.run();
+        double setpoint = constants.shooter.TARGET_RPM;
+        double error = setpoint - rpm;
+
+        double feedforward = constants.shooter.kS + constants.shooter.kV * setpoint;
+        double feedback = constants.shooter.kP * error;
+
+        double power = feedforward + feedback;
 
         double scale = constants.NOMINAL_VOLTAGE / voltage;
         scale = Math.max(minVoltageCompensation, Math.min(maxVoltageCompensation, scale));

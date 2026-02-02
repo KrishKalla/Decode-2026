@@ -1,63 +1,181 @@
 package org.firstinspires.ftc.teamcode.OpModes.Auto;
 
+import static android.os.SystemClock.sleep;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierCurve;
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.geometry.BezierLine;
+
+
+import org.firstinspires.ftc.teamcode.subsystems.intake;
+import org.firstinspires.ftc.teamcode.subsystems.shooter;
+import org.firstinspires.ftc.teamcode.subsystems.turret;
+import org.firstinspires.ftc.teamcode.util.LLHandler;
+import org.firstinspires.ftc.teamcode.util.constants;
+
+import com.pedropathing.paths.Path;
+import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-@Autonomous
-public class auto extends LinearOpMode {
-    DcMotorEx FL;
-    DcMotorEx FR;
-    DcMotorEx BL;
-    DcMotorEx BR;
+@Autonomous(name = "Test Close Auto")
+public class auto extends OpMode {
 
-    HardwareMap map = hardwareMap;
-    double speed = 0.4;
+    private LLHandler llHandler;
 
-    public void runOpMode() {
-    FL =map.get(DcMotorEx .class,"topLeft");
-            FL.setDirection(DcMotorEx.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
-            FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    // ---- Pathing ----
+    private Follower follower;
 
+    // ---- State System ----
+    private int pathState = 0;
+    
+    private final Pose startPose    = new Pose(20.5, 118, Math.toRadians(180));
+    private final Pose scorePose    = new Pose(55.000,  84.000, Math.toRadians(180));
+    private final Pose pickup1Pose  = new Pose(23.000,  84.000, Math.toRadians(180));
+    private final Pose pickup2Pose  = new Pose(23.000,  60.000, Math.toRadians(180));
+    private final Pose pickup3Pose  = new Pose(23.000,  36.000, Math.toRadians(180));
+    private final Pose midPickup2   = new Pose(79.000,  57.000, Math.toRadians(180));
+    private final Pose midPickup3   = new Pose(74.135, 29.993, Math.toRadians(180));
 
-    FR =map.get(DcMotorEx .class,"topRight");
-    //FR.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
-            FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    // ---- PATH OBJECTS ----
+    private Path scorePreload;
+    private PathChain grabPickup1, scorePickup1;
+    private PathChain grabPickup2, scorePickup2;
+    private PathChain grabPickup3, scorePickup3;
 
+    @Override
+    public void init() {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-    BL =map.get(DcMotorEx .class,"bottomLeft");
-            BL.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
-            BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        // ---- Subsystems ----
+        shooter shooter = new shooter();
+        intake intake = new intake();
+        turret turret = new turret();
 
+        shooter.init(hardwareMap,llHandler);
+        intake.init(hardwareMap);
+        turret.init(hardwareMap,llHandler);
 
-    BR =map.get(DcMotorEx .class,"bottomRight");
-    //BR.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
-            BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-    while (opModeInInit()) {
-
+        buildPaths();
     }
-    waitForStart();
 
-    ElapsedTime timer = new ElapsedTime();
-    timer.reset();
-    while (timer.milliseconds() < 1000)
-        FL.setPower(speed);
-        BL.setPower(speed);
-        FR.setPower(speed);
-        BR.setPower(speed);
-
+    @Override
+    public void loop() {
+        follower.update();
     }
+
+
+    // ---- BUILD PATHS ----
+    private void buildPaths() {
+
+
+        scorePreload = new Path(new BezierLine(startPose, scorePose));
+        scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
+
+        grabPickup1 = follower.pathBuilder()
+                .addPath(new BezierLine(scorePose, pickup1Pose))
+                .setTangentHeadingInterpolation()  // smooth into pickup
+                .build();
+
+
+        scorePickup1 = follower.pathBuilder()
+                .addPath(new BezierLine(pickup1Pose, scorePose))
+                .setTangentHeadingInterpolation()
+                .setReversed()
+                .build();
+
+
+        grabPickup2 = follower.pathBuilder()
+                .addPath(new BezierCurve(
+                        scorePose,
+                        midPickup2,
+                        pickup2Pose
+                ))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setReversed()
+                .build();
+
+
+        scorePickup2 = follower.pathBuilder()
+                .addPath(new BezierLine(pickup2Pose, scorePose))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .build();
+
+
+        grabPickup3 = follower.pathBuilder()
+                .addPath(new BezierCurve(
+                        scorePose,
+                        midPickup3,
+                        pickup3Pose
+                ))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .build();
+
+
+        scorePickup3 = follower.pathBuilder()
+                .addPath(new BezierLine(pickup3Pose, scorePose))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .build();
+    }
+
+
+    public void autonomousPathUpdate() {
+        switch (pathState) {
+            case 0:
+                follower.followPath(scorePreload);
+                setPathState(1);
+                break;
+            case 1:
+                if(!follower.isBusy()) {
+                    // Score Preload
+                    follower.followPath(grabPickup1,true);
+                    setPathState(2);
+                }
+                break;
+            case 2:
+                if(!follower.isBusy()) {
+                    follower.followPath(scorePickup1,true);
+                    setPathState(3);
+                }
+                break;
+            case 3:
+                if(!follower.isBusy()) {
+                    follower.followPath(grabPickup2,true);
+                    setPathState(4);
+                }
+                break;
+            case 4:
+                if(!follower.isBusy()) {
+                    follower.followPath(scorePickup2,true);
+                    setPathState(5);
+                }
+                break;
+            case 5:
+                if(!follower.isBusy()) {
+                    follower.followPath(grabPickup3,true);
+                    setPathState(6);
+                }
+                break;
+            case 6:
+                if(!follower.isBusy()) {
+                    follower.followPath(scorePickup3,true);
+                    setPathState(7);
+                }
+                break;
+            case 7:
+                if(!follower.isBusy()) {
+                    setPathState(-1); // Done
+                }
+                break;
+        }
+    }
+
+    public void setPathState(int pState) {
+        pathState = pState;
+    }
+
+
 }
