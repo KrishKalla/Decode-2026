@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
 
 @Config
-public class turret {
+public class Turret {
     private Servo left;
     private Servo right;
     private LLHandler handler;
@@ -29,19 +29,23 @@ public class turret {
     private static final double ENCODER_TICKS_PER_TURRET_DEGREE =
             (ENCODER_TICKS_PER_REV / 360.0) / ENCODER_TO_TURRET_RATIO;
     private static final double TICKS_PER_TURRET_DEGREE =
-            (ENCODER_TICKS_PER_REV / 360.0) / ENCODER_TO_TURRET_RATIO;
+            (ENCODER_TICKS_PER_REV / 360.0) * ENCODER_TO_TURRET_RATIO;
 
     private int zeroTicks = 0;
     private double turretTargetDeg = 0.0;
 
+    public static double TURRET_OFFSET = -3.5;
+
     public static double ENCODER_DIRECTION = -1.0;
 
-    public turret() {}
+    public Turret() {}
 
 
     public void init(HardwareMap map, LLHandler handler, PoseTracker tracker) {
         left = map.get(Servo.class, "turretLeft");
+        left.setDirection(Servo.Direction.REVERSE);
         right = map.get(Servo.class, "turretRight");
+        right.setDirection(Servo.Direction.REVERSE);
         this.handler = handler;
         encoder = map.get(DcMotorEx.class, "frontLeft");
         poseTracker = tracker;
@@ -81,11 +85,27 @@ public class turret {
     public double getCurrentTurretAngle() {
         int currentTicks = encoder.getCurrentPosition();
         int deltaTicks = currentTicks - zeroTicks;
-        return deltaTicks * TICKS_PER_TURRET_DEGREE * ENCODER_DIRECTION;
+        return deltaTicks / TICKS_PER_TURRET_DEGREE * ENCODER_DIRECTION;
+    }
+
+    public Pose getTurretFieldPose() {
+        Pose robotPose = poseTracker.getPose();
+
+        double heading = robotPose.getHeading();
+        double cosH = Math.cos(heading);
+        double sinH = Math.sin(heading);
+
+        double worldOffsetX = TURRET_OFFSET * cosH;
+        double worldOffsetY = TURRET_OFFSET * sinH;
+
+        double turretX = robotPose.getX() + worldOffsetX;
+        double turretY = robotPose.getY() + worldOffsetY;
+
+        return new Pose(turretX, turretY, heading);
     }
 
     public double calculateTurretAngleToGoal(Pose goalPose) {
-        Pose currentPose = poseTracker.getPose();
+        Pose currentPose = getTurretFieldPose();
 
         double dx = goalPose.getX() - currentPose.getX();
         double dy = goalPose.getY() - currentPose.getY();

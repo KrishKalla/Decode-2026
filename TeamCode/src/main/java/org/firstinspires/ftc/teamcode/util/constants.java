@@ -78,8 +78,8 @@ public class constants {
        public static double alpha = 0.225;
        public static double step = 0.02;
        public static double MIN_ANGLE = 0.18;
-       public static double PASSTHROUGH = 0.56;
-       public static double STOP = 0.2;
+       public static double PASSTHROUGH = 0.85;
+       public static double STOP = 0.5;
        public static double SHOT_LOAD = 65;
     }
 

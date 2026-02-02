@@ -5,7 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.subsystems.experimental.turret;
+import org.firstinspires.ftc.teamcode.subsystems.experimental.Turret;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
 import org.firstinspires.ftc.teamcode.util.constantsExperimental;
 
@@ -18,17 +18,17 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp(name = "turret testing")
 @Config
 public class turrettesting_experimental extends OpMode {
-    private turret turret;
+    private Turret turret;
     private LLHandler llhandler;
     private Follower follower;
     private Localizer localizer;
     private int alliance = 1;
     public void init() {
-        turret = new turret();
+        turret = new Turret();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         llhandler = new LLHandler(hardwareMap, alliance);
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(0, 0, 0));
+        follower.setStartingPose(new Pose(72, 72, 0));
         follower.update();
         turret.init(hardwareMap, llhandler, follower.poseTracker);
     }
