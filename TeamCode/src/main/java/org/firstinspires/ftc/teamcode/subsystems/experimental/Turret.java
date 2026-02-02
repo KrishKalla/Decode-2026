@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems.experimental;
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.localization.PoseTracker;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -15,7 +16,7 @@ public class Turret {
     private Servo left;
     private Servo right;
     private LLHandler handler;
-    private DcMotorEx encoder;
+    public DcMotorEx encoder;
     private ElapsedTime timer;
     private PoseTracker poseTracker;
 
@@ -31,12 +32,11 @@ public class Turret {
     private static final double TICKS_PER_TURRET_DEGREE =
             (ENCODER_TICKS_PER_REV / 360.0) * ENCODER_TO_TURRET_RATIO;
 
-    private int zeroTicks = 0;
     private double turretTargetDeg = 0.0;
-
-    public static double TURRET_OFFSET = -3.5;
-
+    private boolean llValid;
+    public static double TURRET_OFFSET = -2.7266;
     public static double ENCODER_DIRECTION = -1.0;
+    public static double LLWEIGHT = 1;
 
     public Turret() {}
 
@@ -46,20 +46,18 @@ public class Turret {
         left.setDirection(Servo.Direction.REVERSE);
         right = map.get(Servo.class, "turretRight");
         right.setDirection(Servo.Direction.REVERSE);
+
         this.handler = handler;
         encoder = map.get(DcMotorEx.class, "frontLeft");
         poseTracker = tracker;
 
-        left.setPosition(0.5);
-        right.setPosition(0.5);
-
         timer = new ElapsedTime();
-
-        zeroTurret();
     }
 
     public void zeroTurret() {
-        zeroTicks = encoder.getCurrentPosition();
+        left.setPosition(0.5);
+        right.setPosition(0.5);
+        encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turretTargetDeg = 0.0;
         timer.reset();
     }
@@ -67,7 +65,8 @@ public class Turret {
 
     public void update(Pose goalPose) {
         double angleToGoal = calculateTurretAngleToGoal(goalPose);
-        double constrainedAngle = getConstrainedAngle(angleToGoal);
+        double LLCorrectedAngle = applyLLCorrection(angleToGoal);
+        double constrainedAngle = getConstrainedAngle(LLCorrectedAngle);
         setTurretAngle(constrainedAngle);
     }
 
@@ -83,8 +82,7 @@ public class Turret {
     }
 
     public double getCurrentTurretAngle() {
-        int currentTicks = encoder.getCurrentPosition();
-        int deltaTicks = currentTicks - zeroTicks;
+        int deltaTicks = encoder.getCurrentPosition();
         return deltaTicks / TICKS_PER_TURRET_DEGREE * ENCODER_DIRECTION;
     }
 
@@ -151,9 +149,27 @@ public class Turret {
         return error <= toleranceDeg;
     }
 
+    private double applyLLCorrection(double calculatedAngle) {
+        if (handler.getLatestResult() != null) {
+            double headingOffset = handler.getLatestResult()[3];
+            if (headingOffset == -1001) {
+                llValid = false;
+                return calculatedAngle;
+            }
+            llValid = true;
+            return calculatedAngle + (headingOffset * LLWEIGHT);
+        }
+        llValid = false;
+        return calculatedAngle;
+    }
+
     public double getError() {
         double currentAngle = getCurrentTurretAngle();
         return normalizeAngle(turretTargetDeg - currentAngle);
+    }
+
+    public boolean getLLValid() {
+        return llValid;
     }
 
     public double clamp(double pos, double low, double high) {

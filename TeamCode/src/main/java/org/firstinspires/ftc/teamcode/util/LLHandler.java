@@ -42,7 +42,7 @@ public class LLHandler {
             double x = goal.getPosition().x;
             double y = -goal.getPosition().y;
             double z = goal.getPosition().z;
-            double tx = result.getTx();
+            double tx = -result.getTx();
 
             latestResult = new double[] {x, y, z, tx};
             return new double[] {x, y, z, tx};

@@ -92,7 +92,7 @@ public class v1 extends OpMode {
         llhandler.start();
         thread.start();
         intake.setIntake(constants.INTAKE_PRESETS.OFF);
-//        turret.preset(constants.TURRET_PRESETS.RESET);
+        turret.zeroTurret();
         shooter.hoodPreset(constants.HOOD.RESET);
         shooter.flywheelPreset(constants.FLYWHEEL.ON);
         shooter.setStopper(true);
