@@ -29,7 +29,8 @@ public class shootertesting extends OpMode {
     private shooter shooter;
     private intake intake;
     ;
-    public static double MANUALHOOD = 0.2;
+    public static double MANUALHOOD = 0.875;
+    public static double Delta_Hood = 0;
 
     private int alliance = 1;
     private LLHandler llhandler;
@@ -49,43 +50,35 @@ public class shootertesting extends OpMode {
     }
 
     public void loop() {
-        shooter.setHood(MANUALHOOD);
+        
         shooter.updateBatteryVoltage();
         double shit = shooter.calculate();
         shooter.motorLeft.setPower(shit);
         shooter.motorRight.setPower(shit);
-        if (gamepad1.right_trigger > 0.3 | ON) {
+        if (constants.shooter.TARGET_RPM-shooter.getRPM()>50)
+        {
+            shooter.setHood(MANUALHOOD-Delta_Hood);
+        }
+        else{
+            shooter.setHood(MANUALHOOD);
+        }
+
+        if (gamepad1.right_trigger > 0.3) {
             intake.setIntake(constants.INTAKE_PRESETS.ON);
         }
         if (gamepad1.left_trigger > 0.3) {
             intake.setIntake(constants.INTAKE_PRESETS.REJECT);
         }
-        if (gamepad1.dpad_down | !ON) {
+        if (gamepad1.left_bumper) {
             intake.setIntake(constants.INTAKE_PRESETS.OFF);
-        }
-        if (STOPPER) {
-            shooter.setStopper(true);
-        }
-        if (!STOPPER) {
             shooter.setStopper(false);
         }
-        if(gamepad1.right_bumper) {
-            shooter.flywheelPreset(constants.FLYWHEEL.ON);
-            shooter.hoodPreset(constants.HOOD.MANUAL);
-        }
-        if(gamepad1.left_bumper) {
-            shooter.flywheelPreset(constants.FLYWHEEL.OFF);
-            shooter.hoodPreset(constants.HOOD.RESET);
-        }
-        if (gamepad1.dpad_left) {
-            shooter.setStopper(false);
-        }
-        if (gamepad1.dpad_right) {
+        if (gamepad1.right_bumper){
             shooter.setStopper(true);
         }
         telemetry.addLine(shooter.toString());
         telemetry.addData("RPM: ", shooter.getRPM());
-        telemetry.addData("POWER: ", shit);
+        telemetry.addData("Target: ", constants.shooter.TARGET_RPM);
         telemetry.addLine(intake.toString());
         telemetry.update();
         

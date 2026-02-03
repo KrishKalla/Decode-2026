@@ -107,7 +107,6 @@ public class shooter {
                 flywheelState = false;
                 break;
             case ON:
-                pidf.reset();
                 flywheelState = true;
                 break;
         }
