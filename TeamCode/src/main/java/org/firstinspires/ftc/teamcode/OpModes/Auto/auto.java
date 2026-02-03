@@ -46,6 +46,8 @@ public class auto extends OpMode {
     private PathChain grabPickup2, scorePickup2;
     private PathChain grabPickup3, scorePickup3;
 
+
+
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -54,6 +56,8 @@ public class auto extends OpMode {
         shooter shooter = new shooter();
         intake intake = new intake();
         turret turret = new turret();
+        constants.shooter.TARGET_RPM=800;
+        constants.shooter.Hood_pos=0.75;
 
         shooter.init(hardwareMap,llHandler);
         intake.init(hardwareMap);

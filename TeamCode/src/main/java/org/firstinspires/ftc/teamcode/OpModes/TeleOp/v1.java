@@ -35,6 +35,7 @@ public class v1 extends OpMode {
     Runnable r;
     private Thread thread;
     public static double MANUALHOOD = 0.2;
+    private boolean shooting_state=false;
 
     @Override
     public void init() {
@@ -101,7 +102,7 @@ public class v1 extends OpMode {
 
     @Override
     public void loop() {
-        shooter.setHood(MANUALHOOD);
+        shooter.update();
         follower.update();
         follower.setTeleOpDrive(
             -gamepad1.left_stick_y,
@@ -110,23 +111,30 @@ public class v1 extends OpMode {
             true //robot centric
         );
 
-        if (gamepad1.right_trigger > 0.3) {
-            intake.setIntake(constants.INTAKE_PRESETS.ON);
+        if(shooting_state)
+        {
+            shooter.update_constant();
         }
 
+        if (gamepad1.right_trigger > 0.3) {
+            intake.setIntake(constants.INTAKE_PRESETS.ON);
+            shooter.setStopper(true);
+            shooting_state=false;
+        }
         else if (gamepad1.left_trigger > 0.3) {
-            intake.setIntake(constants.INTAKE_PRESETS.REJECT);
+            intake.setIntake(constants.INTAKE_PRESETS.ON);
         }
         else{
             intake.setIntake(constants.INTAKE_PRESETS.OFF);
         }
 
-
         if (gamepad1.right_bumper) {
-            shooter.flywheelPreset(constants.FLYWHEEL.ON);
+            shooter.setStopper(true);
+            shooting_state=false;
         }
         if (gamepad1.left_bumper) {
-            shooter.flywheelPreset(constants.FLYWHEEL.OFF);
+            shooter.setStopper(false);
+            shooting_state=true;
         }
 
 //        if (gamepad1.square) {
@@ -143,13 +151,7 @@ public class v1 extends OpMode {
 //            shooter.hoodPreset(constants.HOOD.MANUAL);
 //            shooter.manual(-1);
 //        }
-
-        if (gamepad1.square) {
-            shooter.setStopper(true);
-        }
-        if (gamepad1.circle) {
-            shooter.setStopper(false);
-        }
+        
 //        if (gamepad1.dpad_right) {
 //            turret.preset(constants.TURRET_PRESETS.MANUAL);
 //            turret.manual(-1);

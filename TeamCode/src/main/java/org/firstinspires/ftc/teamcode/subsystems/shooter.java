@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
+
 import androidx.annotation.NonNull;
 
 import com.pedropathing.control.PIDFCoefficients;
@@ -112,20 +114,30 @@ public class shooter {
         }
     }
 
+    public void update_constant(){
+        double x=follower.getPose().getX();
+        double y=follower.getPose().getY();
+        double distance=Math.sqrt(Math.pow(x,2)+Math.pow(y,2));
+        constants.shooter.TARGET_RPM=0.0200816*Math.pow(distance,2)-1.41282*distance+752.32143;
+        constants.shooter.Hood_pos=0.00241176*distance+0.58433;
+    }
+
     public void update() {
-        previousDistance = handler.getLatestResult()[2];
-        if (previousDistance == -1001) {
-            hoodTrackingState = "MISSING";
-        } else {
-            hoodTrackingState = "TRACKING";
-            filterDistance(previousDistance);
-            double hoodPos = LUT.get(ema);
-            setHood(hoodPos);
-        }
+//        previousDistance = handler.getLatestResult()[2];
+//        if (previousDistance == -1001) {
+//            hoodTrackingState = "MISSING";
+//        } else {
+//            hoodTrackingState = "TRACKING";
+//            filterDistance(previousDistance);
+//            double hoodPos = LUT.get(ema);
+//            setHood(hoodPos);
+//        }
+        setHood(constants.shooter.Hood_pos);
 
         updateBatteryVoltage();
 
         if (flywheelState) {
+
             power = calculate();
             motorLeft.setPower(power);
             motorRight.setPower(power);

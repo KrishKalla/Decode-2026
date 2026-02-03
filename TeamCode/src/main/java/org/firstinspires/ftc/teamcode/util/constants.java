@@ -79,9 +79,11 @@ public class constants {
        public static double PASSTHROUGH = 0.85;
        public static double STOP = 0.5;
        public static double SHOT_LOAD = 65;
+       public static double Hood_pos = 0.18;
     }
 
     public enum HOOD {
+
         RESET,
         MANUAL,
         AUTO
