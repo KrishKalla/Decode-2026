@@ -27,15 +27,14 @@ public class Turret {
     private static final double ENCODER_TICKS_PER_REV  = 8192.0;
     private static final double MIN_ANGLE = -135.0;
     private static final double MAX_ANGLE = 135.0;
-    private static final double ENCODER_TICKS_PER_TURRET_DEGREE =
-            (ENCODER_TICKS_PER_REV / 360.0) / ENCODER_TO_TURRET_RATIO;
     private static final double TICKS_PER_TURRET_DEGREE =
             (ENCODER_TICKS_PER_REV / 360.0) * ENCODER_TO_TURRET_RATIO;
 
     private double turretTargetDeg = 0.0;
     private boolean llValid;
     public static double TURRET_OFFSET = -2.7266;
-    public static double ENCODER_DIRECTION = -1.0;
+    public static double ENCODER_DIRECTION = 1.0;
+    public static double ERROR_SIGN = 1;
     public static double LLWEIGHT = 1;
 
     public Turret() {}
@@ -65,8 +64,11 @@ public class Turret {
 
     public void update(Pose goalPose) {
         double angleToGoal = calculateTurretAngleToGoal(goalPose);
-        double LLCorrectedAngle = applyLLCorrection(angleToGoal);
-        double constrainedAngle = getConstrainedAngle(LLCorrectedAngle);
+        double constrainedAngle = getConstrainedAngle(angleToGoal);
+        setTurretAngle(constrainedAngle);
+        double correctedAngle = applyCorrection(angleToGoal);
+        double LLCorrectedAngle = applyLLCorrection(correctedAngle);
+        constrainedAngle = getConstrainedAngle(LLCorrectedAngle);
         setTurretAngle(constrainedAngle);
     }
 
@@ -109,10 +111,10 @@ public class Turret {
         double dy = goalPose.getY() - currentPose.getY();
         double worldAngleToGoal = Math.toDegrees(Math.atan2(dy, dx));
 
-        double robotHeading = Math.toDegrees(currentPose.getHeading());
+        double robotHeading = Math.toDegrees(currentPose.getHeading() + Math.PI);
         double robotFrameAngle = normalizeAngle(worldAngleToGoal - robotHeading);
 
-        return normalizeAngle(robotFrameAngle + 180.0);
+        return normalizeAngle(robotFrameAngle);
     }
 
     public double getConstrainedAngle(double desiredAngle) {
@@ -129,7 +131,7 @@ public class Turret {
     }
 
     public void setTurretAngle(double turretAngleDeg) {
-        turretTargetDeg = turretAngleDeg;
+        turretTargetDeg = normalizeAngle(turretAngleDeg);
 
         double servoAngleDeg = turretAngleDeg / SERVO_TO_TURRET_RATIO;
         double servoPosition = (servoAngleDeg / 355) + 0.5;
@@ -163,9 +165,20 @@ public class Turret {
         return calculatedAngle;
     }
 
+    private double applyCorrection(double calculatedAngle) {
+        double error = getError();
+        double correctedPos =  (calculatedAngle + ERROR_SIGN * error / SERVO_TO_TURRET_RATIO) / 355;
+        correctedPos = clamp(correctedPos, 0.11, 0.87);
+        return correctedPos;
+    }
+
     public double getError() {
         double currentAngle = getCurrentTurretAngle();
         return normalizeAngle(turretTargetDeg - currentAngle);
+    }
+
+    public double getTurretTargetDeg() {
+        return turretTargetDeg;
     }
 
     public boolean getLLValid() {
