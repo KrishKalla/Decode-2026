@@ -28,7 +28,7 @@ public class shootertesting extends OpMode {
     private boolean automatedDrive;
     private shooter shooter;
     private intake intake;
-    ;
+    private Follower follower;
     public static double MANUALHOOD = 0.875;
     public static double Delta_Hood = 0;
 
@@ -42,6 +42,10 @@ public class shootertesting extends OpMode {
         llhandler = new LLHandler(hardwareMap, alliance);
         shooter.init(hardwareMap, llhandler);
         intake.init(hardwareMap);
+
+        follower  = Constants.createFollower(hardwareMap);
+        follower.setStartingPose(new Pose(72, 72, 0));
+        follower.update();
     }
 
     @Override
@@ -50,18 +54,15 @@ public class shootertesting extends OpMode {
     }
 
     public void loop() {
-        
+        follower.update();
+        shooter.update();
+        shooter.update_constant();
         shooter.updateBatteryVoltage();
-        double shit = shooter.calculate();
-        shooter.motorLeft.setPower(shit);
-        shooter.motorRight.setPower(shit);
-        if (constants.shooter.TARGET_RPM-shooter.getRPM()>50)
-        {
-            shooter.setHood(MANUALHOOD-Delta_Hood);
-        }
-        else{
-            shooter.setHood(MANUALHOOD);
-        }
+
+//        double shit = shooter.calculate();
+//        shooter.motorLeft.setPower(shit);
+//        shooter.motorRight.setPower(shit);
+
 
         if (gamepad1.right_trigger > 0.3) {
             intake.setIntake(constants.INTAKE_PRESETS.ON);
@@ -78,7 +79,8 @@ public class shootertesting extends OpMode {
         }
         telemetry.addLine(shooter.toString());
         telemetry.addData("RPM: ", shooter.getRPM());
-        telemetry.addData("Target: ", constants.shooter.TARGET_RPM);
+        telemetry.addData("Target_RPM: ", constants.shooter.TARGET_RPM);
+        telemetry.addData("Target_Hood: ", constants.shooter.Hood_pos);
         telemetry.addLine(intake.toString());
         telemetry.update();
         

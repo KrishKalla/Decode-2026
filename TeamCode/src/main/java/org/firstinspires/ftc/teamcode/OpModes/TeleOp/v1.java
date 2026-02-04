@@ -102,20 +102,15 @@ public class v1 extends OpMode {
 
     @Override
     public void loop() {
-        shooter.update();
         follower.update();
+        shooter.update();
+        shooter.update_constant();
         follower.setTeleOpDrive(
             -gamepad1.left_stick_y,
             -gamepad1.left_stick_x,
             -gamepad1.right_stick_x,
             true //robot centric
         );
-
-        if(shooting_state)
-        {
-            shooter.update_constant();
-        }
-
         if (gamepad1.right_trigger > 0.3) {
             intake.setIntake(constants.INTAKE_PRESETS.ON);
             shooter.setStopper(true);

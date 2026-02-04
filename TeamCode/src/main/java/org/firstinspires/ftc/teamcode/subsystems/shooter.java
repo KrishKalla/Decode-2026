@@ -137,7 +137,6 @@ public class shooter {
         updateBatteryVoltage();
 
         if (flywheelState) {
-
             power = calculate();
             motorLeft.setPower(power);
             motorRight.setPower(power);
