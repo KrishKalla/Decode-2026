@@ -15,7 +15,7 @@ import com.pedropathing.localization.Localizer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "turret testing")
+@TeleOp(name = "turret testing new")
 @Config
 public class turrettesting_experimental extends OpMode {
     private Turret turret;
@@ -47,7 +47,7 @@ public class turrettesting_experimental extends OpMode {
     }
 
     public void loop() {
-        Pose goalPose = constantsExperimental.BLUE_GOAL;
+        Pose goalPose = new Pose(constantsExperimental.BLUE_X, constantsExperimental.BLUE_Y);
         follower.update();
         llhandler.poll();
         turret.update(goalPose);
@@ -55,7 +55,8 @@ public class turrettesting_experimental extends OpMode {
         telemetry.addData("Encoder Ticks", turret.encoder.getCurrentPosition());
         telemetry.addData("TX", llhandler.getLatestResult()[3]);
         telemetry.addData("Current Turret Angle", "%.2f°", turret.getCurrentTurretAngle());
-        telemetry.addData("Target Angle", "%.2f°", turret.getError());
+        telemetry.addData("Target Angle", "%.2f°", turret.getTurretTargetDeg());
+        telemetry.addData("Error", "%.2f°", turret.getError());
         telemetry.addData("Is Aimed", turret.isAimedAtGoal(goalPose, 1.0));
         telemetry.addData("LLVALID", turret.getLLValid());
         telemetry.update();
