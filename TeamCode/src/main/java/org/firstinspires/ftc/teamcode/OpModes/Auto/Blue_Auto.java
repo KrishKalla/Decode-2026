@@ -26,7 +26,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name = "Blue Close Auto")
 public class Blue_Auto extends OpMode {
 
-    private static double TURRET_ANGLE = 115;
+    private static double TURRET_ANGLE = 118;
     private ElapsedTime shootTimer = new ElapsedTime();
 
     private boolean shotWaitStarted = false;
@@ -164,7 +164,7 @@ public class Blue_Auto extends OpMode {
                         shotWaitStarted = true;
                     }
 
-                    if (shootTimer.seconds() >= 1.0) {
+                    if (shootTimer.seconds() >= 3.0) {
 
                         shooter.setStopper(true);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
@@ -194,7 +194,7 @@ public class Blue_Auto extends OpMode {
                         shotWaitStarted = true;
                     }
 
-                    if (shootTimer.seconds() >= 1.0) {
+                    if (shootTimer.seconds() >= 3.0) {
 
                         shooter.setStopper(true);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
@@ -226,7 +226,7 @@ public class Blue_Auto extends OpMode {
                         shotWaitStarted = true;
                     }
 
-                    if (shootTimer.seconds() >= 1.0) {
+                    if (shootTimer.seconds() >= 3.0) {
 
                         shooter.setStopper(true);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
@@ -257,7 +257,7 @@ public class Blue_Auto extends OpMode {
                         shotWaitStarted = true;
                     }
 
-                    if (shootTimer.seconds() >= 2.0) {
+                    if (shootTimer.seconds() >= 3.0) {
                         shotWaitStarted = false;   // reset for next time
                         setPathState(8);
                     }
