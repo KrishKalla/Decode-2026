@@ -34,7 +34,6 @@ public class Turret {
     private boolean llValid;
     public static double TURRET_OFFSET = -2.7266;
     public static double ENCODER_DIRECTION = 1.0;
-    public static double ERROR_SIGN = 1;
     public static double LLWEIGHT = 1;
 
     public Turret() {}
@@ -64,11 +63,8 @@ public class Turret {
 
     public void update(Pose goalPose) {
         double angleToGoal = calculateTurretAngleToGoal(goalPose);
-        double constrainedAngle = getConstrainedAngle(angleToGoal);
-        setTurretAngle(constrainedAngle);
-        double correctedAngle = applyCorrection(angleToGoal);
-        double LLCorrectedAngle = applyLLCorrection(correctedAngle);
-        constrainedAngle = getConstrainedAngle(LLCorrectedAngle);
+        double LLCorrectedAngle = applyLLCorrection(angleToGoal);
+        double constrainedAngle = getConstrainedAngle(LLCorrectedAngle);
         setTurretAngle(constrainedAngle);
     }
 
@@ -163,13 +159,6 @@ public class Turret {
         }
         llValid = false;
         return calculatedAngle;
-    }
-
-    private double applyCorrection(double calculatedAngle) {
-        double error = getError();
-        double correctedPos =  (calculatedAngle + ERROR_SIGN * error / SERVO_TO_TURRET_RATIO) / 355;
-        correctedPos = clamp(correctedPos, 0.11, 0.87);
-        return correctedPos;
     }
 
     public double getError() {
