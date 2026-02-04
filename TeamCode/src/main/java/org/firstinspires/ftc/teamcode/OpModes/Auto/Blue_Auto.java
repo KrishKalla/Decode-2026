@@ -10,9 +10,9 @@ import com.pedropathing.geometry.BezierLine;
 
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.subsystems.experimental.Turret;
 import org.firstinspires.ftc.teamcode.subsystems.intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter;
-import org.firstinspires.ftc.teamcode.subsystems.turret;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
 import org.firstinspires.ftc.teamcode.util.constants;
 
@@ -26,7 +26,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name = "Blue Close Auto")
 public class Blue_Auto extends OpMode {
 
-    private static double Hood_pos=0.25;
+    private static double TURRET_ANGLE = 115;
     private ElapsedTime shootTimer = new ElapsedTime();
 
     private boolean shotWaitStarted = false;
@@ -56,7 +56,7 @@ public class Blue_Auto extends OpMode {
 
     private intake intake;
     private shooter shooter;
-    private turret turret;
+    private Turret turret;
 
     @Override
     public void init() {
@@ -65,13 +65,13 @@ public class Blue_Auto extends OpMode {
         // ---- Subsystems ----
         shooter = new shooter();
         intake = new intake();
-        turret = new turret();
+        turret = new Turret();
         follower = Constants.createFollower(hardwareMap);
         follower.setPose(startPose);
 
         shooter.init(hardwareMap, llHandler);
         intake.init(hardwareMap);
-        turret.init(hardwareMap, llHandler);
+        turret.init(hardwareMap, llHandler, follower.poseTracker);
 
         constants.shooter.TARGET_RPM=825;
         constants.shooter.Hood_pos=0.85;
@@ -149,7 +149,7 @@ public class Blue_Auto extends OpMode {
                 follower.followPath(scorePreload);
                 intake.setIntake(constants.INTAKE_PRESETS.OFF);
                 shooter.flywheelPreset(constants.FLYWHEEL.ON);
-                turret.setServoPos(Hood_pos);
+                turret.setTurretAngle(TURRET_ANGLE);
                 shooter.setStopper(false);
 
                 setPathState(1);

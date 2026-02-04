@@ -87,7 +87,7 @@ public class turret {
         return pos;
     }
 
-    private void setServoPos(double pos) {
+    public void setServoPos(double pos) {
         left.setPosition(pos);
         right.setPosition(pos);
     }
