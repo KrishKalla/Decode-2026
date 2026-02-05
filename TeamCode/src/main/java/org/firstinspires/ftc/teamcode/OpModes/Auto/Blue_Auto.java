@@ -26,7 +26,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name = "Blue Close Auto")
 public class Blue_Auto extends OpMode {
 
-    private static double TURRET_ANGLE = 117;
+    private static double TURRET_ANGLE = 115;
     private ElapsedTime shootTimer = new ElapsedTime();
 
     private boolean shotWaitStarted = false;
@@ -41,14 +41,14 @@ public class Blue_Auto extends OpMode {
 
     private final Pose startPose = new Pose(24.76, 129.48, Math.toRadians(145));
     private final Pose scorePose2 = new Pose(54.000, 85.000, Math.toRadians(210));
-    private final Pose pickup1Pose = new Pose(23.000, 84.000, Math.toRadians(180));
-    private final Pose pickup2Pose = new Pose(23.000, 60.000, Math.toRadians(180));
-    private final Pose pickup3Pose = new Pose(23.000, 36.000, Math.toRadians(180));
+    private final Pose pickup1Pose = new Pose(24.000, 84.000, Math.toRadians(180));
+    private final Pose pickup2Pose = new Pose(24.000, 60.000, Math.toRadians(180));
+    private final Pose pickup3Pose = new Pose(24.000, 36.000, Math.toRadians(180));
     private final Pose midPickup2 = new Pose(79.000, 57.000, Math.toRadians(180));
     private final Pose midPickup3 = new Pose(75.000, 30.000, Math.toRadians(180));
     private final Pose Gatepose = new Pose(19.500, 63.00, Math.toRadians(180));
-    private final Pose IntakeGatepose = new Pose(18.00, 56.5000, Math.toRadians(140));
-    private final Pose midGate = new Pose(19.7000, 55.4000, Math.toRadians(180));
+    private final Pose IntakeGatepose = new Pose(19.3, 56.2000, Math.toRadians(140));
+    private final Pose midGate = new Pose(24.7000, 55.3000, Math.toRadians(180));
 
     // ---- PATH OBJECTS ----
     private Path scorePreload;
@@ -77,8 +77,8 @@ public class Blue_Auto extends OpMode {
         intake.init(hardwareMap);
         turret.init(hardwareMap, llHandler, follower.poseTracker);
 
-        constants.shooter.TARGET_RPM = 795;
-        constants.shooter.Hood_pos = 0.795;
+        constants.shooter.TARGET_RPM = 810;
+        constants.shooter.Hood_pos = 0.81;
 
         buildPaths();
     }
@@ -230,7 +230,7 @@ public class Blue_Auto extends OpMode {
                         shootTimer.reset();
                         shotWaitStarted=true;
                     }
-                    if (shootTimer.seconds() >= 1.5)
+                    if (shootTimer.seconds() >= 0.25)
                     {
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
                         shotWaitStarted = false;
@@ -249,7 +249,7 @@ public class Blue_Auto extends OpMode {
                         shotWaitStarted = true;
                     }
                     
-                    if (shootTimer.seconds() >= 3.0){
+                    if (shootTimer.seconds() >= 1.0){
                         intake.setIntake(constants.INTAKE_PRESETS.OFF);
                         shooter.setStopper(false);
                         follower.followPath(scoreGate, true);
