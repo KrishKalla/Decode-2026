@@ -50,11 +50,13 @@ public class shootertesting extends OpMode {
 
     @Override
     public void start() {
-        ;
+        llhandler.alliance(1);
+        llhandler.start();
     }
 
     public void loop() {
         follower.update();
+        llhandler.poll();
         shooter.update();
         shooter.update_constant();
         shooter.updateBatteryVoltage();

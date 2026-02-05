@@ -230,7 +230,9 @@ public class shooter {
     public double getRPM() {
         return ((motorLeft.getVelocity() + motorRight.getVelocity())/2);
     }
-
+    public double getHoodAngle() {
+        return left.getPosition();
+    }
     public double mToIn(double meters) {
         return meters * 39.3700787;
     }
