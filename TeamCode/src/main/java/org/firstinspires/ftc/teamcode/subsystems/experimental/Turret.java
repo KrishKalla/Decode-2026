@@ -22,7 +22,7 @@ public class Turret {
 
     private double alliance = 1;
 
-    private static final double SERVO_TO_TURRET_RATIO  = 4.0 / 3.0;
+    public static double SERVO_TO_TURRET_RATIO  = 1.25;
     private static final double ENCODER_TO_TURRET_RATIO = 108.0 / 21.0;
     private static final double ENCODER_TICKS_PER_REV  = 8192.0;
     private static final double MIN_ANGLE = -135.0;
@@ -107,10 +107,10 @@ public class Turret {
         double dy = goalPose.getY() - currentPose.getY();
         double worldAngleToGoal = Math.toDegrees(Math.atan2(dy, dx));
 
-        double robotHeading = Math.toDegrees(currentPose.getHeading() + Math.PI);
+        double robotHeading = Math.toDegrees(currentPose.getHeading());
         double robotFrameAngle = normalizeAngle(worldAngleToGoal - robotHeading);
 
-        return normalizeAngle(robotFrameAngle);
+        return normalizeAngle(robotFrameAngle + 180.0);
     }
 
     public double getConstrainedAngle(double desiredAngle) {
@@ -127,7 +127,7 @@ public class Turret {
     }
 
     public void setTurretAngle(double turretAngleDeg) {
-        turretTargetDeg = normalizeAngle(turretAngleDeg);
+        turretTargetDeg = turretAngleDeg;
 
         double servoAngleDeg = turretAngleDeg / SERVO_TO_TURRET_RATIO;
         double servoPosition = (servoAngleDeg / 355) + 0.5;

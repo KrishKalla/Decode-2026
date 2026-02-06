@@ -54,6 +54,7 @@ public class turrettesting_experimental extends OpMode {
         telemetry.addData("Current Pose", follower.getPose().toString());
         telemetry.addData("Encoder Ticks", turret.encoder.getCurrentPosition());
         telemetry.addData("TX", llhandler.getLatestResult()[3]);
+        telemetry.addData("DIST FROM TAG", llhandler.getLatestResult()[2]);
         telemetry.addData("Current Turret Angle", "%.2f°", turret.getCurrentTurretAngle());
         telemetry.addData("Target Angle", "%.2f°", turret.getTurretTargetDeg());
         telemetry.addData("Error", "%.2f°", turret.getError());
