@@ -52,7 +52,7 @@ public class Q2_Blue extends OpMode {
         turret.init(hardwareMap, llhandler, follower.poseTracker);
         shooter.init(hardwareMap, llhandler);
 
-        turret.zeroTurret();
+
 
         timer = new ElapsedTime();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -86,8 +86,10 @@ public class Q2_Blue extends OpMode {
 
         intake.setIntake(constants.INTAKE_PRESETS.OFF);
 
+        turret.zeroTurret();
+
         shooter.flywheelPreset(constants.FLYWHEEL.ON);
-        shooter.hoodPreset(constants.HOOD.AUTO);
+//        shooter.hoodPreset(constants.HOOD.AUTO);
         shooter.setStopper(true);
 
         timer.reset();
@@ -96,6 +98,7 @@ public class Q2_Blue extends OpMode {
     @Override
     public void loop() {
         follower.update();
+        shooter.update();
         follower.setTeleOpDrive(
             -gamepad1.left_stick_y,
             -gamepad1.left_stick_x,
@@ -115,29 +118,55 @@ public class Q2_Blue extends OpMode {
             intake.setIntake(constants.INTAKE_PRESETS.OFF);
         }
 
-
-        //Shooter
+        //Open Stopper
         if (gamepad1.left_bumper) {
             shooter.setStopper(false);
         }
+
         //GP2
-        if (gamepad2.left_bumper && gamepad2.right_bumper) {
+        if (gamepad2.left_trigger > 0.3) {
             shooter.flywheelPreset(constants.FLYWHEEL.OFF);
         }
-        if (gamepad2.right_trigger > 0.3 && gamepad2.left_trigger > 0.3) {
+        if (gamepad2.right_trigger > 0.3) {
             shooter.flywheelPreset(constants.FLYWHEEL.ON);
         }
-        //Manual Controls
-        if (gamepad2.dpad_up) {
+
+        //Manual Controls for Hood
+        if (gamepad2.right_bumper) {
             shooter.manual(1);
         }
-        if (gamepad2.dpad_down) {
+        if (gamepad2.left_bumper) {
             shooter.manual(-1);
         }
         if (gamepad1.circle) {
             shooter.setHood(0.9);
         }
 
+        //Close Zone Set points
+        if (gamepad2.triangle){
+            constants.shooter.TARGET_RPM=800;
+            constants.shooter.Hood_pos=0.81;
+        }
+        //Far Zone Set points
+        if (gamepad2.cross){
+            constants.shooter.TARGET_RPM=900;
+            constants.shooter.Hood_pos=0.867;
+        }
+
+        //Fix Turret Pose Left
+        if (gamepad2.dpad_left){
+            turret.setTurretAngle(-90);
+        }
+
+        //Fix Turret Pose Right
+        if (gamepad2.dpad_right){
+            turret.setTurretAngle(90);
+        }
+
+        //Fix Turret Pose Middle
+        if (gamepad2.dpad_down){
+            turret.setTurretAngle(0);
+        }
         updateTelemetry();
     }
 
