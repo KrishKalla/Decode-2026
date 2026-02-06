@@ -24,7 +24,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
 @Autonomous(name = "Blue Close Auto")
-public class Blue_Auto extends OpMode {
+public class Blue_15_Auto extends OpMode {
 
     private static double TURRET_ANGLE = 115;
     private ElapsedTime shootTimer = new ElapsedTime();
