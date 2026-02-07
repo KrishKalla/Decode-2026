@@ -23,10 +23,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
-@Autonomous(name = "Red Close Auto")
+@Autonomous(name = "Red 12 Auto")
 public class Red_12_Auto extends OpMode {
 
-    private static double TURRET_ANGLE = -115;
+    private static double TURRET_ANGLE = -112;
     private ElapsedTime shootTimer = new ElapsedTime();
 
     private boolean shotWaitStarted = false;
@@ -40,21 +40,22 @@ public class Red_12_Auto extends OpMode {
     private int pathState = 0;
 
     // Blue: 24.76, 129.48, 145° → Red: 119.24, 129.48, 215°
-    private final Pose startPose = new Pose(119.24, 129.48, Math.toRadians(215));
+    private final Pose startPose = new Pose(120.598,127.213,Math.toRadians(35));
     // Blue: 54.0, 85.0, 210° → Red: 90.0, 85.0, 150°
-    private final Pose scorePose2 = new Pose(90.000, 85.000, Math.toRadians(150));
+    private final Pose scorePose2 = new Pose(90.000, 85.000, Math.toRadians(-30));
     // Blue: 24.0, 84.0, 180° → Red: 120.0, 84.0, 0°
-    private final Pose pickup1Pose = new Pose(120.000, 84.000, Math.toRadians(0));
+    private final Pose pickup1Pose = new Pose(116.00, 84.000, Math.toRadians(0));
     // Blue: 24.0, 60.0, 180° → Red: 120.0, 60.0, 0°
-    private final Pose pickup2Pose = new Pose(120.000, 60.000, Math.toRadians(0));
+    private final Pose pickup2Pose = new Pose(114.500, 60.000, Math.toRadians(0));
     // Blue: 24.0, 36.0, 180° → Red: 120.0, 36.0, 0°
-    private final Pose pickup3Pose = new Pose(120.000, 36.000, Math.toRadians(0));
+    private final Pose pickup3Pose = new Pose(116.00, 36.000, Math.toRadians(0));
     // Blue: 79.0, 57.0, 180° → Red: 65.0, 57.0, 0°
-    private final Pose midPickup2 = new Pose(65.000, 57.000, Math.toRadians(0));
+    private final Pose midPickup2 = new Pose(67.000, 57.000, Math.toRadians(0));
     // Blue: 75.0, 30.0, 180° → Red: 69.0, 30.0, 0°
-    private final Pose midPickup3 = new Pose(69.000, 30.000, Math.toRadians(0));
+    private final Pose midPickup3 = new Pose(71.000, 30.000, Math.toRadians(0));
     // Blue: 19.5, 63.0, 180° → Red: 124.5, 63.0, 0°
-    private final Pose Gatepose = new Pose(124.500, 63.00, Math.toRadians(0));
+    private final Pose Gatepose = new Pose(122.45, 67, Math.toRadians(0));
+    private final Pose gateToShot = new Pose(100.5,63);
 
     // ---- PATH OBJECTS ----
     private Path scorePreload;
@@ -82,7 +83,7 @@ public class Red_12_Auto extends OpMode {
         turret.init(hardwareMap, llHandler, follower.poseTracker);
 
         constants.shooter.TARGET_RPM = 810;
-        constants.shooter.Hood_pos = 0.81;
+        constants.shooter.Hood_pos = 0.76;
 
         buildPaths();
     }
@@ -133,7 +134,7 @@ public class Red_12_Auto extends OpMode {
                 .build();
 
         scorePickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(Gatepose, scorePose2))
+                .addPath(new BezierCurve(Gatepose, gateToShot, scorePose2))
                 .setLinearHeadingInterpolation(Gatepose.getHeading(), scorePose2.getHeading())
                 .build();
 
@@ -191,10 +192,17 @@ public class Red_12_Auto extends OpMode {
                 break;
             case 99:
                 if (!follower.isBusy()){
-                    intake.setIntake(constants.INTAKE_PRESETS.OFF);
-                    shooter.setStopper(false);
-                    follower.followPath(OpenGate,true);
-                    setPathState(2);
+                    if (!shotWaitStarted) {
+                        intake.setIntake(constants.INTAKE_PRESETS.OFF);
+                        shooter.setStopper(false);
+                        follower.followPath(OpenGate,true);
+                        shootTimer.reset();
+                        shotWaitStarted = true;
+                    }
+                    if (shootTimer.seconds() >= 1.0) {
+                        setPathState(2);
+                        shotWaitStarted = false;
+                    }
                 }
                 break;
             case 2:

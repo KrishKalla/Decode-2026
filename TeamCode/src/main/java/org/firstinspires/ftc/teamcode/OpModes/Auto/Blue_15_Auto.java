@@ -23,7 +23,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
-@Autonomous(name = "Blue Close Auto")
+@Autonomous(name = "Blue 15 Auto")
 public class Blue_15_Auto extends OpMode {
 
     private static double TURRET_ANGLE = 115;
@@ -41,9 +41,9 @@ public class Blue_15_Auto extends OpMode {
 
     private final Pose startPose = new Pose(24.76, 129.48, Math.toRadians(145));
     private final Pose scorePose2 = new Pose(54.000, 85.000, Math.toRadians(210));
-    private final Pose pickup1Pose = new Pose(24.000, 84.000, Math.toRadians(180));
-    private final Pose pickup2Pose = new Pose(24.000, 60.000, Math.toRadians(180));
-    private final Pose pickup3Pose = new Pose(24.000, 36.000, Math.toRadians(180));
+    private final Pose pickup1Pose = new Pose(25.000, 84.000, Math.toRadians(180));
+    private final Pose pickup2Pose = new Pose(25.000, 60.000, Math.toRadians(180));
+    private final Pose pickup3Pose = new Pose(25.000, 36.000, Math.toRadians(180));
     private final Pose midPickup2 = new Pose(79.000, 57.000, Math.toRadians(180));
     private final Pose midPickup3 = new Pose(75.000, 30.000, Math.toRadians(180));
     private final Pose Gatepose = new Pose(19.500, 63.00, Math.toRadians(180));
