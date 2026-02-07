@@ -34,7 +34,7 @@ public class shooter {
 
     public boolean auto = true;
     private double previousDistance;
-    private double ema = -101;
+    public double ema = -101;
     private double power = 0;
     private double rpm;
 
@@ -136,7 +136,6 @@ public class shooter {
             setHood(interp[1]);
             constants.shooter.TARGET_RPM = interp[0];
         }
-        setHood(constants.shooter.Hood_pos);
     }
 
     public void update() {

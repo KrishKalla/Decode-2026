@@ -13,6 +13,7 @@ public class LUT {
             {1.13, 690, 0.4},
             {1.17, 690, 0.475},
             {1.2, 700, 0.5}
+
     };
     // change ts to a regression algo
     public static double[] get(double d) {

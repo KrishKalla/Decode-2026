@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpModes.TeleOp;
 
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -33,7 +35,7 @@ public class Q2_Blue extends OpMode {
     Runnable r;
 
     public static double MANUAL_HOOD;
-    public static boolean AUTO = true;
+    public static boolean AUTO = false;
 
 
     @Override
@@ -46,7 +48,7 @@ public class Q2_Blue extends OpMode {
         turret = new Turret();
         shooter = new shooter();
         llhandler = new LLHandler(hardwareMap, alliance);
-        llhandler.alliance(0);
+        llhandler.alliance(alliance);
 
         intake.init(hardwareMap);
         turret.init(hardwareMap, llhandler, follower.poseTracker);
@@ -65,6 +67,7 @@ public class Q2_Blue extends OpMode {
                     llhandler.poll();
                     turret.update(goalPose);
                     shooter.update();
+                    constants.shooter.TARGET_RPM = 820;
                 }
             }
         };
@@ -80,6 +83,8 @@ public class Q2_Blue extends OpMode {
 
     @Override
     public void start() {
+        shooter.setHood(0.825);
+        constants.shooter.TARGET_RPM = 820;
         follower.startTeleopDrive();
         llhandler.start();
         thread.start();
@@ -97,14 +102,9 @@ public class Q2_Blue extends OpMode {
 
     @Override
     public void loop() {
+        follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
         follower.update();
         shooter.update();
-        follower.setTeleOpDrive(
-            -gamepad1.left_stick_y,
-            -gamepad1.left_stick_x,
-            -gamepad1.right_stick_x,
-            true //robot centric
-        );
 
         //Intake
         if (gamepad1.right_trigger > 0.3) {
@@ -119,8 +119,11 @@ public class Q2_Blue extends OpMode {
         }
 
         //Open Stopper
-        if (gamepad1.left_bumper) {
+        if (gamepad1.dpad_left) {
             shooter.setStopper(false);
+        }
+        if (gamepad1.dpad_right) {
+            shooter.setStopper(true);
         }
 
         //GP2
@@ -181,6 +184,7 @@ public class Q2_Blue extends OpMode {
         //ADD REGRESSION VALUE (IF WE HAVE ONE)
         telemetry.addData("RPM", shooter.getRPM());
         telemetry.addData("Hood Angle", shooter.getHoodAngle());
+        telemetry.addData("EMA", shooter.ema);
         telemetry.update();
     }
 }

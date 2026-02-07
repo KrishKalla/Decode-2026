@@ -34,7 +34,7 @@ public class Turret {
     private boolean llValid;
     public static double TURRET_OFFSET = -2.7266;
     public static double ENCODER_DIRECTION = 1.0;
-    public static double LLWEIGHT = 1;
+    public static double LLWEIGHT = 0.75;
 
     public Turret() {}
 
@@ -50,6 +50,8 @@ public class Turret {
         poseTracker = tracker;
 
         timer = new ElapsedTime();
+
+        zeroTurret();
     }
 
     public void zeroTurret() {
