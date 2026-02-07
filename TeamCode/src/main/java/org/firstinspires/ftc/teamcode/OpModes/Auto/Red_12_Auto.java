@@ -290,6 +290,7 @@ public class Red_12_Auto extends OpMode {
                 if (!follower.isBusy()){
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
                     shooter.flywheelPreset(constants.FLYWHEEL.OFF);
+                    turret.zeroTurret();
                     setPathState(-1); // Done
                 }
                 break;

@@ -34,7 +34,7 @@ public class shooter {
 
     public boolean auto = true;
     private double previousDistance;
-    private double ema = -101;
+    public double ema = -101;
     private double power = 0;
     private double rpm;
 
@@ -117,13 +117,7 @@ public class shooter {
         }
     }
 
-    public void update_constant(){
-        double x=follower.getPose().getX();
-        double y=follower.getPose().getY();
-        double distance=Math.sqrt(Math.pow(x,2)+Math.pow(y,2));
-        constants.shooter.TARGET_RPM=0.0200816*Math.pow(distance,2)-1.41282*distance+752.32143;
-        constants.shooter.Hood_pos=0.00241176*distance+0.58433;
-    }
+
 
     public void updateHood() {
         previousDistance = handler.getLatestResult()[2];
@@ -136,7 +130,6 @@ public class shooter {
             setHood(interp[1]);
             constants.shooter.TARGET_RPM = interp[0];
         }
-        setHood(constants.shooter.Hood_pos);
     }
 
     public void update() {

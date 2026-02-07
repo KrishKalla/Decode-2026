@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.OpModes.TeleOp;
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -20,8 +18,8 @@ import org.firstinspires.ftc.teamcode.util.constants;
 import org.firstinspires.ftc.teamcode.util.poseStorage;
 
 @Config
-@TeleOp(name = "Blue TeleOp Auto", group = "1")
-public class Q2_Blue extends OpMode {
+@TeleOp(name = "Blue TeleOp Manuel", group = "1")
+public class Q2_Blue_Manual extends OpMode {
     private Follower follower;
     private intake intake;
     private Turret turret;
@@ -35,20 +33,19 @@ public class Q2_Blue extends OpMode {
     Runnable r;
 
     public static double MANUAL_HOOD;
-    public static boolean AUTO = false;
+    public static boolean AUTO = true;
 
 
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(poseStorage.lastBlueAutoPose);
         follower.update();
 
         intake = new intake();
         turret = new Turret();
         shooter = new shooter();
         llhandler = new LLHandler(hardwareMap, alliance);
-        llhandler.alliance(alliance);
+        llhandler.alliance(0);
 
         intake.init(hardwareMap);
         turret.init(hardwareMap, llhandler, follower.poseTracker);
@@ -59,20 +56,6 @@ public class Q2_Blue extends OpMode {
         timer = new ElapsedTime();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        r = new Runnable() {
-            @Override
-            public void run() {
-                while(true) {
-                    Pose goalPose = new Pose(poseStorage.BLUE_X, poseStorage.BLUE_Y);
-                    llhandler.poll();
-                    turret.update(goalPose);
-                    shooter.update();
-                    constants.shooter.TARGET_RPM = 820;
-                }
-            }
-        };
-
-        thread = new Thread(r);
     }
 
     @Override
@@ -83,8 +66,6 @@ public class Q2_Blue extends OpMode {
 
     @Override
     public void start() {
-        shooter.setHood(0.825);
-        constants.shooter.TARGET_RPM = 820;
         follower.startTeleopDrive();
         llhandler.start();
         thread.start();
@@ -102,18 +83,14 @@ public class Q2_Blue extends OpMode {
 
     @Override
     public void loop() {
-        follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
         follower.update();
         shooter.update();
-<<<<<<< HEAD
         follower.setTeleOpDrive(
-            gamepad1.left_stick_y,
-            gamepad1.left_stick_x,
-            gamepad1.right_stick_x,
-            true //robot centric
+                -gamepad1.left_stick_y,
+                -gamepad1.left_stick_x,
+                -gamepad1.right_stick_x,
+                true //robot centric
         );
-=======
->>>>>>> 65f8cb9b1959ae70ce59469b60467d77c7c92c10
 
         //Intake
         if (gamepad1.right_trigger > 0.3) {
@@ -128,11 +105,8 @@ public class Q2_Blue extends OpMode {
         }
 
         //Open Stopper
-        if (gamepad1.dpad_left) {
+        if (gamepad1.left_bumper) {
             shooter.setStopper(false);
-        }
-        if (gamepad1.dpad_right) {
-            shooter.setStopper(true);
         }
 
         //GP2
@@ -157,7 +131,7 @@ public class Q2_Blue extends OpMode {
         //Close Zone Set points
         if (gamepad2.triangle){
             constants.shooter.TARGET_RPM=800;
-            constants.shooter.Hood_pos=0.81;
+            constants.shooter.Hood_pos=0.87;
         }
         //Far Zone Set points
         if (gamepad2.cross){
@@ -184,16 +158,10 @@ public class Q2_Blue extends OpMode {
 
     public void updateTelemetry() {
         telemetry.addLine(follower.getPose().toString());
-        telemetry.addLine("≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡TURRET≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡");
-        telemetry.addData("Current Pos", turret.getCurrentTurretAngle());
-        telemetry.addData("Target Pos", turret.getTurretTargetDeg());
-        telemetry.addData("TX", llhandler.getLatestResult()[3]);
-        telemetry.addData("Calculated Error", turret.getError());
         telemetry.addLine("≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡SHOOTER≡≡≡≡≡≡≡≡≡≡≡≡≡≡");
         //ADD REGRESSION VALUE (IF WE HAVE ONE)
         telemetry.addData("RPM", shooter.getRPM());
         telemetry.addData("Hood Angle", shooter.getHoodAngle());
-        telemetry.addData("EMA", shooter.ema);
         telemetry.update();
     }
 }

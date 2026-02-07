@@ -26,7 +26,7 @@ public class Q2_RED extends OpMode {
     private shooter shooter;
     private LLHandler llhandler;
 
-    int alliance = 1;
+    int alliance = 0;
     private ElapsedTime timer;
 
     Thread thread;
@@ -46,7 +46,7 @@ public class Q2_RED extends OpMode {
         turret = new Turret();
         shooter = new shooter();
         llhandler = new LLHandler(hardwareMap, alliance);
-        llhandler.alliance(0);
+        llhandler.alliance(alliance);
 
         intake.init(hardwareMap);
         turret.init(hardwareMap, llhandler, follower.poseTracker);
@@ -80,6 +80,8 @@ public class Q2_RED extends OpMode {
 
     @Override
     public void start() {
+        shooter.setHood(0.825);
+        constants.shooter.TARGET_RPM = 820;
         follower.startTeleopDrive();
         llhandler.start();
         thread.start();
