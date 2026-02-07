@@ -32,6 +32,7 @@ public class shooter {
     private ElapsedTime timer;
     private PoseTracker poseTracker;
 
+    public boolean auto = true;
     private double previousDistance;
     private double ema = -101;
     private double power = 0;
@@ -93,9 +94,11 @@ public class shooter {
                 break;
             case MANUAL:
                 hoodState = "MANUAL";
+                auto = false;
                 break;
             case AUTO:
                 hoodState = "AUTO";
+                auto = true;
                 break;
         }
     }
@@ -122,18 +125,21 @@ public class shooter {
         constants.shooter.Hood_pos=0.00241176*distance+0.58433;
     }
 
-    public void update() {
-//        previousDistance = handler.getLatestResult()[2];
-//        if (previousDistance == -1001) {
-//            hoodTrackingState = "MISSING";
-//        } else {
-//            hoodTrackingState = "TRACKING";
-//            filterDistance(previousDistance);
-//            double hoodPos = LUT.get(ema);
-//            setHood(hoodPos);
-//        }
+    public void updateHood() {
+        previousDistance = handler.getLatestResult()[2];
+        if (previousDistance == -1001) {
+            hoodTrackingState = "MISSING";
+        } else {
+            hoodTrackingState = "TRACKING";
+            filterDistance(previousDistance);
+            double[] interp = LUT.get(ema);
+            setHood(interp[1]);
+            constants.shooter.TARGET_RPM = interp[0];
+        }
         setHood(constants.shooter.Hood_pos);
+    }
 
+    public void update() {
         updateBatteryVoltage();
 
         if (flywheelState) {
