@@ -23,10 +23,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
-@Autonomous(name = "Blue Close Auto")
+@Autonomous(name = "Blue 12 Auto")
 public class Blue_12_Auto extends OpMode {
 
-    private static double TURRET_ANGLE = 115;
+    private static double TURRET_ANGLE = 110;
     private ElapsedTime shootTimer = new ElapsedTime();
 
     private boolean shotWaitStarted = false;
@@ -41,12 +41,13 @@ public class Blue_12_Auto extends OpMode {
 
     private final Pose startPose = new Pose(24.76, 129.48, Math.toRadians(145));
     private final Pose scorePose2 = new Pose(54.000, 85.000, Math.toRadians(210));
-    private final Pose pickup1Pose = new Pose(24.000, 84.000, Math.toRadians(180));
-    private final Pose pickup2Pose = new Pose(24.000, 60.000, Math.toRadians(180));
-    private final Pose pickup3Pose = new Pose(24.000, 36.000, Math.toRadians(180));
+    private final Pose pickup1Pose = new Pose(26.500, 84.000, Math.toRadians(180));
+    private final Pose pickup2Pose = new Pose(26.500, 60.000, Math.toRadians(180));
+    private final Pose pickup3Pose = new Pose(26.500, 36.000, Math.toRadians(180));
     private final Pose midPickup2 = new Pose(79.000, 57.000, Math.toRadians(180));
     private final Pose midPickup3 = new Pose(75.000, 30.000, Math.toRadians(180));
-    private final Pose Gatepose = new Pose(19.500, 63.00, Math.toRadians(180));
+    private final Pose Gatepose = new Pose(21.00, 64.50, Math.toRadians(180));
+    private final Pose gateToShot = new Pose(43.5,63);
 
     // ---- PATH OBJECTS ----
     private Path scorePreload;
@@ -74,7 +75,7 @@ public class Blue_12_Auto extends OpMode {
         turret.init(hardwareMap, llHandler, follower.poseTracker);
 
         constants.shooter.TARGET_RPM = 810;
-        constants.shooter.Hood_pos = 0.81;
+        constants.shooter.Hood_pos = 0.76;
 
         buildPaths();
     }
@@ -125,7 +126,7 @@ public class Blue_12_Auto extends OpMode {
                 .build();
 
         scorePickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(Gatepose, scorePose2))
+                .addPath(new BezierCurve(Gatepose, gateToShot, scorePose2))
                 .setLinearHeadingInterpolation(Gatepose.getHeading(), scorePose2.getHeading())
                 .build();
 
@@ -183,10 +184,18 @@ public class Blue_12_Auto extends OpMode {
                 break;
             case 99:
                 if (!follower.isBusy()){
-                    intake.setIntake(constants.INTAKE_PRESETS.OFF);
-                    shooter.setStopper(false);
-                    follower.followPath(OpenGate,true);
-                    setPathState(2);
+
+                    if (!shotWaitStarted) {
+                        intake.setIntake(constants.INTAKE_PRESETS.OFF);
+                        shooter.setStopper(false);
+                        follower.followPath(OpenGate,true);
+                        shootTimer.reset();
+                        shotWaitStarted = true;
+                    }
+                    if (shootTimer.seconds() >= 1.0) {
+                        setPathState(2);
+                        shotWaitStarted=false;
+                    }
                 }
                 break;
             case 2:
