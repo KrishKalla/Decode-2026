@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.subsystems.intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
 import org.firstinspires.ftc.teamcode.util.constants;
+import org.firstinspires.ftc.teamcode.util.poseStorage;
 
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
@@ -26,7 +27,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name = "Blue 12 Auto")
 public class Blue_12_Auto extends OpMode {
 
-    private static double TURRET_ANGLE = 110;
+    private static double TURRET_ANGLE = 108;
     private ElapsedTime shootTimer = new ElapsedTime();
 
     private boolean shotWaitStarted = false;
@@ -39,14 +40,14 @@ public class Blue_12_Auto extends OpMode {
     // ---- State System ----
     private int pathState = 0;
 
-    private final Pose startPose = new Pose(24.76, 129.48, Math.toRadians(145));
+    private final Pose startPose = new Pose(23.6,127.213 ,Math.toRadians(145));
     private final Pose scorePose2 = new Pose(54.000, 85.000, Math.toRadians(210));
     private final Pose pickup1Pose = new Pose(26.500, 84.000, Math.toRadians(180));
-    private final Pose pickup2Pose = new Pose(26.500, 60.000, Math.toRadians(180));
+    private final Pose pickup2Pose = new Pose(28.00, 60.000, Math.toRadians(180));
     private final Pose pickup3Pose = new Pose(26.500, 36.000, Math.toRadians(180));
     private final Pose midPickup2 = new Pose(79.000, 57.000, Math.toRadians(180));
     private final Pose midPickup3 = new Pose(75.000, 30.000, Math.toRadians(180));
-    private final Pose Gatepose = new Pose(21.00, 64.50, Math.toRadians(180));
+    private final Pose Gatepose = new Pose(21, 65.5, Math.toRadians(180));
     private final Pose gateToShot = new Pose(43.5,63);
 
     // ---- PATH OBJECTS ----
@@ -74,8 +75,8 @@ public class Blue_12_Auto extends OpMode {
         intake.init(hardwareMap);
         turret.init(hardwareMap, llHandler, follower.poseTracker);
 
-        constants.shooter.TARGET_RPM = 810;
-        constants.shooter.Hood_pos = 0.76;
+        constants.shooter.TARGET_RPM = 800;
+        constants.shooter.Hood_pos = 0.78;
 
         buildPaths();
     }
@@ -89,6 +90,7 @@ public class Blue_12_Auto extends OpMode {
         autonomousPathUpdate();
         telemetry.update();
         shooter.update();
+        poseStorage.lastBlueAutoPose = follower.getPose();
     }
 
 
@@ -202,6 +204,7 @@ public class Blue_12_Auto extends OpMode {
                 if (!follower.isBusy()) {
                     //Ready to Shoot
                     follower.followPath(scorePickup2, true);
+                    TURRET_ANGLE=107;
                     setPathState(3);
                 }
                 break;
