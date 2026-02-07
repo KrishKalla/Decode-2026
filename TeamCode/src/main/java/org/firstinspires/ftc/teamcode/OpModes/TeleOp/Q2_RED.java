@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.util.constants;
 import org.firstinspires.ftc.teamcode.util.poseStorage;
 
 @Config
-@TeleOp(name = "Blue TeleOp", group = "1")
+@TeleOp(name = "Red TeleOp", group = "1")
 public class Q2_RED extends OpMode {
     private Follower follower;
     private intake intake;
