@@ -49,12 +49,14 @@ public class Blue_12_Auto extends OpMode {
     private final Pose midPickup3 = new Pose(75.000, 30.000, Math.toRadians(180));
     private final Pose Gatepose = new Pose(21, 65.5, Math.toRadians(180));
     private final Pose gateToShot = new Pose(43.5,63);
+    private final Pose parkpose = new Pose(56.199, 107.879, Math.toRadians(210));
 
     // ---- PATH OBJECTS ----
     private Path scorePreload;
     private PathChain grabPickup1, scorePickup1;
     private PathChain grabPickup2, OpenGate, scorePickup2;
     private PathChain grabPickup3, scorePickup3;
+    private PathChain Park;
 
     private intake intake;
     private shooter shooter;
@@ -147,6 +149,13 @@ public class Blue_12_Auto extends OpMode {
                 .addPath(new BezierLine(pickup3Pose, scorePose2))
                 .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose2.getHeading())
                 .build();
+
+
+        Park = follower.pathBuilder()
+                .addPath(new BezierLine(scorePose2,parkpose))
+                .setLinearHeadingInterpolation(scorePose2.getHeading(), parkpose.getHeading())
+                .build();
+
 
 
     }
@@ -284,6 +293,7 @@ public class Blue_12_Auto extends OpMode {
                 break;
             case 8:
                 if (!follower.isBusy()){
+                    follower.followPath(Park);
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
                     shooter.flywheelPreset(constants.FLYWHEEL.OFF);
                     turret.zeroTurret();

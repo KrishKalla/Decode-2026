@@ -57,11 +57,14 @@ public class Red_12_Auto extends OpMode {
     private final Pose Gatepose = new Pose(122.45, 67, Math.toRadians(0));
     private final Pose gateToShot = new Pose(100.5,63);
 
+    private final Pose parkpose = new Pose(87.5, 107.879, Math.toRadians(-30));
+
     // ---- PATH OBJECTS ----
     private Path scorePreload;
     private PathChain grabPickup1, scorePickup1;
     private PathChain grabPickup2, OpenGate, scorePickup2;
     private PathChain grabPickup3, scorePickup3;
+    private PathChain Park;
 
     private intake intake;
     private shooter shooter;
@@ -154,6 +157,10 @@ public class Red_12_Auto extends OpMode {
                 .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose2.getHeading())
                 .build();
 
+        Park = follower.pathBuilder()
+                .addPath(new BezierLine(scorePose2,parkpose))
+                .setLinearHeadingInterpolation(scorePose2.getHeading(), parkpose.getHeading())
+                .build();
 
     }
 
@@ -288,6 +295,7 @@ public class Red_12_Auto extends OpMode {
                 break;
             case 8:
                 if (!follower.isBusy()){
+                    follower.followPath(Park);
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
                     shooter.flywheelPreset(constants.FLYWHEEL.OFF);
                     turret.zeroTurret();

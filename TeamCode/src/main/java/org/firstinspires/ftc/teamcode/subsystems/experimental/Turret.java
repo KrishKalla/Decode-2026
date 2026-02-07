@@ -47,7 +47,7 @@ public class Turret {
         right.setDirection(Servo.Direction.REVERSE);
 
         this.handler = handler;
-        encoder = map.get(DcMotorEx.class, "frontLeft");
+        encoder = map.get(DcMotorEx.class, "intakeL"); //PORT 2 EXPANSKON HUB
         poseTracker = tracker;
 
         timer = new ElapsedTime();
@@ -59,6 +59,7 @@ public class Turret {
         left.setPosition(0.5);
         right.setPosition(0.5);
         zeroTicks = encoder.getCurrentPosition();
+        encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turretTargetDeg = 0.0;
         timer.reset();
     }
@@ -83,7 +84,7 @@ public class Turret {
     }
 
     public double getCurrentTurretAngle() {
-        int deltaTicks = encoder.getCurrentPosition() - zeroTicks;
+        int deltaTicks = encoder.getCurrentPosition();// - zeroTicks;
         return deltaTicks / TICKS_PER_TURRET_DEGREE * ENCODER_DIRECTION;
     }
 

@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -15,19 +14,20 @@ import org.firstinspires.ftc.teamcode.subsystems.intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
 import org.firstinspires.ftc.teamcode.util.constants;
-import org.firstinspires.ftc.teamcode.util.poseStorage;
 
 @Config
 @TeleOp(name = "Blue TeleOp Manuel", group = "1")
-public class Q2_Blue_Manual extends OpMode {
+public class Q2_Manual extends OpMode {
     private Follower follower;
     private intake intake;
     private Turret turret;
     private shooter shooter;
     private LLHandler llhandler;
 
-    int alliance = 1;
     private ElapsedTime timer;
+
+    Thread thread;
+    Runnable r;
 
 
     public static double MANUAL_HOOD;
@@ -52,6 +52,17 @@ public class Q2_Blue_Manual extends OpMode {
         timer = new ElapsedTime();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
+        r = new Runnable() {
+            @Override
+            public void run() {
+                while(true) {
+                    shooter.update();
+                }
+            }
+        };
+
+        thread = new Thread(r);
+
     }
 
     @Override
@@ -70,6 +81,8 @@ public class Q2_Blue_Manual extends OpMode {
         shooter.flywheelPreset(constants.FLYWHEEL.ON);
 //        shooter.hoodPreset(constants.HOOD.AUTO);
         shooter.setStopper(true);
+
+        thread.start();
 
         timer.reset();
     }
@@ -117,15 +130,26 @@ public class Q2_Blue_Manual extends OpMode {
         if (gamepad2.left_bumper) {
             shooter.manual(-1);
         }
-        if (gamepad1.circle) {
-            shooter.setHood(0.9);
-        }
 
         //Close Zone Set points
-        if (gamepad2.triangle){
-            constants.shooter.TARGET_RPM=800;
-            constants.shooter.Hood_pos=0.87;
-        }
+            //very close = square
+            if (gamepad2.square){
+                constants.shooter.TARGET_RPM=650;
+                constants.shooter.Hood_pos=0.24;
+
+            }
+            //Medium Range = triangle
+            if (gamepad2.triangle){
+                constants.shooter.TARGET_RPM=800;
+                constants.shooter.Hood_pos=0.78;
+            }
+            //Far Range= circle
+            if (gamepad2.circle){
+                constants.shooter.TARGET_RPM=800;
+                constants.shooter.Hood_pos=0.87;
+            }
+
+
         //Far Zone Set points
         if (gamepad2.cross){
             constants.shooter.TARGET_RPM=900;
