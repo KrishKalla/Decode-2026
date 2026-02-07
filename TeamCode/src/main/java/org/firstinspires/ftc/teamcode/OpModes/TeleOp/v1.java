@@ -104,7 +104,6 @@ public class v1 extends OpMode {
     public void loop() {
         follower.update();
         shooter.update();
-        shooter.update_constant();
         follower.setTeleOpDrive(
             -gamepad1.left_stick_y,
             -gamepad1.left_stick_x,

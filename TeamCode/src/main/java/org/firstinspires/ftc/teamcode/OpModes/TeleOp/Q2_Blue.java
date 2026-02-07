@@ -105,15 +105,7 @@ public class Q2_Blue extends OpMode {
         follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
         follower.update();
         shooter.update();
-<<<<<<< HEAD
-        follower.setTeleOpDrive(
-            gamepad1.left_stick_y,
-            gamepad1.left_stick_x,
-            gamepad1.right_stick_x,
-            true //robot centric
-        );
-=======
->>>>>>> 65f8cb9b1959ae70ce59469b60467d77c7c92c10
+
 
         //Intake
         if (gamepad1.right_trigger > 0.3) {

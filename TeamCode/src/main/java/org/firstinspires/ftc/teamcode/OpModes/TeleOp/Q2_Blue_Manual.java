@@ -29,8 +29,6 @@ public class Q2_Blue_Manual extends OpMode {
     int alliance = 1;
     private ElapsedTime timer;
 
-    Thread thread;
-    Runnable r;
 
     public static double MANUAL_HOOD;
     public static boolean AUTO = true;
@@ -44,8 +42,6 @@ public class Q2_Blue_Manual extends OpMode {
         intake = new intake();
         turret = new Turret();
         shooter = new shooter();
-        llhandler = new LLHandler(hardwareMap, alliance);
-        llhandler.alliance(0);
 
         intake.init(hardwareMap);
         turret.init(hardwareMap, llhandler, follower.poseTracker);
@@ -60,15 +56,12 @@ public class Q2_Blue_Manual extends OpMode {
 
     @Override
     public void init_loop() {
-        llhandler.poll();
         updateTelemetry();
     }
 
     @Override
     public void start() {
         follower.startTeleopDrive();
-        llhandler.start();
-        thread.start();
 
         intake.setIntake(constants.INTAKE_PRESETS.OFF);
 

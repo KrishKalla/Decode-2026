@@ -35,6 +35,7 @@ public class Turret {
     public static double TURRET_OFFSET = -2.7266;
     public static double ENCODER_DIRECTION = 1.0;
     public static double LLWEIGHT = 0.75;
+    private int zeroTicks = 0;
 
     public Turret() {}
 
@@ -57,7 +58,7 @@ public class Turret {
     public void zeroTurret() {
         left.setPosition(0.5);
         right.setPosition(0.5);
-        encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        zeroTicks = encoder.getCurrentPosition();
         turretTargetDeg = 0.0;
         timer.reset();
     }
@@ -82,7 +83,7 @@ public class Turret {
     }
 
     public double getCurrentTurretAngle() {
-        int deltaTicks = encoder.getCurrentPosition();
+        int deltaTicks = encoder.getCurrentPosition() - zeroTicks;
         return deltaTicks / TICKS_PER_TURRET_DEGREE * ENCODER_DIRECTION;
     }
 
