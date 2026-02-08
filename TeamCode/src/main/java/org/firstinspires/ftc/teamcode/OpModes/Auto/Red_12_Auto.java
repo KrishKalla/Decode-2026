@@ -85,8 +85,8 @@ public class Red_12_Auto extends OpMode {
         intake.init(hardwareMap);
         turret.init(hardwareMap, llHandler, follower.poseTracker);
 
-        constants.shooter.TARGET_RPM = 810;
-        constants.shooter.Hood_pos = 0.76;
+        constants.shooter.TARGET_RPM = 800;
+        constants.shooter.Hood_pos = 0.78;
 
         buildPaths();
     }
@@ -99,6 +99,7 @@ public class Red_12_Auto extends OpMode {
         follower.update();
         autonomousPathUpdate();
         telemetry.update();
+        shooter.setHood(constants.shooter.Hood_pos);
         shooter.update();
     }
 

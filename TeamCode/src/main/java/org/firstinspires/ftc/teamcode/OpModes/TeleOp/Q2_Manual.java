@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.subsystems.intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
 import org.firstinspires.ftc.teamcode.util.constants;
+import org.firstinspires.ftc.teamcode.util.poseStorage;
 
 @Config
 @TeleOp(name = "Blue TeleOp Manuel", group = "1")
@@ -25,6 +27,7 @@ public class Q2_Manual extends OpMode {
     private LLHandler llhandler;
 
     private ElapsedTime timer;
+    private int alliance = 1;
 
     Thread thread;
     Runnable r;
@@ -42,6 +45,7 @@ public class Q2_Manual extends OpMode {
         intake = new intake();
         turret = new Turret();
         shooter = new shooter();
+        llhandler = new LLHandler(hardwareMap, alliance);
 
         intake.init(hardwareMap);
         turret.init(hardwareMap, llhandler, follower.poseTracker);
@@ -56,10 +60,16 @@ public class Q2_Manual extends OpMode {
             @Override
             public void run() {
                 while(true) {
+                    Pose goalPose = new Pose(poseStorage.BLUE_X, poseStorage.BLUE_Y);
+                    llhandler.poll();
+                    turret.update(goalPose);
                     shooter.update();
                 }
             }
+
         };
+
+        //turret.zeroTurret();
 
         thread = new Thread(r);
 
@@ -73,13 +83,13 @@ public class Q2_Manual extends OpMode {
     @Override
     public void start() {
         follower.startTeleopDrive();
-
+        llhandler.start();
         intake.setIntake(constants.INTAKE_PRESETS.OFF);
 
         turret.zeroTurret();
 
         shooter.flywheelPreset(constants.FLYWHEEL.ON);
-//        shooter.hoodPreset(constants.HOOD.AUTO);
+        shooter.hoodPreset(constants.HOOD.AUTO);
         shooter.setStopper(true);
 
         thread.start();
@@ -90,7 +100,6 @@ public class Q2_Manual extends OpMode {
     @Override
     public void loop() {
         follower.update();
-        shooter.update();
         follower.setTeleOpDrive(
                 -gamepad1.left_stick_y,
                 -gamepad1.left_stick_x,

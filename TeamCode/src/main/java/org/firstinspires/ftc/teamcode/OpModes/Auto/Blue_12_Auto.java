@@ -27,7 +27,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name = "Blue 12 Auto")
 public class Blue_12_Auto extends OpMode {
 
-    private static double TURRET_ANGLE = 108;
+    private static double TURRET_ANGLE = 107;
     private ElapsedTime shootTimer = new ElapsedTime();
 
     private boolean shotWaitStarted = false;
@@ -47,7 +47,7 @@ public class Blue_12_Auto extends OpMode {
     private final Pose pickup3Pose = new Pose(26.500, 36.000, Math.toRadians(180));
     private final Pose midPickup2 = new Pose(79.000, 57.000, Math.toRadians(180));
     private final Pose midPickup3 = new Pose(75.000, 30.000, Math.toRadians(180));
-    private final Pose Gatepose = new Pose(21, 65.5, Math.toRadians(180));
+    private final Pose Gatepose = new Pose(20.75, 65.5, Math.toRadians(180));
     private final Pose gateToShot = new Pose(43.5,63);
     private final Pose parkpose = new Pose(56.199, 107.879, Math.toRadians(210));
 
@@ -78,7 +78,7 @@ public class Blue_12_Auto extends OpMode {
         turret.init(hardwareMap, llHandler, follower.poseTracker);
 
         constants.shooter.TARGET_RPM = 800;
-        constants.shooter.Hood_pos = 0.78;
+        constants.shooter.Hood_pos = 0.79;
 
         buildPaths();
     }
@@ -92,6 +92,7 @@ public class Blue_12_Auto extends OpMode {
         autonomousPathUpdate();
         telemetry.update();
         shooter.update();
+        shooter.setHood(constants.shooter.Hood_pos);
         poseStorage.lastBlueAutoPose = follower.getPose();
     }
 

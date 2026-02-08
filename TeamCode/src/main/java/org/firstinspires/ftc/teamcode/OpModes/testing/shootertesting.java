@@ -65,6 +65,7 @@ public class shootertesting extends OpMode {
         follower.update();
         llhandler.poll();
         shooter.update();
+        shooter.setHood(constants.shooter.Hood_pos);
 //        shooter.update_constant();
         shooter.updateBatteryVoltage();
 
