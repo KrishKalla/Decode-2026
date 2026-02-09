@@ -54,7 +54,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @Disabled
 public class RobotTeleopMecanumFieldRelativeDrive extends OpMode {
     // This declares the four motors needed
-    DcMotor frontLeftDriveDrive;
+    DcMotor frontLeftDrive;
     DcMotor frontRightDrive;
     DcMotor backLeftDrive;
     DcMotor backRightDrive;
