@@ -34,8 +34,8 @@ public class constants {
     @Config
     public enum INTAKE_EXTENSION {
 
-        RETRACTED(0.65, 0.65),
-        EXTENDED(0.96, 0.98);
+        RETRACTED(0.35, 0.37),
+        EXTENDED(0.66, 0.68);
 
         public final double left;
         public final double right;
