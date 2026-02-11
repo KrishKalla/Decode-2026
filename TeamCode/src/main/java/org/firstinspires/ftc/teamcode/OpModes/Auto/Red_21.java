@@ -55,7 +55,7 @@ public class Red_21 extends OpMode {
     private final Pose centerPickupPose = new Pose(114, 84, Math.toRadians(0));
     private final Pose midFarPickup = new Pose(86.271, 31.767);
     private final Pose farPickupPose = new Pose(114, 36, Math.toRadians(0));
-    private final Pose parkPose = new Pose(83.128, 105.965, Math.toRadians(-60));
+    private final Pose parkPose = new Pose(83.128, 105.965, Math.toRadians(-75));
 
     // ---- PATH OBJECTS ----
     private PathChain Path1;
@@ -93,8 +93,8 @@ public class Red_21 extends OpMode {
         intake.init(hardwareMap);
         turret.init(hardwareMap,follower);
 
-        constants.shooter.TARGET_RPM = 790;
-        constants.shooter.Hood_pos = 0.76;
+        constants.shooter.TARGET_RPM = 795;
+        constants.shooter.Hood_pos = 0.77;
 
         buildPaths();
     }
