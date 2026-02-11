@@ -28,7 +28,7 @@ public class constants {
         ON,
         OFF,
         REJECT,
-        TRANSFERING
+        GATE, TRANSFERING
     }
 
     @Config

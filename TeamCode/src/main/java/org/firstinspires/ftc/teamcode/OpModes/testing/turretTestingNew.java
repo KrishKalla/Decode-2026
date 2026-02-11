@@ -24,6 +24,7 @@ public class turretTestingNew extends OpMode {
     private int alliance = 1;
     private FtcDashboard dashboard;
     public static boolean manual = false;
+    public static double MANUAL = 90;
 
     public void init() {
         dashboard = FtcDashboard.getInstance();
@@ -46,7 +47,7 @@ public class turretTestingNew extends OpMode {
         Pose goalPose = new Pose(poseStorage.BLUE_X, poseStorage.BLUE_Y);
         follower.update();
         if (manual) {
-            turret.setTargetAngle(90);
+            turret.update(MANUAL);
         } else {
             llhandler.poll();
             turret.update(goalPose);

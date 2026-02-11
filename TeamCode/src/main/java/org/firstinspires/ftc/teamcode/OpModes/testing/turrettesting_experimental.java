@@ -5,7 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.subsystems.experimental.Turret;
+import org.firstinspires.ftc.teamcode.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
 import org.firstinspires.ftc.teamcode.util.constantsExperimental;
 
@@ -30,13 +30,12 @@ public class turrettesting_experimental extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(72, 72, 0));
         follower.update();
-        turret.init(hardwareMap, llhandler, follower.poseTracker);
+        turret.init(hardwareMap, follower);
         turret.zeroTurret();
     }
 
     @Override
     public void init_loop() {
-        telemetry.addData("Encoder Ticks", turret.encoder.getCurrentPosition());
         telemetry.update();
     }
 
@@ -52,14 +51,12 @@ public class turrettesting_experimental extends OpMode {
         llhandler.poll();
         turret.update(goalPose);
         telemetry.addData("Current Pose", follower.getPose().toString());
-        telemetry.addData("Encoder Ticks", turret.encoder.getCurrentPosition());
+
         telemetry.addData("TX", llhandler.getLatestResult()[3]);
         telemetry.addData("DIST FROM TAG", llhandler.getLatestResult()[2]);
-        telemetry.addData("Current Turret Angle", "%.2f°", turret.getCurrentTurretAngle());
-        telemetry.addData("Target Angle", "%.2f°", turret.getTurretTargetDeg());
+
         telemetry.addData("Error", "%.2f°", turret.getError());
-        telemetry.addData("Is Aimed", turret.isAimedAtGoal(goalPose, 1.0));
-        telemetry.addData("LLVALID", turret.getLLValid());
+
         telemetry.update();
     }
 }

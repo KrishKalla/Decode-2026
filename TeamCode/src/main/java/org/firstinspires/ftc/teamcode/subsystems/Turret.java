@@ -80,8 +80,15 @@ public class Turret {
         timer.reset();
     }
 
+    public void update(double a) {
+        setTargetAngle(a);
+        update(null);
+    }
+
     public void update(Pose goal) {
-        setTargetAngle(normalizeAngle(calculateAngleToGoal(goal)));
+        if (goal != null) {
+            setTargetAngle(normalizeAngle(calculateAngleToGoal(goal)));
+        }
 
         double dt = timer.seconds();
         timer.reset();
@@ -179,8 +186,13 @@ public class Turret {
         return normalizeAngle(Math.toDegrees(fieldAngleToGoal - turretPose.getHeading() + Math.PI));
     }
 
-    public void setTargetAngle(double angle) {
+    private void setTargetAngle(double angle) {
         target = angle;
+    }
+
+    public void setManualAngle(double angle) {
+        left.setPosition(angleToServoPosition(angle));
+        right.setPosition(angleToServoPosition(angle));
     }
 
     private double angleToServoPosition(double angle) {

@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.OpModes.Auto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.Pose;
@@ -10,11 +12,12 @@ import com.pedropathing.geometry.BezierLine;
 
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.subsystems.experimental.Turret;
+import org.firstinspires.ftc.teamcode.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.subsystems.intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
 import org.firstinspires.ftc.teamcode.util.constants;
+import org.firstinspires.ftc.teamcode.util.poseStorage;
 
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
@@ -26,12 +29,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name = "Red 12 Auto")
 public class Red_12_Auto extends OpMode {
 
-    private static double TURRET_ANGLE = -112;
+    private static double TURRET_ANGLE = -100;
     private ElapsedTime shootTimer = new ElapsedTime();
 
     private boolean shotWaitStarted = false;
 
     private LLHandler llHandler;
+    private FtcDashboard dashboard = FtcDashboard.getInstance();
 
     // ---- Pathing ----
     private Follower follower;
@@ -70,9 +74,12 @@ public class Red_12_Auto extends OpMode {
     private shooter shooter;
     private Turret turret;
 
+    private Thread t;
+    private Runnable r;
+
     @Override
     public void init() {
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
         // ---- Subsystems ----
         shooter = new shooter();
@@ -83,12 +90,42 @@ public class Red_12_Auto extends OpMode {
 
         shooter.init(hardwareMap, llHandler);
         intake.init(hardwareMap);
-        turret.init(hardwareMap, llHandler, follower.poseTracker);
+        turret.init(hardwareMap,follower);
+        llHandler = new LLHandler(hardwareMap, 0);
 
         constants.shooter.TARGET_RPM = 800;
         constants.shooter.Hood_pos = 0.78;
 
         buildPaths();
+
+        r = new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    llHandler.poll();
+                    TelemetryPacket packet = new TelemetryPacket();
+                    Canvas canvas = packet.fieldOverlay().setRotation(Math.toRadians(90)).setTranslation(72, -72);
+                    turret.drawTurret(canvas, packet);
+                    shooter.setHood(constants.shooter.Hood_pos);
+                    shooter.update();
+
+                    packet.put("Target Angle", turret.getTargetAngle());
+                    packet.put("Current Angle", turret.getCurrentAngle());
+                    packet.put("Error", turret.getError());
+                    packet.put("Is Aimed", turret.isAimed());
+
+                    dashboard.sendTelemetryPacket(packet);
+                }
+            }
+        };
+        t = new Thread(r);
+    }
+
+    @Override
+    public void start() {
+        turret.setManualAngle(TURRET_ANGLE);
+        t.start();
+        llHandler.start();
     }
 
     @Override
@@ -99,8 +136,7 @@ public class Red_12_Auto extends OpMode {
         follower.update();
         autonomousPathUpdate();
         telemetry.update();
-        shooter.setHood(constants.shooter.Hood_pos);
-        shooter.update();
+
     }
 
 
@@ -172,7 +208,7 @@ public class Red_12_Auto extends OpMode {
                 follower.followPath(scorePreload);
                 intake.setIntake(constants.INTAKE_PRESETS.OFF);
                 shooter.flywheelPreset(constants.FLYWHEEL.ON);
-                turret.setTurretAngle(TURRET_ANGLE);
+                turret.update(TURRET_ANGLE);
                 shooter.setStopper(false);
 
                 setPathState(1);

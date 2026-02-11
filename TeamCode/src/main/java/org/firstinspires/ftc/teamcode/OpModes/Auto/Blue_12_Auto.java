@@ -10,7 +10,7 @@ import com.pedropathing.geometry.BezierLine;
 
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.subsystems.experimental.Turret;
+import org.firstinspires.ftc.teamcode.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.subsystems.intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
@@ -75,7 +75,7 @@ public class Blue_12_Auto extends OpMode {
 
         shooter.init(hardwareMap, llHandler);
         intake.init(hardwareMap);
-        turret.init(hardwareMap, llHandler, follower.poseTracker);
+        turret.init(hardwareMap, follower);
 
         constants.shooter.TARGET_RPM = 800;
         constants.shooter.Hood_pos = 0.79;
@@ -168,7 +168,7 @@ public class Blue_12_Auto extends OpMode {
                 follower.followPath(scorePreload);
                 intake.setIntake(constants.INTAKE_PRESETS.OFF);
                 shooter.flywheelPreset(constants.FLYWHEEL.ON);
-                turret.setTurretAngle(TURRET_ANGLE);
+                turret.update(TURRET_ANGLE);
                 shooter.setStopper(false);
 
                 setPathState(1);

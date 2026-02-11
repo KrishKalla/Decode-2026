@@ -80,6 +80,12 @@ public class intake {
                 setPower(constants.intake.INTAKE_POWER);
                 setExtension(constants.INTAKE_EXTENSION.RETRACTED);
                 break;
+            case GATE:
+                intakeState = "GATE";
+                setDirection(1);
+                setPower(0);
+                setExtension(constants.INTAKE_EXTENSION.EXTENDED);
+                break;
         }
     }
 

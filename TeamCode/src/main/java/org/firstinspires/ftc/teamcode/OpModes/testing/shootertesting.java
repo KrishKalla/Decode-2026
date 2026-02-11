@@ -11,10 +11,9 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.subsystems.experimental.Turret;
+import org.firstinspires.ftc.teamcode.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.subsystems.intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter;
-import org.firstinspires.ftc.teamcode.subsystems.turret;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
 import org.firstinspires.ftc.teamcode.util.constants;
 
@@ -50,7 +49,7 @@ public class shootertesting extends OpMode {
         follower.setStartingPose(new Pose(72, 72, 0));
         follower.update();
 
-        turret.init(hardwareMap, llhandler, follower.poseTracker);
+        turret.init(hardwareMap, follower);
     }
 
     @Override
@@ -58,7 +57,7 @@ public class shootertesting extends OpMode {
         shooter.flywheelPreset(constants.FLYWHEEL.ON);
         llhandler.alliance(1);
         llhandler.start();
-        turret.setTurretAngle(0);
+        turret.update(0);
     }
 
     public void loop() {
@@ -84,7 +83,7 @@ public class shootertesting extends OpMode {
             intake.setIntake(constants.INTAKE_PRESETS.OFF);
             shooter.setStopper(false);
         }
-        if (gamepad1.right_bumper){
+        if (gamepad1.right_bumper||STOPPER){
             shooter.setStopper(true);
         }
         telemetry.addLine(shooter.toString());
