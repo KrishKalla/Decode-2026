@@ -26,7 +26,7 @@ public class Turret {
     private Follower follower;
 
     //Constants
-    public static double SERVO_TO_TURRET_RATIO = 1.33;
+    public static double SERVO_TO_TURRET_RATIO = 1.3333333;
     private static final double ENCODER_TO_TURRET_RATIO = 108/21.0;
     private static final double ENCODER_TICKS_PER_REV = 8192.0;
     private static final double MIN_ANGLE = -135;

@@ -77,7 +77,7 @@ public class intake {
             case TRANSFERING:
                 intakeState = "TRANSFERING";
                 setDirection(1);
-                setPower(constants.intake.INTAKE_POWER);
+                setPower(constants.intake.INTAKE_POWER-0.3);
                 setExtension(constants.INTAKE_EXTENSION.RETRACTED);
                 break;
             case GATE:
