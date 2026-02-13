@@ -29,7 +29,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name = "Red 21 Auto")
 public class Red_21 extends OpMode {
 
-    private static double TURRET_ANGLE = -121;
+    public static double TURRET_ANGLE = -135;
     private ElapsedTime shootTimer = new ElapsedTime();
 
     private boolean shotWaitStarted = false;
