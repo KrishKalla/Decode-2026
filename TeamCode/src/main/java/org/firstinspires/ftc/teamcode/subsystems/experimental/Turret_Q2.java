@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.util.LLHandler;
 
-@Config
+//@Config
 public class Turret_Q2 {
     private Servo left;
     private Servo right;

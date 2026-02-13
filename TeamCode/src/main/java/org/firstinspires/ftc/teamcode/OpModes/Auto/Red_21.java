@@ -28,9 +28,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Config
 @Autonomous(name = "Red 21 Auto")
 public class Red_21 extends OpMode {
-
-    private static double TURRET_ANGLE = -121;
+    public FtcDashboard dashboard = FtcDashboard.getInstance();
+    private static double TURRET_ANGLE = -114;
+    public static double SHOOT_DURATION = 0.5;
     private ElapsedTime shootTimer = new ElapsedTime();
+    private ElapsedTime timer = new ElapsedTime();
 
     private boolean shotWaitStarted = false;
 
@@ -45,16 +47,16 @@ public class Red_21 extends OpMode {
     // Pose definitions
     private final Pose startPose = new Pose(120.179, 127.973, Math.toRadians(36));
     private final Pose scorePose = new Pose(87.767, 82.764, Math.toRadians(-20));
-    private final Pose pickup1Pose = new Pose(114, 60, Math.toRadians(0));
+    private final Pose pickup1Pose = new Pose(118, 60, Math.toRadians(0));
     private final Pose midPickup1 = new Pose(87.440, 56.941);
 
     private final Pose gateApproachPose = new Pose(125, 60.25, Math.toRadians(30));
     private final Pose midGatePose = new Pose(101.751, 56.946);
-    private final Pose gatePose = new Pose(125, 55.7, Math.toRadians(47.5));
+    private final Pose gatePose = new Pose(125, 56.7, Math.toRadians(47.5));
 
-    private final Pose centerPickupPose = new Pose(114, 84, Math.toRadians(0));
+    private final Pose centerPickupPose = new Pose(118, 84, Math.toRadians(0));
     private final Pose midFarPickup = new Pose(86.271, 31.767);
-    private final Pose farPickupPose = new Pose(114, 36, Math.toRadians(0));
+    private final Pose farPickupPose = new Pose(118, 36, Math.toRadians(0));
     private final Pose parkPose = new Pose(83.128, 105.965, Math.toRadians(-75));
 
     // ---- PATH OBJECTS ----
@@ -81,6 +83,7 @@ public class Red_21 extends OpMode {
 
     @Override
     public void init() {
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
         // ---- Subsystems ----
         shooter = new shooter();
@@ -93,15 +96,15 @@ public class Red_21 extends OpMode {
         intake.init(hardwareMap);
         turret.init(hardwareMap,follower);
 
-        constants.shooter.TARGET_RPM = 795;
-        constants.shooter.Hood_pos = 0.77;
+        constants.shooter.TARGET_RPM = 790;
+        constants.shooter.Hood_pos = 0.75;
 
         buildPaths();
     }
 
     @Override
     public void start() {
-        turret.setManualAngle(TURRET_ANGLE);
+        timer.reset();
     }
 
     @Override
@@ -109,14 +112,17 @@ public class Red_21 extends OpMode {
         addTelemetry("X: ", follower.getPose().getX());
         addTelemetry("Y: ", follower.getPose().getY());
         addTelemetry("Heading: ", follower.getPose().getHeading());
+        addTelemetry("Path State", pathState);
+        addTelemetry("Runtime", timer.seconds());
         follower.update();
         autonomousPathUpdate();
         shooter.setHood(constants.shooter.Hood_pos);
         shooter.update();
-        turret.setManualAngle(TURRET_ANGLE);
+        if (pathState < 17 && pathState != -1) {
+            turret.update(TURRET_ANGLE);
+        }
         telemetry.update();
     }
-
 
     // ---- BUILD PATHS ----
     private void buildPaths() {
@@ -290,7 +296,7 @@ public class Red_21 extends OpMode {
                         shotWaitStarted = true;
                     }
 
-                    if (shootTimer.seconds() >= 0.5) {
+                    if (shootTimer.seconds() >= SHOOT_DURATION) {
 
                         shooter.setStopper(true);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
@@ -321,7 +327,7 @@ public class Red_21 extends OpMode {
                         shotWaitStarted = true;
                     }
 
-                    if (shootTimer.seconds() >= 0.5) {
+                    if (shootTimer.seconds() >= SHOOT_DURATION) {
 
                         shooter.setStopper(true);
                         intake.setIntake(constants.INTAKE_PRESETS.GATE);
@@ -370,7 +376,7 @@ public class Red_21 extends OpMode {
                         shotWaitStarted = true;
                     }
 
-                    if (shootTimer.seconds() >= 0.5) {
+                    if (shootTimer.seconds() >= SHOOT_DURATION) {
 
                         shooter.setStopper(true);
                         intake.setIntake(constants.INTAKE_PRESETS.GATE);
@@ -419,7 +425,7 @@ public class Red_21 extends OpMode {
                         shotWaitStarted = true;
                     }
 
-                    if (shootTimer.seconds() >= 0.5) {
+                    if (shootTimer.seconds() >= SHOOT_DURATION) {
 
                         shooter.setStopper(true);
                         intake.setIntake(constants.INTAKE_PRESETS.GATE);
@@ -468,7 +474,7 @@ public class Red_21 extends OpMode {
                         shotWaitStarted = true;
                     }
 
-                    if (shootTimer.seconds() >= 0.5) {
+                    if (shootTimer.seconds() >= SHOOT_DURATION) {
 
                         shooter.setStopper(true);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
@@ -499,7 +505,7 @@ public class Red_21 extends OpMode {
                         shotWaitStarted = true;
                     }
 
-                    if (shootTimer.seconds() >= 0.5) {
+                    if (shootTimer.seconds() >= SHOOT_DURATION) {
 
                         shooter.setStopper(true);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
@@ -530,7 +536,7 @@ public class Red_21 extends OpMode {
                         shotWaitStarted = true;
                     }
 
-                    if (shootTimer.seconds() >= 0.5) {
+                    if (shootTimer.seconds() >= SHOOT_DURATION) {
                         shotWaitStarted = false;   // reset for next time
                         setPathState(17);
                     }
@@ -541,10 +547,13 @@ public class Red_21 extends OpMode {
                 if (!follower.isBusy()) {
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
                     shooter.flywheelPreset(constants.FLYWHEEL.OFF);
-                    //turret.zeroTurret();
+                    turret.zeroTurret();
                     setPathState(-1);
                 }
                 break;
+
+            case -1:
+                requestOpModeStop();
         }
     }
 
