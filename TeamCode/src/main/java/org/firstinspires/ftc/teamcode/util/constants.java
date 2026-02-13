@@ -70,7 +70,7 @@ public class constants {
     @Config
     public static class shooter {
        public static double kP = 0.004;
-       public static double kS = 0.0035;
+       public static double kS = 0.0042;
        public static double kV = 0.00042;
        public static double TARGET_RPM = 800;
        public static double alpha = 0.225;
