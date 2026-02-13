@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
 import org.firstinspires.ftc.teamcode.util.poseStorage;
 
-@TeleOp(name = "New Turret Testing", group = "testing")
+@TeleOp(name = "GOOD Turret Testing", group = "testing")
 @Config
 public class turretTestingNew extends OpMode {
     private Turret turret;

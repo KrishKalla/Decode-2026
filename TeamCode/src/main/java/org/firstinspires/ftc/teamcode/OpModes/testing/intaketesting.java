@@ -14,6 +14,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @Config
 public class intaketesting extends OpMode {
     private intake intake;
+    public static boolean down = false;
+    public static boolean on = false;
 
     public void init() {
         intake = new intake();
@@ -27,13 +29,16 @@ public class intaketesting extends OpMode {
     }
 
     public void loop() {
-        if(gamepad1.right_bumper) {
+        if(down) {
+            intake.setExtension(constants.INTAKE_EXTENSION.EXTENDED);
+        }
+        if(!down) {
+            intake.setExtension(constants.INTAKE_EXTENSION.RETRACTED);
+        }
+        if (on) {
             intake.setIntake(constants.INTAKE_PRESETS.ON);
         }
-        if(gamepad1.left_bumper) {
-            intake.setIntake(constants.INTAKE_PRESETS.REJECT);
-        }
-        if(gamepad1.triangle) {
+        if (!on) {
             intake.setIntake(constants.INTAKE_PRESETS.OFF);
         }
         telemetry.addLine(intake.toString());

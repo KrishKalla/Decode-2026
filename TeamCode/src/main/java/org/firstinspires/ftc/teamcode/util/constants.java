@@ -9,7 +9,7 @@ public class constants {
     public static double ROBOT_MASS = 10; //kg
     public static double FORWARD_OFFSET = 2.9331; //in
     public static double LATERAL_OFFSET = -6.24015; //in
-    public static double NOMINAL_VOLTAGE = 13.0;
+    public static double NOMINAL_VOLTAGE = 13.5;
     public static double LIMELIGHT_HEIGHT = 0.41; //deg
     public static double LIMELIGHT_MOUNT_ANGLE = 17.45128; //deg --> rad
     public static double APRIL_TAG_HEIGHT = 38.75 - 9.25; //in

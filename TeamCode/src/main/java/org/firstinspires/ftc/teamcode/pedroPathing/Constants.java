@@ -18,13 +18,11 @@ import org.firstinspires.ftc.teamcode.util.constants;
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(constants.ROBOT_MASS)
-            .forwardZeroPowerAcceleration(-60.0)
-            .lateralZeroPowerAcceleration(-65.9)
+            .forwardZeroPowerAcceleration(-70.0)
+            .lateralZeroPowerAcceleration(-75.9)
             .translationalPIDFCoefficients(new PIDFCoefficients(0.175, 0, 0.0133, 0.055))
             .headingPIDFCoefficients(new PIDFCoefficients(1, 0, 0.01, 0.04))
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.003, 0, 0, 0.6, 0.09))
-
-            ;
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.003, 0, 0, 0.6, 0.09));
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
@@ -36,8 +34,8 @@ public class Constants {
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .xVelocity(84.1)
-            .yVelocity(62.4);
+            .xVelocity(92.1)
+            .yVelocity(72.4);
     public static PinpointConstants localizerConstants = new PinpointConstants()
             .forwardPodY(constants.FORWARD_OFFSET)
             .strafePodX(constants.LATERAL_OFFSET)
