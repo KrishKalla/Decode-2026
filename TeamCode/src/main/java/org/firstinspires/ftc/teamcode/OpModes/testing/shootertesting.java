@@ -57,7 +57,7 @@ public class shootertesting extends OpMode {
         shooter.flywheelPreset(constants.FLYWHEEL.ON);
         llhandler.alliance(1);
         llhandler.start();
-        turret.update(0);
+        turret.setManualAngle(0);
     }
 
     public void loop() {
@@ -73,18 +73,21 @@ public class shootertesting extends OpMode {
 //        shooter.motorRight.setPower(shit);
 
 
-        if (gamepad1.right_trigger > 0.3) {
+        if (gamepad1.right_trigger > 0.3||ON) {
             intake.setIntake(constants.INTAKE_PRESETS.ON);
         }
         if (gamepad1.left_trigger > 0.3) {
             intake.setIntake(constants.INTAKE_PRESETS.REJECT);
         }
-        if (gamepad1.left_bumper) {
+        if (gamepad1.left_bumper||!ON) {
             intake.setIntake(constants.INTAKE_PRESETS.OFF);
             shooter.setStopper(false);
         }
         if (gamepad1.right_bumper||STOPPER){
             shooter.setStopper(true);
+        }
+        else if (!STOPPER){
+            shooter.setStopper(false);
         }
         telemetry.addLine(shooter.toString());
         telemetry.addData("RPM: ", shooter.getRPM());
