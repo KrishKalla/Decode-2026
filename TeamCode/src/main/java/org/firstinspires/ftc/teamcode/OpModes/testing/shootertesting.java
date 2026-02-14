@@ -30,9 +30,9 @@ public class shootertesting extends OpMode {
     private intake intake;
     private Turret turret;
     private Follower follower;
-    public static double MANUAL_Turret= 0;
+    public static double MANUAL_Turret= -90;
 
-    private int alliance = 1;
+    private int alliance = 0;
     private LLHandler llhandler;
 
     public void init() {
@@ -54,7 +54,7 @@ public class shootertesting extends OpMode {
     @Override
     public void start() {
         shooter.flywheelPreset(constants.FLYWHEEL.ON);
-        llhandler.alliance(1);
+        llhandler.alliance(alliance);
         llhandler.start();
         turret.setManualAngle(MANUAL_Turret);
     }
@@ -63,29 +63,35 @@ public class shootertesting extends OpMode {
         follower.update();
         llhandler.poll();
         shooter.update();
-        shooter.setHood(constants.shooter.Hood_pos);
 //        shooter.update_constant();
         shooter.updateBatteryVoltage();
+        if (ON){
+            shooter.updateHood();
+        }
+        else{
+            shooter.setHood(constants.shooter.Hood_pos);
+        }
 
 //        double shit = shooter.calculate();
 //        shooter.motorLeft.setPower(shit);
 //        shooter.motorRight.setPower(shit);
 
 
-        if (gamepad1.right_trigger > 0.3||ON) {
+        if (gamepad1.right_trigger > 0.3) {
             intake.setIntake(constants.INTAKE_PRESETS.ON);
         }
+
         if (gamepad1.left_trigger > 0.3) {
-            intake.setIntake(constants.INTAKE_PRESETS.REJECT);
+            intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
         }
-        if (gamepad1.left_bumper||!ON) {
+        if (gamepad1.left_bumper) {
             intake.setIntake(constants.INTAKE_PRESETS.OFF);
             shooter.setStopper(false);
         }
-        if (gamepad1.right_bumper||STOPPER){
+        if (gamepad1.right_bumper){
             shooter.setStopper(true);
         }
-        else if (!STOPPER){
+        if (gamepad1.cross){
             shooter.setStopper(false);
         }
         telemetry.addLine(shooter.toString());

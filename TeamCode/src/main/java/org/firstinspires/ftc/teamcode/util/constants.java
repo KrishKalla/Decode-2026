@@ -22,6 +22,7 @@ public class constants {
     public static class intake {
         public static boolean REVERSED = false;
         public static double INTAKE_POWER = 1;
+        public static double TRANSFER_POWER = 0.9;
     }
 
     public enum INTAKE_PRESETS {
@@ -36,7 +37,7 @@ public class constants {
     public enum INTAKE_EXTENSION {
 
         RETRACTED(0.35, 0.37),
-        GATE(0.7,0.72),
+        GATE(0.72,0.74),
         EXTENDED(0.66, 0.68);
 
         public final double left;
@@ -71,15 +72,15 @@ public class constants {
     //Shooter Constants
     @Config
     public static class shooter {
-       public static double kP = 0.004;
+       public static double kP = 0.008;
        public static double kS = 0.0042;
        public static double kV = 0.00042;
        public static double TARGET_RPM = 800;
        public static double alpha = 0.225;
        public static double step = 0.02;
        public static double MIN_ANGLE = 0.18;
-       public static double PASSTHROUGH = 0.9;
-       public static double STOP = 0.55;
+       public static double PASSTHROUGH = 0.8;
+       public static double STOP = 0.475;
        public static double SHOT_LOAD = 65;
        public static double Hood_pos = 0.18;
     }

@@ -45,16 +45,16 @@ public class Red_21 extends OpMode {
     // Pose definitions
     private final Pose startPose = new Pose(120.179, 127.973, Math.toRadians(36));
     private final Pose scorePose = new Pose(87.767, 82.764, Math.toRadians(-20));
-    private final Pose pickup1Pose = new Pose(114, 60, Math.toRadians(0));
+    private final Pose pickup1Pose = new Pose(113, 60, Math.toRadians(0));
     private final Pose midPickup1 = new Pose(87.440, 56.941);
 
     private final Pose gateApproachPose = new Pose(125, 60.25, Math.toRadians(30));
     private final Pose midGatePose = new Pose(101.751, 56.946);
     private final Pose gatePose = new Pose(125, 55.7, Math.toRadians(47.5));
 
-    private final Pose centerPickupPose = new Pose(114, 84, Math.toRadians(0));
+    private final Pose centerPickupPose = new Pose(113, 84, Math.toRadians(0));
     private final Pose midFarPickup = new Pose(86.271, 31.767);
-    private final Pose farPickupPose = new Pose(114, 36, Math.toRadians(0));
+    private final Pose farPickupPose = new Pose(113, 36, Math.toRadians(0));
     private final Pose parkPose = new Pose(83.128, 105.965, Math.toRadians(-70));
 
     // ---- PATH OBJECTS ----
@@ -95,7 +95,7 @@ public class Red_21 extends OpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        constants.shooter.TARGET_RPM = 760;
+        constants.shooter.TARGET_RPM = 770;
         constants.shooter.Hood_pos = 0.65;
 
         buildPaths();
@@ -103,7 +103,7 @@ public class Red_21 extends OpMode {
 
     @Override
     public void start() {
-        turret.setManualAngle(TURRET_ANGLE);
+        turret.update(TURRET_ANGLE);
     }
 
     @Override
@@ -112,6 +112,7 @@ public class Red_21 extends OpMode {
         addTelemetry("Y: ", follower.getPose().getY());
         addTelemetry("Heading: ", Math.toDegrees(follower.getPose().getHeading()));
         addTelemetry("RPM",shooter.getRPM());
+        addTelemetry("Time: ", getRuntime());
         telemetry.update();
 
 
@@ -119,13 +120,7 @@ public class Red_21 extends OpMode {
         autonomousPathUpdate();
         shooter.setHood(constants.shooter.Hood_pos);
         shooter.update();
-        if ((TURRET_ANGLE-(Math.toDegrees(follower.getPose().getHeading())+20)) <= -135)
-        {
-            turret.setManualAngle(TURRET_ANGLE-(Math.toDegrees(follower.getPose().getHeading())+20));
-        }
-        else{
-            turret.setManualAngle(TURRET_ANGLE);
-        }
+        turret.update(TURRET_ANGLE);
         telemetry.update();
     }
 
@@ -532,8 +527,8 @@ public class Red_21 extends OpMode {
                     shooter.setStopper(false);
                     follower.followPath(Path16, true);
                     TURRET_ANGLE=-90;
-                    constants.shooter.TARGET_RPM = 720;
-                    constants.shooter.Hood_pos = 0.62;
+                    constants.shooter.TARGET_RPM = 700;
+                    constants.shooter.Hood_pos = 0.60;
                     setPathState(16);
                 }
                 break;
