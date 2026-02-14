@@ -30,8 +30,7 @@ public class shootertesting extends OpMode {
     private intake intake;
     private Turret turret;
     private Follower follower;
-    public static double MANUALHOOD = 0.875;
-    public static double Delta_Hood = 0;
+    public static double MANUAL_Turret= 0;
 
     private int alliance = 1;
     private LLHandler llhandler;
@@ -57,7 +56,7 @@ public class shootertesting extends OpMode {
         shooter.flywheelPreset(constants.FLYWHEEL.ON);
         llhandler.alliance(1);
         llhandler.start();
-        turret.setManualAngle(0);
+        turret.setManualAngle(MANUAL_Turret);
     }
 
     public void loop() {

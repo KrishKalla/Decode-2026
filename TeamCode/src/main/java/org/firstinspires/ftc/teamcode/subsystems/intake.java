@@ -84,7 +84,7 @@ public class intake {
                 intakeState = "GATE";
                 setDirection(1);
                 setPower(0);
-                setExtension(constants.INTAKE_EXTENSION.EXTENDED);
+                setExtension(constants.INTAKE_EXTENSION.GATE);
                 break;
         }
     }
@@ -97,6 +97,11 @@ public class intake {
                 servoR.setPosition(state.right);
                 break;
             case EXTENDED:
+                extended = true;
+                servoL.setPosition(state.left);
+                servoR.setPosition(state.right);
+                break;
+            case GATE:
                 extended = true;
                 servoL.setPosition(state.left);
                 servoR.setPosition(state.right);

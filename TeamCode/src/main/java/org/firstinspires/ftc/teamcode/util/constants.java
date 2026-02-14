@@ -28,13 +28,15 @@ public class constants {
         ON,
         OFF,
         REJECT,
-        GATE, TRANSFERING
+        GATE,
+        TRANSFERING
     }
 
     @Config
     public enum INTAKE_EXTENSION {
 
         RETRACTED(0.35, 0.37),
+        GATE(0.7,0.72),
         EXTENDED(0.66, 0.68);
 
         public final double left;
