@@ -1,15 +1,16 @@
 package org.firstinspires.ftc.teamcode.OpModes.Auto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
-import com.pedropathing.geometry.Pose;
 import com.pedropathing.geometry.BezierLine;
-
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.PathChain;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Turret;
@@ -19,15 +20,9 @@ import org.firstinspires.ftc.teamcode.util.LLHandler;
 import org.firstinspires.ftc.teamcode.util.constants;
 import org.firstinspires.ftc.teamcode.util.poseStorage;
 
-import com.pedropathing.paths.Path;
-import com.pedropathing.paths.PathChain;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
 @Config
-@Autonomous(name = "Red 21 Auto")
-public class Red_21 extends OpMode {
+@Autonomous(name = "Red 18 Auto")
+public class Red_18 extends OpMode {
 
     public static double TURRET_ANGLE = -110;
     private ElapsedTime shootTimer = new ElapsedTime();
@@ -363,7 +358,7 @@ public class Red_21 extends OpMode {
                         shotWaitStarted = true;
                     }
 
-                    if (shootTimer.seconds() >= 1.0) {
+                    if (shootTimer.seconds() >= 1.5) {
                         intake.setIntake(constants.INTAKE_PRESETS.OFF);
                         shooter.setStopper(false);
 
@@ -443,7 +438,7 @@ public class Red_21 extends OpMode {
                         shotWaitStarted = true;
                     }
 
-                    if (shootTimer.seconds() >= 1.0) {
+                    if (shootTimer.seconds() >= 1.5) {
                         intake.setIntake(constants.INTAKE_PRESETS.OFF);
                         shooter.setStopper(false);
 
@@ -455,56 +450,7 @@ public class Red_21 extends OpMode {
                 break;
 
             case 11:
-                // Score and go to gate approach (THIRD TIME)
-                if (!follower.isBusy()) {
-                    if (!shotWaitStarted) {
-                        intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
-                        shootTimer.reset();
-                        shotWaitStarted = true;
-                    }
-
-                    if (shootTimer.seconds() >= shootingtime) {
-
-                        shooter.setStopper(true);
-                        intake.setIntake(constants.INTAKE_PRESETS.GATE);
-
-                        follower.followPath(Path12,true);
-                        shotWaitStarted = false;   // reset for next time
-                        setPathState(12);
-                    }
-                }
-                break;
-
-            case 12:
-                // Gate approach to gate (THIRD TIME)
-                if (!follower.isBusy()) {
-                    intake.setIntake(constants.INTAKE_PRESETS.ON);
-                    follower.followPath(Path13, true);
-                    setPathState(13);
-                }
-                break;
-
-            case 13:
-                // Gate back to score (THIRD TIME)
-                if (!follower.isBusy()) {
-                    if (!shotWaitStarted) {
-                        shootTimer.reset();
-                        shotWaitStarted = true;
-                    }
-
-                    if (shootTimer.seconds() >= 1.0) {
-                        intake.setIntake(constants.INTAKE_PRESETS.OFF);
-                        shooter.setStopper(false);
-
-                        follower.followPath(Path14,true);
-                        shotWaitStarted = false;   // reset for next time
-                        setPathState(14);
-                    }
-                }
-                break;
-
-            case 14:
-                // Score and go to far pickup
+                // Score and go to intake Far pickup
                 if (!follower.isBusy()) {
                     if (!shotWaitStarted) {
                         intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
@@ -523,7 +469,6 @@ public class Red_21 extends OpMode {
                     }
                 }
                 break;
-
             case 15:
                 // Far pickup to park
                 if (!follower.isBusy()) {
