@@ -5,11 +5,14 @@ import com.bylazar.configurables.annotations.Configurable;
 @Configurable
 public class LUT {
     static double[][] table = {
+            {0.83, 640, 0.20},
+            {0.94, 660, 0.30},
             {1.14, 700, 0.43},
             {1.36, 720, 0.47},
             {1.58, 750, 0.55},
             {1.8, 770, 0.62},
-            {2.09, 820, 0.67},
+            {1.88, 790, 0.63},
+            {2.10, 820, 0.67},
             {2.30, 850, 0.74},
             {2.5, 890, 0.79}
     };

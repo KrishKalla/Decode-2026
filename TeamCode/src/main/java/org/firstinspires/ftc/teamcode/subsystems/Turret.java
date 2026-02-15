@@ -35,6 +35,7 @@ public class Turret {
             (ENCODER_TICKS_PER_REV / 360.0) * ENCODER_TO_TURRET_RATIO;
     public static double TURRET_OFFSET = -2.7266;
     public static double ENCODER_DIRECTION = -1;
+    private int zero = 0;
 
     private double target;
     private boolean aimed;
@@ -73,23 +74,23 @@ public class Turret {
     }
 
     public void zeroTurret() {
-        target = 0;
-        left.setPosition(0.5);
-        right.setPosition(0.5);
-        encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setTargetAngle(0);
         timer.reset();
     }
 
     public void update(double a) {
         setTargetAngle(a);
-        update(null);
+        updatePID();
     }
 
     public void update(Pose goal) {
         if (goal != null) {
             setTargetAngle(normalizeAngle(calculateAngleToGoal(goal)));
         }
+        updatePID();
+    }
 
+    private void updatePID() {
         double dt = timer.seconds();
         timer.reset();
         if (dt <= 0) {
@@ -107,6 +108,7 @@ public class Turret {
             iTerm = 0.0;
             lastErr = errDeg;
             aimed = false;
+            return;
         }
 
         iTerm += errDeg * dt;
@@ -156,7 +158,7 @@ public class Turret {
     }
 
     public double getCurrentAngle() {
-        return encoder.getCurrentPosition() / TICKS_PER_TURRET_DEGREE * ENCODER_DIRECTION;
+        return getDelta() / TICKS_PER_TURRET_DEGREE * ENCODER_DIRECTION;
     }
 
     public Pose getTurretFieldPose() {
@@ -230,6 +232,14 @@ public class Turret {
         packet.put("Turret Absolute Heading", Math.toDegrees(turretAngle));
     }
 
+    public int getDelta() {
+        return encoder.getCurrentPosition() - zero;
+    }
+
+    public int getEncoderPos() {
+        return encoder.getCurrentPosition();
+    }
+
     public double getError() {
         return normalizeAngle(target - getCurrentAngle());
     }
@@ -241,7 +251,4 @@ public class Turret {
     public boolean isAimed() {
         return aimed;
     }
-
-
 }
-

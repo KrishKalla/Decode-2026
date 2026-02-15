@@ -38,6 +38,12 @@ public class turretTestingNew extends OpMode {
         turret.zeroTurret();
     }
 
+    @Override
+    public void init_loop() {
+        telemetry.addData("encoder pos",turret.getEncoderPos());
+        telemetry.update();
+    }
+
     public void start() {
         llhandler.start();
         turret.zeroTurret();

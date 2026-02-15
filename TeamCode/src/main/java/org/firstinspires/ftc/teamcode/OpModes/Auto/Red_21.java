@@ -29,8 +29,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name = "Red 21 Auto")
 public class Red_21 extends OpMode {
 
-    public static double TURRET_ANGLE = -120;
+    public static double TURRET_ANGLE = -110;
     private ElapsedTime shootTimer = new ElapsedTime();
+    private ElapsedTime runtime = new ElapsedTime();
 
     private boolean shotWaitStarted = false;
 
@@ -79,6 +80,8 @@ public class Red_21 extends OpMode {
     private shooter shooter;
     private Turret turret;
 
+    private Pose goalPose = new Pose(poseStorage.RED_X, poseStorage.RED_Y);
+
     @Override
     public void init() {
 
@@ -103,16 +106,17 @@ public class Red_21 extends OpMode {
 
     @Override
     public void start() {
-        turret.update(TURRET_ANGLE);
+        runtime.reset();
     }
 
     @Override
     public void loop() {
-        addTelemetry("X: ", follower.getPose().getX());
-        addTelemetry("Y: ", follower.getPose().getY());
-        addTelemetry("Heading: ", Math.toDegrees(follower.getPose().getHeading()));
-        addTelemetry("RPM",shooter.getRPM());
-        addTelemetry("Time: ", getRuntime());
+        telemetry.addData("X", follower.getPose().getX());
+        telemetry.addData("Y", follower.getPose().getY());
+        telemetry.addData("Heading", Math.toDegrees(follower.getPose().getHeading()));
+        telemetry.addData("RPM",shooter.getRPM());
+        telemetry.addData("Time", runtime.seconds());
+        telemetry.addData("Turret Error", turret.getError());
         telemetry.update();
 
 
@@ -317,7 +321,6 @@ public class Red_21 extends OpMode {
                     shooter.setStopper(false);
                     follower.followPath(Path3, true);
                     setPathState(3);
-                    TURRET_ANGLE = -114;
                 }
                 break;
 
@@ -526,7 +529,7 @@ public class Red_21 extends OpMode {
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
                     shooter.setStopper(false);
                     follower.followPath(Path16, true);
-                    TURRET_ANGLE=-90;
+                    TURRET_ANGLE=-80;
                     constants.shooter.TARGET_RPM = 700;
                     constants.shooter.Hood_pos = 0.60;
                     setPathState(16);
@@ -556,16 +559,15 @@ public class Red_21 extends OpMode {
                     setPathState(-1);
                 }
                 break;
+            case -1:
+                requestOpModeStop();
+                break;
         }
     }
 
     public void setPathState(int pState) {
         pathState = pState;
-        addTelemetry("Path State", pathState);
+        telemetry.addData("Path State", pathState);
 
-    }
-
-    public void addTelemetry(String info, Object value) {
-        telemetry.addData(info, value);
     }
 }

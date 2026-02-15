@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.subsystems.intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
 import org.firstinspires.ftc.teamcode.util.constants;
+import org.firstinspires.ftc.teamcode.util.poseStorage;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -30,9 +31,9 @@ public class shootertesting extends OpMode {
     private intake intake;
     private Turret turret;
     private Follower follower;
-    public static double MANUAL_Turret= -90;
+    public static double MANUAL_Turret = -90;
 
-    private int alliance = 0;
+    public static int alliance = 1;
     private LLHandler llhandler;
 
     public void init() {
@@ -44,7 +45,7 @@ public class shootertesting extends OpMode {
         shooter.init(hardwareMap, llhandler);
         intake.init(hardwareMap);
 
-        follower  = Constants.createFollower(hardwareMap);
+        follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(72, 72, 0));
         follower.update();
 
@@ -56,26 +57,25 @@ public class shootertesting extends OpMode {
         shooter.flywheelPreset(constants.FLYWHEEL.ON);
         llhandler.alliance(alliance);
         llhandler.start();
-        turret.setManualAngle(MANUAL_Turret);
     }
 
     public void loop() {
         follower.update();
         llhandler.poll();
         shooter.update();
-//        shooter.update_constant();
         shooter.updateBatteryVoltage();
-        if (ON){
+
+        if (ON) {
             shooter.updateHood();
-        }
-        else{
+            if (alliance == 1) {
+                turret.update(new Pose(poseStorage.BLUE_X, poseStorage.BLUE_Y));
+            } else {
+                turret.update(new Pose(poseStorage.RED_X, poseStorage.RED_Y));
+            }
+        } else {
             shooter.setHood(constants.shooter.Hood_pos);
+            turret.setManualAngle(MANUAL_Turret);
         }
-
-//        double shit = shooter.calculate();
-//        shooter.motorLeft.setPower(shit);
-//        shooter.motorRight.setPower(shit);
-
 
         if (gamepad1.right_trigger > 0.3) {
             intake.setIntake(constants.INTAKE_PRESETS.ON);
@@ -84,23 +84,31 @@ public class shootertesting extends OpMode {
         if (gamepad1.left_trigger > 0.3) {
             intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
         }
+
         if (gamepad1.left_bumper) {
             intake.setIntake(constants.INTAKE_PRESETS.OFF);
             shooter.setStopper(false);
         }
-        if (gamepad1.right_bumper){
+
+        if (gamepad1.right_bumper) {
             shooter.setStopper(true);
         }
-        if (gamepad1.cross){
+
+        if (gamepad1.cross) {
             shooter.setStopper(false);
         }
+
         telemetry.addLine(shooter.toString());
         telemetry.addData("RPM: ", shooter.getRPM());
+        telemetry.addData("HOOD POS", shooter.getHoodAngle());
         telemetry.addData("Target_RPM: ", constants.shooter.TARGET_RPM);
         telemetry.addData("Target_Hood: ", constants.shooter.Hood_pos);
         telemetry.addData("lldist", llhandler.getLatestResult()[2]);
+        telemetry.addData("Turret Angle", turret.getCurrentAngle());
+        telemetry.addData("Turret Target", turret.getTargetAngle());
+        telemetry.addData("Turret Error", turret.getError());
+        telemetry.addData("Mode", ON ? "AUTO" : "MANUAL");
         telemetry.addLine(intake.toString());
         telemetry.update();
-        
     }
 }
