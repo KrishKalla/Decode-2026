@@ -34,9 +34,11 @@ public class Red_21 extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private double shootingtime = 0.7;
 
+    private boolean Auto_hood = true;
     private boolean shotWaitStarted = false;
 
-    private LLHandler llHandler;
+    private LLHandler llhandler;
+    public static int alliance = 0;
 
     // ---- Pathing ----
     private Follower follower;
@@ -90,17 +92,18 @@ public class Red_21 extends OpMode {
         shooter = new shooter();
         intake = new intake();
         turret = new Turret();
+        llhandler = new LLHandler(hardwareMap, alliance);
         follower = Constants.createFollower(hardwareMap);
         follower.setPose(startPose);
 
-        shooter.init(hardwareMap, llHandler);
+        shooter.init(hardwareMap, llhandler);
         intake.init(hardwareMap);
         turret.init(hardwareMap,follower);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        constants.shooter.TARGET_RPM = 770;
-        constants.shooter.Hood_pos = 0.65;
+        llhandler.alliance(alliance);
+        llhandler.start();
 
         buildPaths();
     }
@@ -120,13 +123,19 @@ public class Red_21 extends OpMode {
         telemetry.addData("Turret Error", turret.getError());
         telemetry.update();
 
-
+        llhandler.poll();
         follower.update();
         autonomousPathUpdate();
-        shooter.setHood(constants.shooter.Hood_pos);
+
+        if (!Auto_hood) {
+            shooter.setHood(constants.shooter.Hood_pos);
+        }
+        else{
+            shooter.updateHood();
+        }
+
         shooter.update();
         turret.update(TURRET_ANGLE);
-        telemetry.update();
     }
 
 
@@ -290,28 +299,34 @@ public class Red_21 extends OpMode {
                 intake.setIntake(constants.INTAKE_PRESETS.OFF);
                 shooter.flywheelPreset(constants.FLYWHEEL.ON);
                 shooter.setStopper(false);
-                setPathState(1);
+                setPathState(99);
                 break;
 
+            case 99: //shooting while moving
+                if (!shotWaitStarted) {
+                    shootTimer.reset();
+                    shotWaitStarted=true;
+                }
+                if (shootTimer.seconds() >= 0.7){
+                    intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
+                }
+                if (shootTimer.seconds()>= 1.5){
+                    intake.setIntake(constants.INTAKE_PRESETS.OFF);
+                    shotWaitStarted = false;
+                    setPathState(1);
+                }
             case 1:
-                // Score preload and go to first pickup
+                // Go to first pickup
                 if (!follower.isBusy()) {
-                    if (!shotWaitStarted) {
-                        shootTimer.reset();
-                        shotWaitStarted = true;
-                    }
+                    Auto_hood=false;
+                    constants.shooter.TARGET_RPM = 770;
+                    constants.shooter.Hood_pos = 0.65;
 
-                    if (shootTimer.seconds() >= 0.3) {
-                        intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
-                    }
-                    if (shootTimer.seconds() >= shootingtime+0.3){
-                        shooter.setStopper(true);
-                        intake.setIntake(constants.INTAKE_PRESETS.ON);
+                    shooter.setStopper(true);
+                    intake.setIntake(constants.INTAKE_PRESETS.ON);
 
-                        follower.followPath(Path2,true);
-                        shotWaitStarted = false;   // reset for next time
-                        setPathState(2);
-                    }
+                    follower.followPath(Path2,true);
+                    setPathState(2);
                 }
                 break;
 
