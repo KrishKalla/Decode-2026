@@ -37,7 +37,7 @@ public class Turret {
     public static double ENCODER_DIRECTION = -1;
     public static double SERVO_MAX = 0.89;
     public static double SERVO_MIN = 0.11;
-    private int zero = 0;
+    private int zero = -9086;
 
     private double target;
     private double lastTarget;
