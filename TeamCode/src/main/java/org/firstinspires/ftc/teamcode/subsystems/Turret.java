@@ -38,11 +38,13 @@ public class Turret {
     private int zero = 0;
 
     private double target;
+    private double lastTarget;
     private boolean aimed;
 
     public static double kP = .115;
     public static double kI = 0.001;
     public static double kD = 0.002;
+    public static double kF = 0;
     public static double TOLERANCE = 0.5;
 
     public static double SNAP = 180;
@@ -117,7 +119,10 @@ public class Turret {
         double dErr = (errDeg - lastErr) / dt;
         lastErr = errDeg;
 
-        double uDeg = kP * errDeg + kI * iTerm + kD * dErr;
+        double targetRate = normalizeAngle(target - lastTarget) / dt;
+        lastTarget = target;
+
+        double uDeg = kP * errDeg + kI * iTerm + kD * dErr + kF * targetRate;
 
         double servoDelta = (uDeg / SERVO_TO_TURRET_RATIO / 355);
 
