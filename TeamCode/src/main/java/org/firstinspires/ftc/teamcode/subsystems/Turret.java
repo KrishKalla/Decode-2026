@@ -35,6 +35,8 @@ public class Turret {
             (ENCODER_TICKS_PER_REV / 360.0) * ENCODER_TO_TURRET_RATIO;
     public static double TURRET_OFFSET = -2.7266;
     public static double ENCODER_DIRECTION = -1;
+    public static double SERVO_MAX = 0.89;
+    public static double SERVO_MIN = 0.11;
     private int zero = 0;
 
     private double target;
@@ -137,12 +139,13 @@ public class Turret {
         servoDelta = clamp(servoDelta, -maxServoStep, maxServoStep);
 
         double currentServo = left.getPosition();
-        double nextServo = clamp(currentServo + servoDelta, 0.16, 0.84);
 
-        boolean saturatingHigh = nextServo >= 0.89 && servoDelta > 0;
-        boolean saturatingLow = nextServo <= 0.11 && servoDelta < 0;
+        double nextServo = clamp(currentServo + servoDelta, SERVO_MIN, SERVO_MAX);
+
+        boolean saturatingHigh = nextServo >= SERVO_MAX && servoDelta > 0;
+        boolean saturatingLow = nextServo <= SERVO_MIN && servoDelta < 0;
         if (saturatingHigh || saturatingLow) {
-            iTerm = -errDeg * dt;
+            iTerm -= errDeg * dt;
             iTerm = clamp(iTerm, -iClamp, iClamp);
         }
 
