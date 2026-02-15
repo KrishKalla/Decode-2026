@@ -545,7 +545,7 @@ public class Red_21 extends OpMode {
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
                     shooter.setStopper(false);
                     follower.followPath(Path16, true);
-                    TURRET_ANGLE=-80;
+                    TURRET_ANGLE=-82;
                     constants.shooter.TARGET_RPM = 700;
                     constants.shooter.Hood_pos = 0.60;
                     setPathState(16);
