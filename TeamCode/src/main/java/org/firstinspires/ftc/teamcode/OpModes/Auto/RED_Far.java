@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.geometry.BezierLine;
 
@@ -17,7 +16,6 @@ import org.firstinspires.ftc.teamcode.util.LLHandler;
 import org.firstinspires.ftc.teamcode.util.constants;
 
 import com.pedropathing.paths.Path;
-import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -133,7 +131,7 @@ public class RED_Far extends OpMode {
                 if (!follower.isBusy()){
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
                     shooter.flywheelPreset(constants.FLYWHEEL.OFF);
-                    turret.zeroTurret();
+                    turret.reset();
                     setPathState(-1); // Done
                 }
                 break;

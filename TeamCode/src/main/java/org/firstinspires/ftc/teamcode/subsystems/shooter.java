@@ -1,14 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
-
 import androidx.annotation.NonNull;
 
-import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.control.PIDFController;
 import com.pedropathing.localization.PoseTracker;
-import com.pedropathing.math.MathFunctions;
-import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -18,7 +13,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
 import org.firstinspires.ftc.teamcode.util.LUT;
 import org.firstinspires.ftc.teamcode.util.constants;
-import org.firstinspires.ftc.teamcode.util.shooterConstants;
 
 public class shooter {
     public DcMotorEx motorLeft;
@@ -119,7 +113,7 @@ public class shooter {
 
 
 
-    public void updateHood() {
+    public void calculateParams() {
         previousDistance = handler.getLatestResult()[2];
         if (previousDistance == -1001) {
             hoodTrackingState = "MISSING";

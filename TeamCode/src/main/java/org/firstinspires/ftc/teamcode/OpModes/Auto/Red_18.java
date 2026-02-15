@@ -18,20 +18,21 @@ import org.firstinspires.ftc.teamcode.subsystems.intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
 import org.firstinspires.ftc.teamcode.util.constants;
-import org.firstinspires.ftc.teamcode.util.poseStorage;
+import org.firstinspires.ftc.teamcode.util.storage;
 
 @Config
 @Autonomous(name = "Red 18 Auto")
 public class Red_18 extends OpMode {
 
-    public static double TURRET_ANGLE = -110;
+    public static double TURRET_ANGLE = -115;
     private ElapsedTime shootTimer = new ElapsedTime();
     private ElapsedTime runtime = new ElapsedTime();
-    private double shootingtime = 0.7;
+    private double shootingtime = 1;
 
     private boolean shotWaitStarted = false;
 
-    private LLHandler llHandler;
+    private LLHandler llhandler;  // lowercase
+
 
     // ---- Pathing ----
     private Follower follower;
@@ -76,7 +77,7 @@ public class Red_18 extends OpMode {
     private shooter shooter;
     private Turret turret;
 
-    private Pose goalPose = new Pose(poseStorage.RED_X, poseStorage.RED_Y);
+    private Pose goalPose = new Pose(storage.RED_X, storage.RED_Y);
 
     @Override
     public void init() {
@@ -88,9 +89,15 @@ public class Red_18 extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.setPose(startPose);
 
-        shooter.init(hardwareMap, llHandler);
+        llhandler = new LLHandler(hardwareMap,0);
+        llhandler.alliance(0);
+        llhandler.start();
+
+        shooter.init(hardwareMap, llhandler);
         intake.init(hardwareMap);
         turret.init(hardwareMap,follower);
+
+        turret.reset();
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 

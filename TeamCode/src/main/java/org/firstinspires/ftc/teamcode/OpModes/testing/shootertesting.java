@@ -3,10 +3,6 @@ package org.firstinspires.ftc.teamcode.OpModes.testing;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.bylazar.configurables.annotations.Configurable;
-import com.bylazar.telemetry.JoinedTelemetry;
-import com.bylazar.telemetry.PanelsTelemetry;
-import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 
@@ -16,7 +12,7 @@ import org.firstinspires.ftc.teamcode.subsystems.intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
 import org.firstinspires.ftc.teamcode.util.constants;
-import org.firstinspires.ftc.teamcode.util.poseStorage;
+import org.firstinspires.ftc.teamcode.util.storage;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -31,7 +27,7 @@ public class shootertesting extends OpMode {
     private intake intake;
     private Turret turret;
     private Follower follower;
-    public static double MANUAL_Turret = -90;
+    public static double MANUAL_Turret =0;
 
     public static int alliance = 1;
     private LLHandler llhandler;
@@ -66,11 +62,11 @@ public class shootertesting extends OpMode {
         shooter.updateBatteryVoltage();
 
         if (ON) {
-            shooter.updateHood();
+            shooter.calculateParams();
             if (alliance == 1) {
-                turret.update(new Pose(poseStorage.BLUE_X, poseStorage.BLUE_Y));
+                turret.update(new Pose(storage.BLUE_X, storage.BLUE_Y));
             } else {
-                turret.update(new Pose(poseStorage.RED_X, poseStorage.RED_Y));
+                turret.update(new Pose(storage.RED_X, storage.RED_Y));
             }
         } else {
             shooter.setHood(constants.shooter.Hood_pos);

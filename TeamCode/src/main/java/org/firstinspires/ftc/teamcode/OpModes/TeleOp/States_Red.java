@@ -18,8 +18,8 @@ import org.firstinspires.ftc.teamcode.util.constants;
 import org.firstinspires.ftc.teamcode.util.storage;
 
 @Config
-@TeleOp(name = "Blue Close TeleOp ", group = "1")
-public class States_Blue extends OpMode {
+@TeleOp(name = "Red Close TeleOp ", group = "1")
+public class States_Red extends OpMode {
     private Follower follower;
     private intake intake;
     private Turret turret;
@@ -27,7 +27,7 @@ public class States_Blue extends OpMode {
     private LLHandler llhandler;
 
     private ElapsedTime timer;
-    private int alliance = 1;
+    private int alliance = 0;
 
     Thread thread;
     Runnable r;

@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
-import org.firstinspires.ftc.teamcode.util.poseStorage;
+import org.firstinspires.ftc.teamcode.util.storage;
 
 @TeleOp(name = "GOOD Turret Testing", group = "testing")
 @Config
@@ -35,7 +35,7 @@ public class turretTestingNew extends OpMode {
         follower.setStartingPose(new Pose(72, 72, 0));
         follower.update();
         turret.init(hardwareMap, follower);
-        turret.zeroTurret();
+        turret.reset();
     }
 
     @Override
@@ -50,7 +50,7 @@ public class turretTestingNew extends OpMode {
     }
 
     public void loop() {
-        Pose goalPose = new Pose(poseStorage.BLUE_X, poseStorage.BLUE_Y);
+        Pose goalPose = new Pose(storage.BLUE_X, storage.BLUE_Y);
         follower.update();
         if (manual) {
             turret.update(MANUAL);
@@ -58,6 +58,10 @@ public class turretTestingNew extends OpMode {
             llhandler.poll();
             turret.update(goalPose);
         }
+
+        telemetry.addData("storedZero", storage.storedZero);
+        telemetry.addData("zero", turret.zero);
+        telemetry.update();
 
 
         TelemetryPacket packet = new TelemetryPacket();

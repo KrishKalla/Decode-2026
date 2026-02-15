@@ -6,14 +6,13 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.localization.PoseTracker;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.util.LLHandler;
+import org.firstinspires.ftc.teamcode.util.storage;
 
 @Config
 public class Turret {
@@ -35,18 +34,18 @@ public class Turret {
             (ENCODER_TICKS_PER_REV / 360.0) * ENCODER_TO_TURRET_RATIO;
     public static double TURRET_OFFSET = -2.7266;
     public static double ENCODER_DIRECTION = -1;
-    public static double SERVO_MAX = 0.89;
-    public static double SERVO_MIN = 0.11;
-    private int zero = -9086;
+    public static double SERVO_MAX = 0.80;
+    public static double SERVO_MIN = 0.20;
+    public int zero = 0;
 
     private double target;
     private double lastTarget;
     private boolean aimed;
 
-    public static double kP = .115;
-    public static double kI = 0.001;
+    public static double kP = 0.115;
+    public static double kI = 0;
     public static double kD = 0.002;
-    public static double kF = 0;
+    public static double kF = 0.00165;
     public static double TOLERANCE = 0.5;
 
     public static double SNAP = 180;
@@ -68,7 +67,7 @@ public class Turret {
         right = map.get(Servo.class, "turretRight");
         right.setDirection(Servo.Direction.REVERSE);
 
-        encoder = map.get(DcMotorEx.class, "intakeL"); //PORT 2 EXPANSKON HUB
+        encoder = map.get(DcMotorEx.class, "intakeL"); //PORT 2 EXPANSION HUB
 
         this.follower = follower;
 
@@ -77,9 +76,15 @@ public class Turret {
         timer = new ElapsedTime();
     }
 
-    public void zeroTurret() {
+    public void reset() {
         setTargetAngle(0);
+        encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        zero = 0;
         timer.reset();
+    }
+
+    public void zeroTurret() {
+        zero = storage.storedZero;
     }
 
     public void update(double a) {
@@ -98,7 +103,7 @@ public class Turret {
         double dt = timer.seconds();
         timer.reset();
         if (dt <= 0) {
-            dt = 0.02;
+                dt = 0.02;
         }
 
         double current = getCurrentAngle();
@@ -151,6 +156,8 @@ public class Turret {
 
         left.setPosition(nextServo);
         right.setPosition(nextServo);
+
+        storage.storedZero = zero-encoder.getCurrentPosition();
 
         aimed = Math.abs(errDeg) <= TOLERANCE;
     }

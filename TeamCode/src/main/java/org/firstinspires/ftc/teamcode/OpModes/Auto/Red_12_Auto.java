@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.subsystems.intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
 import org.firstinspires.ftc.teamcode.util.constants;
-import org.firstinspires.ftc.teamcode.util.poseStorage;
 
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
@@ -335,7 +334,7 @@ public class Red_12_Auto extends OpMode {
                     follower.followPath(Park);
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
                     shooter.flywheelPreset(constants.FLYWHEEL.OFF);
-                    turret.zeroTurret();
+                    turret.reset();
                     setPathState(-1); // Done
                 }
                 break;

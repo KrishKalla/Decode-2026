@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.OpModes.Auto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.Pose;
@@ -17,9 +15,8 @@ import org.firstinspires.ftc.teamcode.subsystems.intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
 import org.firstinspires.ftc.teamcode.util.constants;
-import org.firstinspires.ftc.teamcode.util.poseStorage;
+import org.firstinspires.ftc.teamcode.util.storage;
 
-import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -29,7 +26,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name = "Red 21 Auto")
 public class Red_21 extends OpMode {
 
-    public static double TURRET_ANGLE = -110;
+    public static double TURRET_ANGLE = -20;
     private ElapsedTime shootTimer = new ElapsedTime();
     private ElapsedTime runtime = new ElapsedTime();
     private double shootingtime = 0.7;
@@ -83,7 +80,7 @@ public class Red_21 extends OpMode {
     private shooter shooter;
     private Turret turret;
 
-    private Pose goalPose = new Pose(poseStorage.RED_X, poseStorage.RED_Y);
+    private Pose goalPose = new Pose(storage.RED_X, storage.RED_Y);
 
     @Override
     public void init() {
@@ -131,7 +128,7 @@ public class Red_21 extends OpMode {
             shooter.setHood(constants.shooter.Hood_pos);
         }
         else{
-            shooter.updateHood();
+            shooter.calculateParams();
         }
 
         shooter.update();
@@ -307,14 +304,15 @@ public class Red_21 extends OpMode {
                     shootTimer.reset();
                     shotWaitStarted=true;
                 }
-                if (shootTimer.seconds() >= 0.7){
+                if (shootTimer.seconds() >= 1.2){
                     intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
                 }
-                if (shootTimer.seconds()>= 1.5){
+                if (shootTimer.seconds()>= 2){
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
                     shotWaitStarted = false;
                     setPathState(1);
                 }
+                break;
             case 1:
                 // Go to first pickup
                 if (!follower.isBusy()) {
