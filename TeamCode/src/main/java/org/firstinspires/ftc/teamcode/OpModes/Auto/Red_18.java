@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.util.storage;
 @Autonomous(name = "Red 18 Auto")
 public class Red_18 extends OpMode {
 
-    public static double TURRET_ANGLE = -115;
+    public static double TURRET_ANGLE = -112;
     private ElapsedTime shootTimer = new ElapsedTime();
     private ElapsedTime runtime = new ElapsedTime();
     private double shootingtime = 0.7;
@@ -93,6 +93,7 @@ public class Red_18 extends OpMode {
         shooter.init(hardwareMap, llhandler);
         intake.init(hardwareMap);
         turret.init(hardwareMap,follower);
+        turret.reset();
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -297,9 +298,6 @@ public class Red_18 extends OpMode {
                     if (!shotWaitStarted) {
                         shootTimer.reset();
                         shotWaitStarted = true;
-                    }
-
-                    if (shootTimer.seconds() >= 0.3) {
                         intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
                     }
                     if (shootTimer.seconds() >= shootingtime+0.3){

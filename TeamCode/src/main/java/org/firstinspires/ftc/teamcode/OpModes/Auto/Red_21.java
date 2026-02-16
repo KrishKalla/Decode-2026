@@ -34,6 +34,7 @@ public class Red_21 extends OpMode {
 
     private boolean Auto_hood = true;
     private boolean shotWaitStarted = false;
+    private boolean moveshootfinished = false;
 
     private LLHandler llhandler;
     private static final int alliance = 0;
@@ -308,10 +309,11 @@ public class Red_21 extends OpMode {
                     shootTimer.reset();
                     shotWaitStarted=true;
                 }
-                if (shootTimer.seconds() >= 1.2){
+                if (shootTimer.seconds() >= 1.2 && !moveshootfinished){
                     intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
                 }
                 if (shootTimer.seconds()>= 2){
+                    moveshootfinished=true;
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
                     shotWaitStarted = false;
                     setPathState(1);
