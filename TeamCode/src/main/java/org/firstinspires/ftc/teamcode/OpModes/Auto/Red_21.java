@@ -26,7 +26,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name = "Red 21 Auto")
 public class Red_21 extends OpMode {
 
-    public static double TURRET_ANGLE = -115;
+    public static double TURRET_ANGLE = -25;
     private ElapsedTime shootTimer = new ElapsedTime();
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime loopTimer = new ElapsedTime();
@@ -98,6 +98,7 @@ public class Red_21 extends OpMode {
         shooter.init(hardwareMap, llhandler);
         intake.init(hardwareMap);
         turret.init(hardwareMap,follower);
+        turret.reset();
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -309,10 +310,10 @@ public class Red_21 extends OpMode {
                     shootTimer.reset();
                     shotWaitStarted=true;
                 }
-                if (shootTimer.seconds() >= 1.2 && !moveshootfinished){
+                if (shootTimer.seconds() >= 1.5 && !moveshootfinished){
                     intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
                 }
-                if (shootTimer.seconds()>= 2){
+                if (shootTimer.seconds()>= 2.2){
                     moveshootfinished=true;
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
                     shotWaitStarted = false;
@@ -549,7 +550,7 @@ public class Red_21 extends OpMode {
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
                     shooter.setStopper(false);
                     follower.followPath(Path16, true);
-                    TURRET_ANGLE=-82;
+                    TURRET_ANGLE=8;
                     constants.shooter.TARGET_RPM = 700;
                     constants.shooter.Hood_pos = 0.60;
                     setPathState(16);

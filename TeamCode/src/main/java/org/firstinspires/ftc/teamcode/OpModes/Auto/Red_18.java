@@ -5,12 +5,9 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
-import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.PathChain;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
+import com.pedropathing.geometry.BezierLine;
+
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Turret;
@@ -20,19 +17,27 @@ import org.firstinspires.ftc.teamcode.util.LLHandler;
 import org.firstinspires.ftc.teamcode.util.constants;
 import org.firstinspires.ftc.teamcode.util.storage;
 
+import com.pedropathing.paths.PathChain;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 @Config
-@Autonomous(name = "Red 18 Auto")
+@Autonomous(name = "Red 21 Auto")
 public class Red_18 extends OpMode {
 
-    public static double TURRET_ANGLE = -112;
+    public static double TURRET_ANGLE = -25;
     private ElapsedTime shootTimer = new ElapsedTime();
     private ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime loopTimer = new ElapsedTime();
     private double shootingtime = 0.7;
 
+    private boolean Auto_hood = true;
     private boolean shotWaitStarted = false;
+    private boolean moveshootfinished = false;
 
-    private LLHandler llhandler;  // lowercase
-
+    private LLHandler llhandler;
+    private static final int alliance = 0;
 
     // ---- Pathing ----
     private Follower follower;
@@ -86,7 +91,7 @@ public class Red_18 extends OpMode {
         shooter = new shooter();
         intake = new intake();
         turret = new Turret();
-        llhandler = new LLHandler(hardwareMap,0);
+        llhandler = new LLHandler(hardwareMap, alliance);
         follower = Constants.createFollower(hardwareMap);
         follower.setPose(startPose);
 
@@ -97,7 +102,7 @@ public class Red_18 extends OpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        llhandler.alliance(0);
+        llhandler.alliance(alliance);
         llhandler.start();
 
         constants.shooter.TARGET_RPM = 770;
@@ -113,9 +118,19 @@ public class Red_18 extends OpMode {
 
     @Override
     public void loop() {
+        loopTimer.reset();
+
+        llhandler.poll();
         follower.update();
         autonomousPathUpdate();
-        shooter.setHood(constants.shooter.Hood_pos);
+
+        if (!Auto_hood) {
+            shooter.setHood(constants.shooter.Hood_pos);
+        }
+        else{
+            shooter.calculateParams();
+        }
+
         shooter.update();
         turret.update(TURRET_ANGLE);
 
@@ -125,6 +140,7 @@ public class Red_18 extends OpMode {
         telemetry.addData("RPM",shooter.getRPM());
         telemetry.addData("Time", runtime.seconds());
         telemetry.addData("Turret Error", turret.getError());
+        telemetry.addData("Loop Time", loopTimer.milliseconds());
         telemetry.update();
     }
 
@@ -291,21 +307,20 @@ public class Red_18 extends OpMode {
                 shooter.setStopper(false);
                 setPathState(1);
                 break;
-
             case 1:
-                // Score preload and go to first pickup
+                // Go to first pickup
                 if (!follower.isBusy()) {
                     if (!shotWaitStarted) {
                         shootTimer.reset();
-                        shotWaitStarted = true;
+                        shotWaitStarted=true;
                         intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
                     }
-                    if (shootTimer.seconds() >= shootingtime+0.3){
-                        shooter.setStopper(true);
+                    if (shootTimer.seconds()>= shootingtime){
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
+                        shooter.setStopper(true);
 
+                        shotWaitStarted = false;
                         follower.followPath(Path2,true);
-                        shotWaitStarted = false;   // reset for next time
                         setPathState(2);
                     }
                 }
@@ -359,7 +374,7 @@ public class Red_18 extends OpMode {
                         shotWaitStarted = true;
                     }
 
-                    if (shootTimer.seconds() >= 1.5) {
+                    if (shootTimer.seconds() >= 1.0) {
                         intake.setIntake(constants.INTAKE_PRESETS.OFF);
                         shooter.setStopper(false);
 
@@ -439,7 +454,7 @@ public class Red_18 extends OpMode {
                         shotWaitStarted = true;
                     }
 
-                    if (shootTimer.seconds() >= 1.5) {
+                    if (shootTimer.seconds() >= 1.0) {
                         intake.setIntake(constants.INTAKE_PRESETS.OFF);
                         shooter.setStopper(false);
 
@@ -451,7 +466,7 @@ public class Red_18 extends OpMode {
                 break;
 
             case 11:
-                // Score and go to intake Far pickup
+                // Score and go to gate approach (THIRD TIME)
                 if (!follower.isBusy()) {
                     if (!shotWaitStarted) {
                         intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
@@ -476,7 +491,7 @@ public class Red_18 extends OpMode {
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
                     shooter.setStopper(false);
                     follower.followPath(Path16, true);
-                    TURRET_ANGLE=-80;
+                    TURRET_ANGLE=8;
                     constants.shooter.TARGET_RPM = 700;
                     constants.shooter.Hood_pos = 0.60;
                     setPathState(16);
