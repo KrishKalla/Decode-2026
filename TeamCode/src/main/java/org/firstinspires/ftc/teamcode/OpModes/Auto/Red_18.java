@@ -23,7 +23,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
-@Autonomous(name = "Red 21 Auto")
+@Autonomous(name = "Red 18 Auto")
 public class Red_18 extends OpMode {
 
     public static double TURRET_ANGLE = -25;
