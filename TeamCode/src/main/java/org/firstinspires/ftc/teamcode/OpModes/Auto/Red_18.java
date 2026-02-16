@@ -26,7 +26,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name = "Red 18 Auto")
 public class Red_18 extends OpMode {
 
-    public static double TURRET_ANGLE = -25;
+    public static double TURRET_ANGLE = -112;
     private ElapsedTime shootTimer = new ElapsedTime();
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime loopTimer = new ElapsedTime();
@@ -471,6 +471,7 @@ public class Red_18 extends OpMode {
                     if (!shotWaitStarted) {
                         intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
                         shootTimer.reset();
+
                         shotWaitStarted = true;
                     }
 
@@ -491,7 +492,7 @@ public class Red_18 extends OpMode {
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
                     shooter.setStopper(false);
                     follower.followPath(Path16, true);
-                    TURRET_ANGLE=8;
+                    TURRET_ANGLE=-82;
                     constants.shooter.TARGET_RPM = 700;
                     constants.shooter.Hood_pos = 0.60;
                     setPathState(16);
