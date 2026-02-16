@@ -164,21 +164,21 @@ public class States_Red extends OpMode {
         //very close = square
         if (gamepad2.square){
             AUTO = false;
-            constants.shooter.TARGET_RPM=650;
-            constants.shooter.Hood_pos=0.24;
+            constants.shooter.TARGET_RPM=660;
+            constants.shooter.Hood_pos=0.30;
 
         }
         //Medium Range = triangle
         if (gamepad2.triangle){
             AUTO = false;
-            constants.shooter.TARGET_RPM=800;
-            constants.shooter.Hood_pos=0.78;
+            constants.shooter.TARGET_RPM=770;
+            constants.shooter.Hood_pos=0.62;
         }
         //Far Range= circle
         if (gamepad2.circle){
             AUTO = false;
-            constants.shooter.TARGET_RPM=810;
-            constants.shooter.Hood_pos=0.845;
+            constants.shooter.TARGET_RPM=850;
+            constants.shooter.Hood_pos=0.74;
         }
 
         if (gamepad2.cross) {
@@ -186,7 +186,7 @@ public class States_Red extends OpMode {
         }
         //Far Zone Set points
         if (gamepad2.cross){
-            constants.shooter.TARGET_RPM=900;
+            constants.shooter.TARGET_RPM=1000;
             constants.shooter.Hood_pos=0.867;
         }
 
