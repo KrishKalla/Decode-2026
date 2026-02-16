@@ -27,7 +27,7 @@ public class Red_18 extends OpMode {
     public static double TURRET_ANGLE = -115;
     private ElapsedTime shootTimer = new ElapsedTime();
     private ElapsedTime runtime = new ElapsedTime();
-    private double shootingtime = 1;
+    private double shootingtime = 0.7;
 
     private boolean shotWaitStarted = false;
 
@@ -86,20 +86,18 @@ public class Red_18 extends OpMode {
         shooter = new shooter();
         intake = new intake();
         turret = new Turret();
+        llhandler = new LLHandler(hardwareMap,0);
         follower = Constants.createFollower(hardwareMap);
         follower.setPose(startPose);
-
-        llhandler = new LLHandler(hardwareMap,0);
-        llhandler.alliance(0);
-        llhandler.start();
 
         shooter.init(hardwareMap, llhandler);
         intake.init(hardwareMap);
         turret.init(hardwareMap,follower);
 
-        turret.reset();
-
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
+        llhandler.alliance(0);
+        llhandler.start();
 
         constants.shooter.TARGET_RPM = 770;
         constants.shooter.Hood_pos = 0.65;
@@ -114,20 +112,18 @@ public class Red_18 extends OpMode {
 
     @Override
     public void loop() {
+        follower.update();
+        autonomousPathUpdate();
+        shooter.setHood(constants.shooter.Hood_pos);
+        shooter.update();
+        turret.update(TURRET_ANGLE);
+
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());
         telemetry.addData("Heading", Math.toDegrees(follower.getPose().getHeading()));
         telemetry.addData("RPM",shooter.getRPM());
         telemetry.addData("Time", runtime.seconds());
         telemetry.addData("Turret Error", turret.getError());
-        telemetry.update();
-
-
-        follower.update();
-        autonomousPathUpdate();
-        shooter.setHood(constants.shooter.Hood_pos);
-        shooter.update();
-        turret.update(TURRET_ANGLE);
         telemetry.update();
     }
 

@@ -26,16 +26,17 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name = "Red 21 Auto")
 public class Red_21 extends OpMode {
 
-    public static double TURRET_ANGLE = -20;
+    public static double TURRET_ANGLE = -115;
     private ElapsedTime shootTimer = new ElapsedTime();
     private ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime loopTimer = new ElapsedTime();
     private double shootingtime = 0.7;
 
     private boolean Auto_hood = true;
     private boolean shotWaitStarted = false;
 
     private LLHandler llhandler;
-    public static int alliance = 0;
+    private static final int alliance = 0;
 
     // ---- Pathing ----
     private Follower follower;
@@ -112,13 +113,7 @@ public class Red_21 extends OpMode {
 
     @Override
     public void loop() {
-        telemetry.addData("X", follower.getPose().getX());
-        telemetry.addData("Y", follower.getPose().getY());
-        telemetry.addData("Heading", Math.toDegrees(follower.getPose().getHeading()));
-        telemetry.addData("RPM",shooter.getRPM());
-        telemetry.addData("Time", runtime.seconds());
-        telemetry.addData("Turret Error", turret.getError());
-        telemetry.update();
+        loopTimer.reset();
 
         llhandler.poll();
         follower.update();
@@ -133,6 +128,15 @@ public class Red_21 extends OpMode {
 
         shooter.update();
         turret.update(TURRET_ANGLE);
+
+        telemetry.addData("X", follower.getPose().getX());
+        telemetry.addData("Y", follower.getPose().getY());
+        telemetry.addData("Heading", Math.toDegrees(follower.getPose().getHeading()));
+        telemetry.addData("RPM",shooter.getRPM());
+        telemetry.addData("Time", runtime.seconds());
+        telemetry.addData("Turret Error", turret.getError());
+        telemetry.addData("Loop Time", loopTimer.milliseconds());
+        telemetry.update();
     }
 
 

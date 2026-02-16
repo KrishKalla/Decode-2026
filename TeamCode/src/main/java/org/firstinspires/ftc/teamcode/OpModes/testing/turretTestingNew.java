@@ -24,6 +24,7 @@ public class turretTestingNew extends OpMode {
     private int alliance = 1;
     private FtcDashboard dashboard;
     public static boolean manual = false;
+    public static boolean RESET = false;
     public static double MANUAL = 90;
 
     public void init() {
@@ -46,7 +47,7 @@ public class turretTestingNew extends OpMode {
 
     public void start() {
         llhandler.start();
-        turret.zeroTurret();
+//        turret.zeroTurret();
     }
 
     public void loop() {
@@ -54,7 +55,9 @@ public class turretTestingNew extends OpMode {
         follower.update();
         if (manual) {
             turret.update(MANUAL);
-        } else {
+        } else if (RESET) {
+            turret.TEST_RESET_ONLY();
+         }else {
             llhandler.poll();
             turret.update(goalPose);
         }

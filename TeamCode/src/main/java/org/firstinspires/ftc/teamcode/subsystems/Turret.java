@@ -87,6 +87,11 @@ public class Turret {
         zero = storage.storedZero;
     }
 
+    public void TEST_RESET_ONLY () {
+        left.setPosition(0.5);
+        right.setPosition(0.5);
+    }
+
     public void update(double a) {
         setTargetAngle(a);
         updatePID();
