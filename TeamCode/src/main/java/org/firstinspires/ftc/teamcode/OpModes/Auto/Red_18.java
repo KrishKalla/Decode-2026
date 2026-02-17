@@ -26,14 +26,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name = "Red 18 Auto")
 public class Red_18 extends OpMode {
 
-    public double TURRET_ANGLE = -112;
+    public double TURRET_ANGLE;
 
-    public static double GateX=129.5,GateY=60,GateHeading=40;
+    public static double GateX=129, GateY=62, GateHeading=30;
     private ElapsedTime shootTimer = new ElapsedTime();
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime loopTimer = new ElapsedTime();
     private double shootingtime = 0.7;
-    private double gateIntakeTime = 1.5;
+    private double gateIntakeTime = 2;
 
     private boolean shotWaitStarted = false;
 
@@ -47,17 +47,17 @@ public class Red_18 extends OpMode {
     private int pathState = 0;
 
     // Pose definitions
-    private final Pose startPose = new Pose(119.40, 125.26, Math.toRadians(0));
-    private final Pose scorePose = new Pose(89, 76, Math.toRadians(-20));
-    private final Pose pickup1Pose = new Pose(113, 60, Math.toRadians(0));
+    private final Pose startPose = new Pose(119.40, 126.79, Math.toRadians(0));
+    private final Pose scorePose = new Pose(89, 84, Math.toRadians(0));
+    private final Pose pickup1Pose = new Pose(115, 60, Math.toRadians(0));
     private final Pose midPickup1 = new Pose(87.440, 56.941);
 
     private final Pose gatePose = new Pose(GateX, GateY, Math.toRadians(GateHeading));
 
-    private final Pose centerPickupPose = new Pose(113, 84, Math.toRadians(0));
+    private final Pose centerPickupPose = new Pose(115, 82, Math.toRadians(0));
     private final Pose midFarPickup = new Pose(86.271, 31.767);
-    private final Pose farPickupPose = new Pose(113, 36, Math.toRadians(0));
-    private final Pose parkPose = new Pose(83.128, 105.965, Math.toRadians(-70));
+    private final Pose farPickupPose = new Pose(115, 36, Math.toRadians(0));
+    private final Pose parkPose = new Pose(83.128, 100, Math.toRadians(-70));
 
     // ---- PATH OBJECTS ----
     private PathChain Path1;
@@ -70,6 +70,7 @@ public class Red_18 extends OpMode {
     private PathChain Path8;
     private PathChain Path9;
     private PathChain Path10;
+    private PathChain Path11;
 
     private intake intake;
     private shooter shooter;
@@ -98,10 +99,9 @@ public class Red_18 extends OpMode {
         llhandler.alliance(alliance);
         llhandler.start();
 
-        constants.shooter.TARGET_RPM = 770;
-        constants.shooter.Hood_pos = 0.65;
-        TURRET_ANGLE = -112;
-
+        constants.shooter.TARGET_RPM = 760;
+        constants.shooter.Hood_pos = 0.71;
+        TURRET_ANGLE = -135;
         buildPaths();
     }
 
@@ -226,7 +226,8 @@ public class Red_18 extends OpMode {
                                 farPickupPose
                         )
                 ).setLinearHeadingInterpolation(scorePose.getHeading(), farPickupPose.getHeading())
-                .addPath(
+                .build();
+        Path11 = follower.pathBuilder().addPath(
                         new BezierLine(
                                 farPickupPose,
                                 parkPose
@@ -239,7 +240,7 @@ public class Red_18 extends OpMode {
         switch (pathState) {
             case 0:
                 // Init - Start to first score position
-                follower.followPath(Path1);
+                follower.followPath(Path1,false);
                 intake.setIntake(constants.INTAKE_PRESETS.OFF);
                 shooter.flywheelPreset(constants.FLYWHEEL.ON);
                 shooter.setStopper(false);
@@ -258,7 +259,7 @@ public class Red_18 extends OpMode {
                         shooter.setStopper(true);
 
                         shotWaitStarted = false;
-                        follower.followPath(Path2);
+                        follower.followPath(Path2,false);
                         setPathState(2);
                     }
                 }
@@ -336,6 +337,9 @@ public class Red_18 extends OpMode {
                     follower.followPath(Path7,false);
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
                     shooter.setStopper(false);
+                    GateX=129;
+                    GateY=61;
+                    GateHeading=30;
                     setPathState(7);
                 }
                 break;
@@ -389,7 +393,7 @@ public class Red_18 extends OpMode {
                     if (shootTimer.seconds() >= shootingtime) {
                         shooter.setStopper(true);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
-                        TURRET_ANGLE=-82;
+                        TURRET_ANGLE=-78;
                         constants.shooter.TARGET_RPM = 700;
                         constants.shooter.Hood_pos = 0.60;
                         follower.followPath(Path10,false);
@@ -400,6 +404,15 @@ public class Red_18 extends OpMode {
                 break;
 
             case 10:
+                if (!follower.isBusy()){
+                    intake.setIntake(constants.INTAKE_PRESETS.OFF);
+                    shooter.setStopper(false);
+                    follower.followPath(Path11, true);
+                    setPathState(11);
+                }
+                break;
+
+            case 11:
                 // At park - final shot
                 if(!follower.isBusy()){
                     if (!shotWaitStarted) {
@@ -410,11 +423,11 @@ public class Red_18 extends OpMode {
 
                     if (shootTimer.seconds() >= shootingtime) {
                         shotWaitStarted = false;
-                        setPathState(11);
+                        setPathState(12);
                     }
                 }
                 break;
-            case 11:
+            case 12:
                 // Done - turn off subsystems
                 intake.setIntake(constants.INTAKE_PRESETS.OFF);
                 shooter.flywheelPreset(constants.FLYWHEEL.OFF);

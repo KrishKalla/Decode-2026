@@ -34,8 +34,8 @@ public class Turret {
             (ENCODER_TICKS_PER_REV / 360.0) * ENCODER_TO_TURRET_RATIO;
     public static double TURRET_OFFSET = -2.7266;
     public static double ENCODER_DIRECTION = -1;
-    public static double SERVO_MAX = 0.80;
-    public static double SERVO_MIN = 0.20;
+    public static double SERVO_MAX = 0.85;
+    public static double SERVO_MIN = 0.15;
     public int zero = 0;
 
     private double target;
