@@ -14,8 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @Config
 public class intaketesting extends OpMode {
     private intake intake;
-    public static boolean down = false;
-    public static boolean on = false;
+    public static int mode=0;
 
     public void init() {
         intake = new intake();
@@ -29,20 +28,19 @@ public class intaketesting extends OpMode {
     }
 
     public void loop() {
-        if(down) {
-            intake.setExtension(constants.INTAKE_EXTENSION.EXTENDED);
-        }
-        if(!down) {
-            intake.setExtension(constants.INTAKE_EXTENSION.RETRACTED);
-        }
-        if (on) {
+        if (mode==1) {
             intake.setIntake(constants.INTAKE_PRESETS.ON);
         }
-        if (!on) {
+        else if (mode==2) {
             intake.setIntake(constants.INTAKE_PRESETS.OFF);
+        }
+        else if (mode==3){
+            intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
+        }
+        else if (mode==4){
+            intake.setIntake(constants.INTAKE_PRESETS.GATE);
         }
         telemetry.addLine(intake.toString());
         telemetry.update();
     }
 }
-//676767 - Han

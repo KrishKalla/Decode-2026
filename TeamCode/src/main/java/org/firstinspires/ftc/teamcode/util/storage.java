@@ -6,8 +6,8 @@ import com.pedropathing.geometry.Pose;
 @Config
 public class storage {
     public static int alliance = 0;
-    public static Pose lastBlueAutoPose = new Pose(23.6, 127.213, Math.toRadians(145));
-    public static Pose lastRedAutoPose = new Pose(120.179, 127.973,Math.toRadians(36));
+    public static Pose lastBlueAutoPose = new Pose(24.60, 125.26, Math.toRadians(-180));
+    public static Pose lastRedAutoPose = new Pose(119.40, 125.26,Math.toRadians(0));
 
     public static double BLUE_X = 10;
     public static double BLUE_Y = 140;
