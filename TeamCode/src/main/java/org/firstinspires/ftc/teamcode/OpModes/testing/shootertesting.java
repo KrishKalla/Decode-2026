@@ -21,7 +21,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @Config
 public class shootertesting extends OpMode {
     public static boolean ON = false;
-    public static boolean STOPPER = false;
+    public static boolean Intake = false;
     private boolean automatedDrive;
     private shooter shooter;
     private intake intake;
@@ -73,8 +73,11 @@ public class shootertesting extends OpMode {
             turret.setManualAngle(MANUAL_Turret);
         }
 
-        if (gamepad1.right_trigger > 0.3) {
+        if (gamepad1.right_trigger > 0.3 || Intake) {
             intake.setIntake(constants.INTAKE_PRESETS.ON);
+        }
+        if (!Intake){/// ///
+            intake.setIntake(constants.INTAKE_PRESETS.OFF);
         }
 
         if (gamepad1.left_trigger > 0.3) {

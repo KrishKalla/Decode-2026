@@ -134,7 +134,7 @@ public class States_Blue extends OpMode {
         } else if (gamepad1.right_bumper) {
             intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
         }
-        else if(gamepad1.cross){
+        else if(gamepad1.right_stick_button){
             intake.setIntake(constants.INTAKE_PRESETS.GATE);
         }
         else {

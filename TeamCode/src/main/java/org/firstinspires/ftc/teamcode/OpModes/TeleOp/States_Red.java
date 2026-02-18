@@ -133,7 +133,11 @@ public class States_Red extends OpMode {
             intake.setIntake(constants.INTAKE_PRESETS.REJECT);
         } else if (gamepad1.right_bumper) {
             intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
-        } else {
+        }
+        else if(gamepad1.right_stick_button){
+                intake.setIntake(constants.INTAKE_PRESETS.GATE);
+        }
+        else {
             intake.setIntake(constants.INTAKE_PRESETS.OFF);
         }
 
@@ -198,13 +202,13 @@ public class States_Red extends OpMode {
 
         //Fix Turret Pose Right
         if (gamepad2.dpad_right){
-            AUTO_AIM=true;
+            AUTO_AIM=false;
             turret.setManualAngle(90);
         }
 
         //Fix Turret Pose Middle
         if (gamepad2.dpad_down){
-            AUTO_AIM=true;
+            AUTO_AIM=false;
             turret.setManualAngle(0);
             //turret.zeroTurret();
         }
@@ -223,5 +227,10 @@ public class States_Red extends OpMode {
         telemetry.addData("RPM", shooter.getRPM());
         telemetry.addData("Hood Angle", shooter.getHoodAngle());
         telemetry.update();
+    }
+
+    @Override
+    public void stop(){
+        thread.interrupt();
     }
 }
