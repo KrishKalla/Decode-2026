@@ -48,13 +48,15 @@ public class Red_18 extends OpMode {
 
     // Pose definitions
     private final Pose startPose = new Pose(119.40, 126.79, Math.toRadians(0));
-    private final Pose scorePose = new Pose(89, 84, Math.toRadians(0));
+    private final Pose scorePose = new Pose(89, 78, Math.toRadians(0));
     private final Pose pickup1Pose = new Pose(115, 60, Math.toRadians(0));
-    private final Pose midPickup1 = new Pose(87.440, 56.941);
+    private final Pose midPickup1 = new Pose(90, 59);
 
     private final Pose gatePose = new Pose(GateX, GateY, Math.toRadians(GateHeading));
 
+    private final Pose midcenterPickupPose = new Pose(93.4,85.2);
     private final Pose centerPickupPose = new Pose(115, 82, Math.toRadians(0));
+
     private final Pose midFarPickup = new Pose(86.271, 31.767);
     private final Pose farPickupPose = new Pose(115, 36, Math.toRadians(0));
     private final Pose parkPose = new Pose(83.128, 100, Math.toRadians(-70));
@@ -92,16 +94,16 @@ public class Red_18 extends OpMode {
         shooter.init(hardwareMap, llhandler);
         intake.init(hardwareMap);
         turret.init(hardwareMap,follower);
-        turret.reset();
+        //turret.reset();
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         llhandler.alliance(alliance);
         llhandler.start();
 
-        constants.shooter.TARGET_RPM = 760;
-        constants.shooter.Hood_pos = 0.71;
-        TURRET_ANGLE = -135;
+        constants.shooter.TARGET_RPM = 770;
+        constants.shooter.Hood_pos = 0.69;
+        TURRET_ANGLE = -128;
         buildPaths();
     }
 
@@ -121,7 +123,7 @@ public class Red_18 extends OpMode {
 
         shooter.setHood(constants.shooter.Hood_pos);
         shooter.update();
-        turret.update(TURRET_ANGLE);
+        turret.setManualAngle(TURRET_ANGLE);
 
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());
@@ -184,8 +186,9 @@ public class Red_18 extends OpMode {
 
         // Path6: Score to center pickup
         Path6 = follower.pathBuilder().addPath(
-                        new BezierLine(
+                        new BezierCurve(
                                 scorePose,
+                                midcenterPickupPose,
                                 centerPickupPose
                         )
                 ).setLinearHeadingInterpolation(scorePose.getHeading(), centerPickupPose.getHeading())
@@ -250,11 +253,13 @@ public class Red_18 extends OpMode {
                 // Go to first pickup
                 if (!follower.isBusy()) {
                     if (!shotWaitStarted) {
+                        follower.setMaxPower(0.2);
                         shootTimer.reset();
                         shotWaitStarted=true;
                         intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
                     }
                     if (shootTimer.seconds()>= shootingtime){
+                        follower.setMaxPower(1);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
                         shooter.setStopper(true);
 
@@ -279,12 +284,14 @@ public class Red_18 extends OpMode {
                 // Score and go directly to gate (FIRST TIME)
                 if (!follower.isBusy()) {
                     if (!shotWaitStarted) {
+                        follower.setMaxPower(0.2);
                         intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
                         shootTimer.reset();
                         shotWaitStarted = true;
                     }
 
                     if (shootTimer.seconds() >= shootingtime) {
+                        follower.setMaxPower(1);
                         follower.followPath(Path4,false);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
                         shooter.setStopper(true);
@@ -298,6 +305,7 @@ public class Red_18 extends OpMode {
                 // At gate - intake for 1.5 seconds (FIRST TIME)
                 if (!follower.isBusy()) {
                     if (!shotWaitStarted) {
+                        follower.setMaxPower(0.2);
                         shootTimer.reset();
                         shotWaitStarted = true;
                     }
@@ -306,6 +314,7 @@ public class Red_18 extends OpMode {
                         intake.setIntake(constants.INTAKE_PRESETS.OFF);
                         shooter.setStopper(false);
                         follower.followPath(Path5,false);
+                        follower.setMaxPower(1);
                         shotWaitStarted = false;
                         setPathState(5);
                     }
@@ -316,12 +325,14 @@ public class Red_18 extends OpMode {
                 // Score and go to CENTER PICKUP
                 if (!follower.isBusy()) {
                     if (!shotWaitStarted) {
+                        follower.setMaxPower(0.2);
                         intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
                         shootTimer.reset();
                         shotWaitStarted = true;
                     }
 
                     if (shootTimer.seconds() >= shootingtime) {
+                        follower.setMaxPower(1);
                         follower.followPath(Path6,false);
                         shooter.setStopper(true);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
@@ -348,12 +359,14 @@ public class Red_18 extends OpMode {
                 // Score and go directly to gate (SECOND TIME)
                 if (!follower.isBusy()) {
                     if (!shotWaitStarted) {
+                        follower.setMaxPower(0.2);
                         intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
                         shootTimer.reset();
                         shotWaitStarted = true;
                     }
 
                     if (shootTimer.seconds() >= shootingtime) {
+                        follower.setMaxPower(1);
                         shooter.setStopper(true);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
                         follower.followPath(Path8,false);
@@ -367,6 +380,7 @@ public class Red_18 extends OpMode {
                 // At gate - intake for 1.5 seconds (SECOND TIME)
                 if (!follower.isBusy()) {
                     if (!shotWaitStarted) {
+                        follower.setMaxPower(0.2);
                         shootTimer.reset();
                         shotWaitStarted = true;
                     }
@@ -374,6 +388,7 @@ public class Red_18 extends OpMode {
                     if (shootTimer.seconds() >= gateIntakeTime) {
                         intake.setIntake(constants.INTAKE_PRESETS.OFF);
                         shooter.setStopper(false);
+                        follower.setMaxPower(1);
                         follower.followPath(Path9,false);
                         shotWaitStarted = false;
                         setPathState(9);
@@ -385,12 +400,14 @@ public class Red_18 extends OpMode {
                 // Score and go to far pickup, then park
                 if (!follower.isBusy()) {
                     if (!shotWaitStarted) {
+                        follower.setMaxPower(0.2);
                         intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
                         shootTimer.reset();
                         shotWaitStarted = true;
                     }
 
                     if (shootTimer.seconds() >= shootingtime) {
+                        follower.setMaxPower(1);
                         shooter.setStopper(true);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
                         TURRET_ANGLE=-78;
@@ -416,12 +433,14 @@ public class Red_18 extends OpMode {
                 // At park - final shot
                 if(!follower.isBusy()){
                     if (!shotWaitStarted) {
+                        follower.setMaxPower(0.2);
                         intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
                         shootTimer.reset();
                         shotWaitStarted = true;
                     }
 
                     if (shootTimer.seconds() >= shootingtime) {
+                        follower.setMaxPower(1);
                         shotWaitStarted = false;
                         setPathState(12);
                     }
