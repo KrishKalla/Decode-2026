@@ -20,13 +20,13 @@ public class srstesting extends OpMode {
 
     @Override
     public void start() {
-        telemetry.addData("Encoder Absolute Pos", srs.readEncoder(1).position);
-        telemetry.addData("disconnected:", srs.disconnected());
-        telemetry.update();
     }
 
     @Override
     public void loop() {
-
+        srs.update();
+        telemetry.addData("Encoder Absolute Pos", srs.readEncoder(1).position);
+        telemetry.addData("disconnected:", srs.disconnected());
+        telemetry.update();
     }
 }

@@ -41,7 +41,7 @@ public class turretTestingNew extends OpMode {
 
     @Override
     public void init_loop() {
-        telemetry.addData("encoder pos",turret.getEncoderPos());
+        telemetry.addData("encoder pos",turret.getDelta());
         telemetry.update();
     }
 
@@ -62,8 +62,9 @@ public class turretTestingNew extends OpMode {
             turret.update(goalPose);
         }
 
-        telemetry.addData("storedZero", storage.storedZero);
-        telemetry.addData("zero", turret.zero);
+        telemetry.addData("turret enc", turret.getDelta() );
+        telemetry.addData("counter", storage.counter);
+        telemetry.addData("zero", turret.ZERO);
         telemetry.update();
 
 

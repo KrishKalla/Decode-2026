@@ -29,16 +29,17 @@ public class Turret {
     //Constants
     public static double SERVO_TO_TURRET_RATIO = 1.3333333;
     private static final double ENCODER_TO_TURRET_RATIO = 108/21.0;
-    private static final double ENCODER_TICKS_PER_REV = 8192.0;
+    private static final int ENCODER_TICKS_PER_REV = 1024;
     private static final double MIN_ANGLE = -135;
     private static final double MAX_ANGLE = 135.0;
     private static final double TICKS_PER_TURRET_DEGREE =
             (ENCODER_TICKS_PER_REV / 360.0) * ENCODER_TO_TURRET_RATIO;
     public static double TURRET_OFFSET = -2.7266;
-    public static double ENCODER_DIRECTION = -1;
+    public static int ENCODER_DIRECTION = -1;
+    public static int DIRECTION = 1;
     public static double SERVO_MAX = 0.80;
     public static double SERVO_MIN = 0.20;
-    public static int zero = 0;
+    public static int ZERO = 423;
 
     private double target;
     private double lastTarget;
@@ -56,6 +57,7 @@ public class Turret {
     public static double iClamp = 40.0;
     private double iTerm = 0.0;
     private double lastErr = 0.0;
+    private int last_pos;
 
     private ElapsedTime timer;
 
@@ -78,6 +80,8 @@ public class Turret {
         dashboard = FtcDashboard.getInstance();
 
         timer = new ElapsedTime();
+
+        last_pos = hub.readEncoder(1).position;
     }
 
     public void reset() {
@@ -253,11 +257,21 @@ public class Turret {
     }
 
     public int getDelta() {
-        return hub.readEncoder(1).position-zero;
+        hub.update();
+        return getEncoderPos() + storage.counter*1024 - ZERO;
     }
 
     public int getEncoderPos() {
-        return hub.readEncoder(1).position;
+        int pos = hub.readEncoder(1).position;
+        int d = pos - last_pos;
+        int half = ENCODER_TICKS_PER_REV / 2;
+        if (d < -half) {
+            storage.counter += DIRECTION;
+        } else if (d > half) {
+            storage.counter -= DIRECTION;
+        }
+        last_pos = pos;
+        return pos;
     }
 
     public double getError() {

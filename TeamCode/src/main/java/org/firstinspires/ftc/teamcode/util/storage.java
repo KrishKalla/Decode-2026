@@ -15,5 +15,5 @@ public class storage {
     public static double RED_X = 140;
     public static double RED_Y = 140;
 
-    public static int storedZero;
+    public static int counter = 0;
 }
