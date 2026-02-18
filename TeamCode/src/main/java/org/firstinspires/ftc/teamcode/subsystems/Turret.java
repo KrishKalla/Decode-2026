@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.hardware.SRSHub;
 import org.firstinspires.ftc.teamcode.util.storage;
 
 @Config
@@ -21,8 +22,9 @@ public class Turret {
     //Hardware
     private Servo left;
     private Servo right;
-    private DcMotor encoder;
     private Follower follower;
+    private SRSHub hub;
+    private SRSHub.Config config = new SRSHub.Config();
 
     //Constants
     public static double SERVO_TO_TURRET_RATIO = 1.3333333;
@@ -34,9 +36,9 @@ public class Turret {
             (ENCODER_TICKS_PER_REV / 360.0) * ENCODER_TO_TURRET_RATIO;
     public static double TURRET_OFFSET = -2.7266;
     public static double ENCODER_DIRECTION = -1;
-    public static double SERVO_MAX = 0.85;
-    public static double SERVO_MIN = 0.15;
-    public int zero = 0;
+    public static double SERVO_MAX = 0.80;
+    public static double SERVO_MIN = 0.20;
+    public static int zero = 0;
 
     private double target;
     private double lastTarget;
@@ -67,7 +69,9 @@ public class Turret {
         right = map.get(Servo.class, "turretRight");
         right.setDirection(Servo.Direction.REVERSE);
 
-        encoder = map.get(DcMotorEx.class, "intakeL"); //PORT 2 EXPANSION HUB
+        config.setEncoder(1, SRSHub.Encoder.PWM);
+        hub = map.get(SRSHub.class, "srs");
+        hub.init(config);
 
         this.follower = follower;
 
@@ -78,13 +82,11 @@ public class Turret {
 
     public void reset() {
         setTargetAngle(0);
-        encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        zero = 0;
         timer.reset();
     }
 
     public void zeroTurret() {
-        zero = storage.storedZero;
+        setTargetAngle(0);
     }
 
     public void TEST_RESET_ONLY () {
@@ -161,8 +163,6 @@ public class Turret {
 
         left.setPosition(nextServo);
         right.setPosition(nextServo);
-
-        storage.storedZero = zero-encoder.getCurrentPosition();
 
         aimed = Math.abs(errDeg) <= TOLERANCE;
     }
@@ -253,11 +253,11 @@ public class Turret {
     }
 
     public int getDelta() {
-        return encoder.getCurrentPosition() - zero;
+        return hub.readEncoder(1).position-zero;
     }
 
     public int getEncoderPos() {
-        return encoder.getCurrentPosition();
+        return hub.readEncoder(1).position;
     }
 
     public double getError() {
