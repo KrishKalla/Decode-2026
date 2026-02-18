@@ -126,6 +126,11 @@ public class shooter {
         }
     }
 
+    public void far(){
+        constants.shooter.TARGET_RPM=940;
+        constants.shooter.Hood_pos=0.6767;
+    }
+
     public void update() {
         updateBatteryVoltage();
 

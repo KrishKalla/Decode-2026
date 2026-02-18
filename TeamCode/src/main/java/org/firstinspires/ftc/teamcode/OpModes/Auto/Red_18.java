@@ -54,12 +54,12 @@ public class Red_18 extends OpMode {
 
     private final Pose gatePose = new Pose(GateX, GateY, Math.toRadians(GateHeading));
 
-    private final Pose midcenterPickupPose = new Pose(93.4,85.2);
+    private final Pose midcenterPickupPose = new Pose(91.4,89.2);
     private final Pose centerPickupPose = new Pose(115, 82, Math.toRadians(0));
 
     private final Pose midFarPickup = new Pose(86.271, 31.767);
     private final Pose farPickupPose = new Pose(115, 36, Math.toRadians(0));
-    private final Pose parkPose = new Pose(83.128, 100, Math.toRadians(-70));
+    private final Pose parkPose = new Pose(83.128, 103, Math.toRadians(-70));
 
     // ---- PATH OBJECTS ----
     private PathChain Path1;
@@ -94,7 +94,7 @@ public class Red_18 extends OpMode {
         shooter.init(hardwareMap, llhandler);
         intake.init(hardwareMap);
         turret.init(hardwareMap,follower);
-        //turret.reset();
+        turret.zeroTurret();
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -103,7 +103,7 @@ public class Red_18 extends OpMode {
 
         constants.shooter.TARGET_RPM = 770;
         constants.shooter.Hood_pos = 0.69;
-        TURRET_ANGLE = -128;
+        TURRET_ANGLE = -134;
         buildPaths();
     }
 
@@ -121,9 +121,9 @@ public class Red_18 extends OpMode {
         autonomousPathUpdate();
 
 
-        shooter.setHood(constants.shooter.Hood_pos);
+        shooter.calculateParams();
         shooter.update();
-        turret.setManualAngle(TURRET_ANGLE);
+        turret.update(TURRET_ANGLE);
 
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());
@@ -131,6 +131,7 @@ public class Red_18 extends OpMode {
         telemetry.addData("RPM",shooter.getRPM());
         telemetry.addData("Time", runtime.seconds());
         telemetry.addData("Turret Error", turret.getError());
+        telemetry.addData("Turret Angle",TURRET_ANGLE);
         telemetry.addData("Loop Time", loopTimer.seconds());
         telemetry.update();
     }
@@ -348,9 +349,9 @@ public class Red_18 extends OpMode {
                     follower.followPath(Path7,false);
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
                     shooter.setStopper(false);
-                    GateX=129;
-                    GateY=61;
-                    GateHeading=30;
+                    //GateX=129;
+                    //GateY=61;
+                    //GateHeading=30;
                     setPathState(7);
                 }
                 break;
@@ -411,8 +412,6 @@ public class Red_18 extends OpMode {
                         shooter.setStopper(true);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
                         TURRET_ANGLE=-78;
-                        constants.shooter.TARGET_RPM = 700;
-                        constants.shooter.Hood_pos = 0.60;
                         follower.followPath(Path10,false);
                         shotWaitStarted = false;
                         setPathState(10);

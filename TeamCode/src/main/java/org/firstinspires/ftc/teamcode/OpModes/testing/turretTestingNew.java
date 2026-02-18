@@ -47,7 +47,7 @@ public class turretTestingNew extends OpMode {
 
     public void start() {
         llhandler.start();
-//        turret.zeroTurret();
+        turret.zeroTurret();
     }
 
     public void loop() {

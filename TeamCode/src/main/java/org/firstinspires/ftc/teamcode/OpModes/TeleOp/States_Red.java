@@ -37,6 +37,8 @@ public class States_Red extends OpMode {
     public static boolean AUTO = true;
     public static boolean AUTO_AIM = true;
 
+    private int Mode=0;//Short
+
 
     @Override
     public void init() {
@@ -71,17 +73,19 @@ public class States_Red extends OpMode {
                     shooter.update();
                     shooter.updateBatteryVoltage();
 
-                    if (shooter.auto) {
+                    if (AUTO && Mode==0) {
                         shooter.calculateParams();
-                    } else {
+                    } else if (AUTO && Mode==1) {
+                        shooter.far();
+                    }
+                    else{
                         shooter.setHood(constants.shooter.Hood_pos);
                     }
-                    if (alliance == 1 && AUTO_AIM == true) {
+
+                    if (alliance == 1 && AUTO_AIM) {
                         turret.update(new Pose(storage.BLUE_X, storage.BLUE_Y));
-                    } else if (alliance == 0  && AUTO_AIM == true){
+                    } else if (alliance == 0  && AUTO_AIM){
                         turret.update(new Pose(storage.RED_X, storage.RED_Y));
-                    } else {
-                        turret.setManualAngle(MANUAL_TURRET);
                     }
                 }
             }
@@ -156,12 +160,10 @@ public class States_Red extends OpMode {
 
         //Manual Controls for Hood
         if (gamepad2.right_bumper) {
-            AUTO = false;
-            shooter.manual(1);
+            Mode=0;
         }
         if (gamepad2.left_bumper) {
-            AUTO = false;
-            shooter.manual(-1);
+            Mode=1;
         }
 
         //Close Zone Set points
@@ -188,33 +190,27 @@ public class States_Red extends OpMode {
         if (gamepad2.cross) {
             AUTO = true;
         }
-        //Far Zone Set points
-        if (gamepad2.cross){
-            constants.shooter.TARGET_RPM=1000;
-            constants.shooter.Hood_pos=0.867;
-        }
 
         //Fix Turret Pose Left
         if (gamepad2.dpad_left){
             AUTO_AIM=false;
-            turret.setManualAngle(-90);
+            turret.setManualAngle(-135);
         }
 
         //Fix Turret Pose Right
         if (gamepad2.dpad_right){
             AUTO_AIM=false;
-            turret.setManualAngle(90);
+            turret.setManualAngle(45);
         }
 
         //Fix Turret Pose Middle
-        if (gamepad2.dpad_down){
+        if (gamepad2.dpad_up){
             AUTO_AIM=false;
             turret.setManualAngle(0);
-            //turret.zeroTurret();
         }
 
         //TURN BACK INTO AUTO TURRET
-        if (gamepad2.dpad_up){
+        if (gamepad2.dpad_down){
             AUTO_AIM=true;
         }
         updateTelemetry();
@@ -226,6 +222,8 @@ public class States_Red extends OpMode {
         //ADD REGRESSION VALUE (IF WE HAVE ONE)
         telemetry.addData("RPM", shooter.getRPM());
         telemetry.addData("Hood Angle", shooter.getHoodAngle());
+        telemetry.addData("Auto_Aim",AUTO_AIM);
+        telemetry.addData("Auto_Shooter", AUTO);
         telemetry.update();
     }
 

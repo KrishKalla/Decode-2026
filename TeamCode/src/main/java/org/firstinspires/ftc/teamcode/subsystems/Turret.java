@@ -35,10 +35,10 @@ public class Turret {
     private static final double TICKS_PER_TURRET_DEGREE =
             (ENCODER_TICKS_PER_REV / 360.0) * ENCODER_TO_TURRET_RATIO;
     public static double TURRET_OFFSET = -2.7266;
-    public static int ENCODER_DIRECTION = -1;
+    public static int ENCODER_DIRECTION = 1;
     public static int DIRECTION = 1;
-    public static double SERVO_MAX = 0.80;
-    public static double SERVO_MIN = 0.20;
+    public static double SERVO_MAX = 0.85;
+    public static double SERVO_MIN = 0.15;
     public static int ZERO = 423;
 
     private double target;
@@ -91,6 +91,7 @@ public class Turret {
 
     public void zeroTurret() {
         setTargetAngle(0);
+        storage.counter=0;
     }
 
     public void TEST_RESET_ONLY () {

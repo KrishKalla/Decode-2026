@@ -63,23 +63,15 @@ public class shootertesting extends OpMode {
 
         if (ON) {
             shooter.calculateParams();
-            if (alliance == 1) {
-                turret.update(new Pose(storage.BLUE_X, storage.BLUE_Y));
-            } else {
-                turret.update(new Pose(storage.RED_X, storage.RED_Y));
-            }
+            turret.setManualAngle(MANUAL_Turret);
         } else {
             shooter.setHood(constants.shooter.Hood_pos);
             turret.setManualAngle(MANUAL_Turret);
         }
 
-        if (gamepad1.right_trigger > 0.3 || Intake) {
+        if (gamepad1.right_trigger > 0.3) {
             intake.setIntake(constants.INTAKE_PRESETS.ON);
         }
-        if (!Intake){/// ///
-            intake.setIntake(constants.INTAKE_PRESETS.OFF);
-        }
-
         if (gamepad1.left_trigger > 0.3) {
             intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
         }
