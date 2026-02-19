@@ -105,8 +105,6 @@ public class States_Red extends OpMode {
         llhandler.start();
         intake.setIntake(constants.INTAKE_PRESETS.OFF);
 
-        turret.zeroTurret();
-
         shooter.flywheelPreset(constants.FLYWHEEL.ON);
         shooter.hoodPreset(constants.HOOD.AUTO);
         AUTO = true;
@@ -224,6 +222,8 @@ public class States_Red extends OpMode {
         telemetry.addData("Hood Angle", shooter.getHoodAngle());
         telemetry.addData("Auto_Aim",AUTO_AIM);
         telemetry.addData("Auto_Shooter", AUTO);
+        telemetry.addData("Counter", storage.counter);
+
         telemetry.update();
     }
 

@@ -120,8 +120,6 @@ public class Red_18 extends OpMode {
         follower.update();
         autonomousPathUpdate();
 
-
-        shooter.calculateParams();
         shooter.update();
         turret.update(TURRET_ANGLE);
 
@@ -146,6 +144,7 @@ public class Red_18 extends OpMode {
                                 scorePose
                         )
                 ).setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading())
+                .setBrakingStrength(0.5)
                 .build();
 
         // Path2: Score to first pickup
@@ -156,6 +155,7 @@ public class Red_18 extends OpMode {
                                 pickup1Pose
                         )
                 ).setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Pose.getHeading())
+                .setBrakingStrength(1)
                 .build();
 
         // Path3: First pickup back to score
@@ -165,6 +165,7 @@ public class Red_18 extends OpMode {
                                 scorePose
                         )
                 ).setLinearHeadingInterpolation(pickup1Pose.getHeading(), scorePose.getHeading())
+                .setBrakingStrength(0.5)
                 .build();
 
         // Path4: Score directly to gate (FIRST TIME)
@@ -174,6 +175,7 @@ public class Red_18 extends OpMode {
                                 gatePose
                         )
                 ).setLinearHeadingInterpolation(scorePose.getHeading(), gatePose.getHeading())
+                .setBrakingStrength(1)
                 .build();
 
         // Path5: Gate back to score (FIRST TIME)
@@ -183,6 +185,7 @@ public class Red_18 extends OpMode {
                                 scorePose
                         )
                 ).setLinearHeadingInterpolation(gatePose.getHeading(), scorePose.getHeading())
+                .setBrakingStrength(0.5)
                 .build();
 
         // Path6: Score to center pickup
@@ -193,6 +196,7 @@ public class Red_18 extends OpMode {
                                 centerPickupPose
                         )
                 ).setLinearHeadingInterpolation(scorePose.getHeading(), centerPickupPose.getHeading())
+                .setBrakingStrength(1)
                 .build();
 
         // Path7: Center pickup back to score
@@ -202,6 +206,7 @@ public class Red_18 extends OpMode {
                                 scorePose
                         )
                 ).setLinearHeadingInterpolation(centerPickupPose.getHeading(), scorePose.getHeading())
+                .setBrakingStrength(0.5)
                 .build();
 
         // Path8: Score directly to gate (SECOND TIME)
@@ -211,6 +216,7 @@ public class Red_18 extends OpMode {
                                 gatePose
                         )
                 ).setLinearHeadingInterpolation(scorePose.getHeading(), gatePose.getHeading())
+                .setBrakingStrength(1)
                 .build();
 
         // Path9: Gate back to score (SECOND TIME)
@@ -220,9 +226,10 @@ public class Red_18 extends OpMode {
                                 scorePose
                         )
                 ).setLinearHeadingInterpolation(gatePose.getHeading(), scorePose.getHeading())
+                .setBrakingStrength(0.5)
                 .build();
 
-        // Path10: Score to far pickup and park
+        // Path10: Score to far pickup
         Path10 = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 scorePose,
@@ -230,6 +237,7 @@ public class Red_18 extends OpMode {
                                 farPickupPose
                         )
                 ).setLinearHeadingInterpolation(scorePose.getHeading(), farPickupPose.getHeading())
+                .setBrakingStrength(1)
                 .build();
         Path11 = follower.pathBuilder().addPath(
                         new BezierLine(
@@ -237,6 +245,7 @@ public class Red_18 extends OpMode {
                                 parkPose
                         )
                 ).setLinearHeadingInterpolation(parkPose.getHeading(), parkPose.getHeading())
+                .setBrakingStrength(0.5)
                 .build();
     }
 
@@ -349,9 +358,6 @@ public class Red_18 extends OpMode {
                     follower.followPath(Path7,false);
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
                     shooter.setStopper(false);
-                    //GateX=129;
-                    //GateY=61;
-                    //GateHeading=30;
                     setPathState(7);
                 }
                 break;
@@ -412,6 +418,8 @@ public class Red_18 extends OpMode {
                         shooter.setStopper(true);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
                         TURRET_ANGLE=-78;
+                        constants.shooter.TARGET_RPM = 700;
+                        constants.shooter.Hood_pos = 0.60;
                         follower.followPath(Path10,false);
                         shotWaitStarted = false;
                         setPathState(10);
