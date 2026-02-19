@@ -143,8 +143,8 @@ public class Red_18 extends OpMode {
                                 startPose,
                                 scorePose
                         )
-                ).setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading())
-                .setBrakingStrength(0.5)
+                ).setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading(),0.8)
+                //.setBrakingStrength(0.5)
                 .build();
 
         // Path2: Score to first pickup
@@ -154,8 +154,8 @@ public class Red_18 extends OpMode {
                                 midPickup1,
                                 pickup1Pose
                         )
-                ).setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Pose.getHeading())
-                .setBrakingStrength(1)
+                ).setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Pose.getHeading(),0.8)
+                //.setBrakingStrength(1)
                 .build();
 
         // Path3: First pickup back to score
@@ -164,8 +164,8 @@ public class Red_18 extends OpMode {
                                 pickup1Pose,
                                 scorePose
                         )
-                ).setLinearHeadingInterpolation(pickup1Pose.getHeading(), scorePose.getHeading())
-                .setBrakingStrength(0.5)
+                ).setLinearHeadingInterpolation(pickup1Pose.getHeading(), scorePose.getHeading(),0.8)
+                //.setBrakingStrength(0.5)
                 .build();
 
         // Path4: Score directly to gate (FIRST TIME)
@@ -174,8 +174,8 @@ public class Red_18 extends OpMode {
                                 scorePose,
                                 gatePose
                         )
-                ).setLinearHeadingInterpolation(scorePose.getHeading(), gatePose.getHeading())
-                .setBrakingStrength(1)
+                ).setLinearHeadingInterpolation(scorePose.getHeading(), gatePose.getHeading(),0.8)
+                //.setBrakingStrength(1)
                 .build();
 
         // Path5: Gate back to score (FIRST TIME)
@@ -184,8 +184,8 @@ public class Red_18 extends OpMode {
                                 gatePose,
                                 scorePose
                         )
-                ).setLinearHeadingInterpolation(gatePose.getHeading(), scorePose.getHeading())
-                .setBrakingStrength(0.5)
+                ).setLinearHeadingInterpolation(gatePose.getHeading(), scorePose.getHeading(),0.8)
+                //.setBrakingStrength(0.5)
                 .build();
 
         // Path6: Score to center pickup
@@ -195,8 +195,8 @@ public class Red_18 extends OpMode {
                                 midcenterPickupPose,
                                 centerPickupPose
                         )
-                ).setLinearHeadingInterpolation(scorePose.getHeading(), centerPickupPose.getHeading())
-                .setBrakingStrength(1)
+                ).setLinearHeadingInterpolation(scorePose.getHeading(), centerPickupPose.getHeading(),0.8)
+                //.setBrakingStrength(1)
                 .build();
 
         // Path7: Center pickup back to score
@@ -205,8 +205,8 @@ public class Red_18 extends OpMode {
                                 centerPickupPose,
                                 scorePose
                         )
-                ).setLinearHeadingInterpolation(centerPickupPose.getHeading(), scorePose.getHeading())
-                .setBrakingStrength(0.5)
+                ).setLinearHeadingInterpolation(centerPickupPose.getHeading(), scorePose.getHeading(),0.8)
+                //.setBrakingStrength(0.5)
                 .build();
 
         // Path8: Score directly to gate (SECOND TIME)
@@ -215,8 +215,8 @@ public class Red_18 extends OpMode {
                                 scorePose,
                                 gatePose
                         )
-                ).setLinearHeadingInterpolation(scorePose.getHeading(), gatePose.getHeading())
-                .setBrakingStrength(1)
+                ).setLinearHeadingInterpolation(scorePose.getHeading(), gatePose.getHeading(),0.8)
+                //.setBrakingStrength(1)
                 .build();
 
         // Path9: Gate back to score (SECOND TIME)
@@ -225,8 +225,8 @@ public class Red_18 extends OpMode {
                                 gatePose,
                                 scorePose
                         )
-                ).setLinearHeadingInterpolation(gatePose.getHeading(), scorePose.getHeading())
-                .setBrakingStrength(0.5)
+                ).setLinearHeadingInterpolation(gatePose.getHeading(), scorePose.getHeading(),0.8)
+                //.setBrakingStrength(0.5)
                 .build();
 
         // Path10: Score to far pickup
@@ -236,16 +236,16 @@ public class Red_18 extends OpMode {
                                 midFarPickup,
                                 farPickupPose
                         )
-                ).setLinearHeadingInterpolation(scorePose.getHeading(), farPickupPose.getHeading())
-                .setBrakingStrength(1)
+                ).setLinearHeadingInterpolation(scorePose.getHeading(), farPickupPose.getHeading(),0.8)
+                //.setBrakingStrength(1)
                 .build();
         Path11 = follower.pathBuilder().addPath(
                         new BezierLine(
                                 farPickupPose,
                                 parkPose
                         )
-                ).setLinearHeadingInterpolation(parkPose.getHeading(), parkPose.getHeading())
-                .setBrakingStrength(0.5)
+                ).setLinearHeadingInterpolation(parkPose.getHeading(), parkPose.getHeading(),0.8)
+                //.setBrakingStrength(0.5)
                 .build();
     }
 
