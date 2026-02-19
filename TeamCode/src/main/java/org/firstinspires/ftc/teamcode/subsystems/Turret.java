@@ -45,10 +45,10 @@ public class Turret {
     private double lastTarget;
     private boolean aimed;
 
-    public static double kP = 0.115;
+    public static double kP = 0.1375;
     public static double kI = 0;
-    public static double kD = 0.002;
-    public static double kF = 0.00165;
+    public static double kD = 0;
+    public static double kF = 0.03125;
     public static double TOLERANCE = 0.5;
 
     public static double SNAP = 180;
