@@ -123,6 +123,8 @@ public class Red_18 extends OpMode {
         shooter.update();
         turret.update(TURRET_ANGLE);
 
+        storage.lastRedAutoPose = follower.getPose();
+
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());
         telemetry.addData("Heading", Math.toDegrees(follower.getPose().getHeading()));

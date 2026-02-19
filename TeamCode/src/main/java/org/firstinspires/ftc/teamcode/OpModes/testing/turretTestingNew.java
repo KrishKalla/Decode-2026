@@ -54,12 +54,12 @@ public class turretTestingNew extends OpMode {
         Pose goalPose = new Pose(storage.BLUE_X, storage.BLUE_Y);
         follower.update();
         if (manual) {
-            turret.update(MANUAL);
+            turret.hardwareUpdate(turret.update(MANUAL));
         } else if (RESET) {
             turret.TEST_RESET_ONLY();
          }else {
             llhandler.poll();
-            turret.update(goalPose);
+            turret.hardwareUpdate(turret.update(goalPose));
         }
 
         telemetry.addData("turret enc", turret.getDelta() );

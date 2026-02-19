@@ -27,11 +27,13 @@ public class States_Red extends OpMode {
     private LLHandler llhandler;
 
     private ElapsedTime timer;
+    private ElapsedTime threadTimer = new ElapsedTime();
     private int alliance = 0;
 
     Thread thread;
     Runnable r;
 
+    private volatile double servoUpdate;
 
     public static double MANUAL_TURRET = 0;
     public static boolean AUTO = true;
@@ -69,9 +71,10 @@ public class States_Red extends OpMode {
             @Override
             public void run() {
                 while(true) {
+                    threadTimer.reset();
                     llhandler.poll();
                     shooter.update();
-                    shooter.updateBatteryVoltage();
+//                    shooter.updateBatteryVoltage();
 
                     if (AUTO && Mode==0) {
                         shooter.calculateParams();
@@ -83,9 +86,9 @@ public class States_Red extends OpMode {
                     }
 
                     if (alliance == 1 && AUTO_AIM) {
-                        turret.update(new Pose(storage.BLUE_X, storage.BLUE_Y));
+                        servoUpdate = turret.update(new Pose(storage.BLUE_X, storage.BLUE_Y));
                     } else if (alliance == 0  && AUTO_AIM){
-                        turret.update(new Pose(storage.RED_X, storage.RED_Y));
+                        servoUpdate = turret.update(new Pose(storage.RED_X, storage.RED_Y));
                     }
                 }
             }
@@ -118,8 +121,9 @@ public class States_Red extends OpMode {
 
     @Override
     public void loop() {
-
+        timer.reset();
         follower.update();
+        turret.hardwareUpdate(servoUpdate);
         follower.setTeleOpDrive(
                 -gamepad1.left_stick_y,
                 -gamepad1.left_stick_x,
@@ -223,7 +227,8 @@ public class States_Red extends OpMode {
         telemetry.addData("Auto_Aim",AUTO_AIM);
         telemetry.addData("Auto_Shooter", AUTO);
         telemetry.addData("Counter", storage.counter);
-
+        telemetry.addData("Loop Timer", timer.milliseconds());
+        telemetry.addData("New Servo Pos", servoUpdate);
         telemetry.update();
     }
 

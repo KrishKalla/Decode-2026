@@ -49,26 +49,6 @@ public class constants {
         }
     }
 
-
-    //Turret Constants
-    @Config
-    public static class turret {
-        public static double SERVO_DEG_RANGE = 355; // needs to be reprogrammed to 270
-        public static double GEAR_MULTIPLIER = 4.0 / 3.0;
-        public static double SERVO_SPAN = 270;
-        public static boolean IS_USING_ENCODER = false;
-        public static double kP = 0.9;
-        public static double deadband = 0.3;
-        public static double step = 0.05;
-    }
-
-    public enum TURRET_PRESETS {
-        RESET,
-        MANUAL,
-        AUTO
-    }
-
-
     //Shooter Constants
     @Config
     public static class shooter {

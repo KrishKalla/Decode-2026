@@ -57,6 +57,7 @@ public class Turret {
     public static double iClamp = 40.0;
     private double iTerm = 0.0;
     private double lastErr = 0.0;
+    private double lastPosition = 0.0;
     private int last_pos;
 
     private ElapsedTime timer;
@@ -99,19 +100,19 @@ public class Turret {
         right.setPosition(0.5);
     }
 
-    public void update(double a) {
+    public double update(double a) {
         setTargetAngle(a);
-        updatePID();
+        return updatePID();
     }
 
-    public void update(Pose goal) {
+    public double update(Pose goal) {
         if (goal != null) {
             setTargetAngle(normalizeAngle(calculateAngleToGoal(goal)));
         }
-        updatePID();
+        return updatePID();
     }
 
-    private void updatePID() {
+    private double updatePID() {
         double dt = timer.seconds();
         timer.reset();
         if (dt <= 0) {
@@ -124,12 +125,10 @@ public class Turret {
         double snapServo = clamp(angleToServoPosition(target), 0.145, 0.855);
 
         if (Math.abs(errDeg) > SNAP) {
-            left.setPosition(snapServo);
-            right.setPosition(snapServo);
             iTerm = 0.0;
             lastErr = errDeg;
             aimed = false;
-            return;
+            return snapServo;
         }
 
         iTerm += errDeg * dt;
@@ -141,7 +140,10 @@ public class Turret {
         double targetRate = normalizeAngle(target - lastTarget) / dt;
         lastTarget = target;
 
-        double uDeg = kP * errDeg + kI * iTerm + kD * dErr + kF * targetRate;
+        double dPosition = (current - lastPosition);
+        lastPosition = current;
+
+        double uDeg = kP * errDeg + kI * iTerm - kD * dPosition + kF * targetRate;
 
         double servoDelta = (uDeg / SERVO_TO_TURRET_RATIO / 355);
 
@@ -166,10 +168,14 @@ public class Turret {
             iTerm = clamp(iTerm, -iClamp, iClamp);
         }
 
-        left.setPosition(nextServo);
-        right.setPosition(nextServo);
-
         aimed = Math.abs(errDeg) <= TOLERANCE;
+
+        return nextServo;
+    }
+
+    public void hardwareUpdate(double pos) {
+        left.setPosition(pos);
+        right.setPosition(pos);
     }
 
     public double normalizeAngle(double angle) {
