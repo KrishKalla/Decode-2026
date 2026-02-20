@@ -1,0 +1,107 @@
+//package org.firstinspires.ftc.teamcode.subsystems;
+//
+//
+//import com.qualcomm.robotcore.hardware.DcMotorEx;
+//import com.qualcomm.robotcore.hardware.HardwareMap;
+//import com.qualcomm.robotcore.hardware.Servo;
+//
+//import org.firstinspires.ftc.teamcode.util.LLHandler;
+//import org.firstinspires.ftc.teamcode.util.constants;
+//
+//// control algorithm: tx -> 0
+//public class turret_depricated {
+//    private Servo left;
+//    private Servo right;
+//    private LLHandler handler;
+//    private DcMotorEx encoder;
+//
+//    public double truePos;
+//    private double calculatedTarget = 0.0;
+//    private double previousError = 0.0;
+//
+//    public String state;
+//    public boolean tracking;
+//    public boolean reset = false;
+//
+//    public turret() {}
+//
+//    public void init(HardwareMap map, LLHandler handler) {
+//        left = map.get(Servo.class, "turretLeft");
+//        right = map.get(Servo.class, "turretRight");
+//        this.handler = handler;
+//        if(constants.turret.IS_USING_ENCODER) {
+//            encoder = map.get(DcMotorEx.class, "turretEncoder");
+//        }
+//        state = "INIT";
+//    }
+//
+//
+//    public void preset(constants.TURRET_PRESETS preset) {
+//        switch (preset) {
+//            case RESET:
+//                setServoPos(0.5);
+//                calculatedTarget = 0.0;
+//                state = "RESET";
+//                reset = true;
+//                break;
+//
+//            case AUTO:
+//                reset = false;
+//                break;
+//            case MANUAL:
+//                reset = false;
+//                state = "MANUAL";
+//                break;
+//        }
+//    }
+//
+//    public double getCalculatedTarget() {
+//        return calculatedTarget;
+//    }
+//
+//    public double update() {
+//        handler.poll();
+//        this.previousError = handler.getLatestResult()[3];
+//        if (previousError == -1001) {
+//            tracking = false;
+//            previousError = 0;
+//        }
+//        else {
+//            tracking = true;
+//            if (Math.abs(previousError) < constants.turret.deadband) {
+//                previousError = 0;
+//            }
+//
+//            if (constants.turret.IS_USING_ENCODER) {
+//                truePos = (encoder.getCurrentPosition() / constants.TICKS_PER_REV) * 360;
+//                calculatedTarget = truePos + constants.turret.kP * previousError;
+//                calculatedTarget = ((calculatedTarget % 360) + 360) % 360;
+//                return (calculatedTarget / constants.turret.GEAR_MULTIPLIER) / constants.turret.SERVO_DEG_RANGE;
+//            }
+//        }
+//
+//        calculatedTarget += constants.turret.kP * previousError;
+//        calculatedTarget = ((calculatedTarget + 120) % 240 + 240) % 240 - 120;
+//        double pos = (calculatedTarget /constants.turret.GEAR_MULTIPLIER)/constants.turret.SERVO_DEG_RANGE;
+//        setServoPos(pos);
+//        return pos;
+//    }
+//
+//    public void setServoPos(double pos) {
+//        left.setPosition(pos);
+//        right.setPosition(pos);
+//    }
+//
+//    // @param direction -- expects -1, 1 where -1 is left & 1 is right
+//    public void manual(int direction) {
+//        left.setPosition(Math.max(0, Math.min(1, left.getPosition() + direction * constants.turret.step)));
+//        right.setPosition(Math.max(0, Math.min(1, right.getPosition() + direction * constants.turret.step)));
+//    }
+//
+//    @Override
+//    public String toString() {
+//        return "Turret State: " + state + "\n" +
+//                "Tracking: " + tracking + "\n" +
+//                "Calculated Target: " + calculatedTarget + "\n";
+//    }
+//}

@@ -77,8 +77,14 @@ public class intake {
             case TRANSFERING:
                 intakeState = "TRANSFERING";
                 setDirection(1);
-                setPower(constants.intake.INTAKE_POWER);
+                setPower(constants.intake.TRANSFER_POWER);
                 setExtension(constants.INTAKE_EXTENSION.RETRACTED);
+                break;
+            case GATE:
+                intakeState = "GATE";
+                setDirection(1);
+                setPower(0);
+                setExtension(constants.INTAKE_EXTENSION.GATE);
                 break;
         }
     }
@@ -91,6 +97,11 @@ public class intake {
                 servoR.setPosition(state.right);
                 break;
             case EXTENDED:
+                extended = true;
+                servoL.setPosition(state.left);
+                servoR.setPosition(state.right);
+                break;
+            case GATE:
                 extended = true;
                 servoL.setPosition(state.left);
                 servoR.setPosition(state.right);

@@ -13,9 +13,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
-import org.firstinspires.ftc.teamcode.util.poseStorage;
+import org.firstinspires.ftc.teamcode.util.storage;
 
-@TeleOp(name = "New Turret Testing", group = "testing")
+@TeleOp(name = "GOOD Turret Testing", group = "testing")
 @Config
 public class turretTestingNew extends OpMode {
     private Turret turret;
@@ -24,6 +24,8 @@ public class turretTestingNew extends OpMode {
     private int alliance = 1;
     private FtcDashboard dashboard;
     public static boolean manual = false;
+    public static boolean RESET = false;
+    public static double MANUAL = 90;
 
     public void init() {
         dashboard = FtcDashboard.getInstance();
@@ -33,8 +35,14 @@ public class turretTestingNew extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(72, 72, 0));
         follower.update();
-        turret.init(hardwareMap, llhandler, follower);
-        turret.zeroTurret();
+        turret.init(hardwareMap, follower);
+        turret.reset();
+    }
+
+    @Override
+    public void init_loop() {
+        telemetry.addData("encoder pos",turret.getDelta());
+        telemetry.update();
     }
 
     public void start() {
@@ -43,14 +51,21 @@ public class turretTestingNew extends OpMode {
     }
 
     public void loop() {
-        Pose goalPose = new Pose(poseStorage.BLUE_X, poseStorage.BLUE_Y);
+        Pose goalPose = new Pose(storage.BLUE_X, storage.BLUE_Y);
         follower.update();
         if (manual) {
-            turret.setTargetAngle(90);
-        } else {
+            turret.hardwareUpdate(turret.update(MANUAL));
+        } else if (RESET) {
+            turret.TEST_RESET_ONLY();
+         }else {
             llhandler.poll();
-            turret.update(goalPose);
+            turret.hardwareUpdate(turret.update(goalPose));
         }
+
+        telemetry.addData("turret enc", turret.getDelta() );
+        telemetry.addData("counter", storage.counter);
+        telemetry.addData("zero", turret.ZERO);
+        telemetry.update();
 
 
         TelemetryPacket packet = new TelemetryPacket();
