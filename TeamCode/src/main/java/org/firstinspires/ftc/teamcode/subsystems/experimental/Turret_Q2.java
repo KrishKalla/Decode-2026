@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
 
 @Config
-public class Turret {
+public class Turret_Q2 {
     private Servo left;
     private Servo right;
     private LLHandler handler;
@@ -37,7 +37,7 @@ public class Turret {
     public static double LLWEIGHT = 0.75;
     private int zeroTicks = 0;
 
-    public Turret() {}
+    public Turret_Q2() {}
 
 
     public void init(HardwareMap map, LLHandler handler, PoseTracker tracker) {

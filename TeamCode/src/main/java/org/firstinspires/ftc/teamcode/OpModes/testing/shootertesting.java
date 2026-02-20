@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.experimental.Turret;
 import org.firstinspires.ftc.teamcode.subsystems.intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter;
-import org.firstinspires.ftc.teamcode.subsystems.turret;
+//import org.firstinspires.ftc.teamcode.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
 import org.firstinspires.ftc.teamcode.util.constants;
 
@@ -29,7 +29,7 @@ public class shootertesting extends OpMode {
     private boolean automatedDrive;
     private shooter shooter;
     private intake intake;
-    private Turret turret;
+//    private Turret turret;
     private Follower follower;
     public static double MANUALHOOD = 0.875;
     public static double Delta_Hood = 0;
@@ -40,7 +40,7 @@ public class shootertesting extends OpMode {
     public void init() {
         shooter = new shooter();
         intake = new intake();
-        turret = new Turret();
+//        turret = new Turret();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         llhandler = new LLHandler(hardwareMap, alliance);
         shooter.init(hardwareMap, llhandler);
@@ -50,7 +50,7 @@ public class shootertesting extends OpMode {
         follower.setStartingPose(new Pose(72, 72, 0));
         follower.update();
 
-        turret.init(hardwareMap, llhandler, follower.poseTracker);
+//        turret.init(hardwareMap, llhandler, follower.poseTracker);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class shootertesting extends OpMode {
         shooter.flywheelPreset(constants.FLYWHEEL.ON);
         llhandler.alliance(1);
         llhandler.start();
-        turret.setTurretAngle(0);
+//        turret.setTurretAngle(0);
     }
 
     public void loop() {
