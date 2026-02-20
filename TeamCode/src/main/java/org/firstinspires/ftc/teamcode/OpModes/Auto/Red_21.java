@@ -31,6 +31,7 @@ public class Red_21 extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime loopTimer = new ElapsedTime();
     private double shootingtime = 0.7;
+    private static double gateIntakeTime = 0.5;
 
     private boolean Auto_hood = true;
     private boolean shotWaitStarted = false;
@@ -51,9 +52,9 @@ public class Red_21 extends OpMode {
     private final Pose pickup1Pose = new Pose(115, 59, Math.toRadians(0));
     private final Pose midPickup1 = new Pose(90, 59);
 
-    private final Pose gateApproachPose = new Pose(125, 60.25, Math.toRadians(30));
-    private final Pose midGatePose = new Pose(101.751, 56.946);
-    private final Pose gatePose = new Pose(125, 55.7, Math.toRadians(47.5));
+    private final Pose gateApproachPose = new Pose(127, 61, Math.toRadians(30));
+    private final Pose midGatePose = new Pose(120, 54);
+    private final Pose gatePose = new Pose(130, 55, Math.toRadians(47.5));
 
     private final Pose midcenterPickupPose = new Pose(91.4,89.2);
     private final Pose centerPickupPose = new Pose(115, 84, Math.toRadians(0));
@@ -100,7 +101,7 @@ public class Red_21 extends OpMode {
         shooter.init(hardwareMap, llhandler);
         intake.init(hardwareMap);
         turret.init(hardwareMap,follower);
-        turret.reset();
+        turret.zeroTurret();
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -122,16 +123,9 @@ public class Red_21 extends OpMode {
         llhandler.poll();
         follower.update();
         autonomousPathUpdate();
-
-        if (!Auto_hood) {
-            shooter.setHood(constants.shooter.Hood_pos);
-        }
-        else{
-            shooter.calculateParams();
-        }
-
+        shooter.calculateParams();
         shooter.update();
-        turret.update(TURRET_ANGLE);
+        turret.hardwareUpdate(turret.update(goalPose));
 
         storage.lastRedAutoPose = follower.getPose();
 
@@ -328,9 +322,6 @@ public class Red_21 extends OpMode {
             case 1:
                 // Go to first pickup
                 if (!follower.isBusy()) {
-                    Auto_hood=false;
-                    constants.shooter.TARGET_RPM = 770;
-                    constants.shooter.Hood_pos = 0.65;
 
                     shooter.setStopper(true);
                     intake.setIntake(constants.INTAKE_PRESETS.ON);
@@ -384,11 +375,13 @@ public class Red_21 extends OpMode {
                 // Gate back to score (FIRST TIME)
                 if (!follower.isBusy()) {
                     if (!shotWaitStarted) {
+                        follower.setMaxPower(0.2);
                         shootTimer.reset();
                         shotWaitStarted = true;
                     }
 
-                    if (shootTimer.seconds() >= 1.0) {
+                    if (shootTimer.seconds() >= gateIntakeTime) {
+                        follower.setMaxPower(1);
                         intake.setIntake(constants.INTAKE_PRESETS.OFF);
                         shooter.setStopper(false);
 
@@ -464,11 +457,13 @@ public class Red_21 extends OpMode {
                 // Gate back to score (SECOND TIME)
                 if (!follower.isBusy()) {
                     if (!shotWaitStarted) {
+                        follower.setMaxPower(0.2);
                         shootTimer.reset();
                         shotWaitStarted = true;
                     }
 
-                    if (shootTimer.seconds() >= 1.0) {
+                    if (shootTimer.seconds() >= gateIntakeTime) {
+                        follower.setMaxPower(1);
                         intake.setIntake(constants.INTAKE_PRESETS.OFF);
                         shooter.setStopper(false);
 
@@ -513,11 +508,13 @@ public class Red_21 extends OpMode {
                 // Gate back to score (THIRD TIME)
                 if (!follower.isBusy()) {
                     if (!shotWaitStarted) {
+                        follower.setMaxPower(0.2);
                         shootTimer.reset();
                         shotWaitStarted = true;
                     }
 
-                    if (shootTimer.seconds() >= 1.0) {
+                    if (shootTimer.seconds() >= gateIntakeTime) {
+                        follower.setMaxPower(1);
                         intake.setIntake(constants.INTAKE_PRESETS.OFF);
                         shooter.setStopper(false);
 

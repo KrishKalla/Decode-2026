@@ -28,7 +28,7 @@ public class Red_18_Safe extends OpMode {
 
     public double TURRET_ANGLE;
 
-    public static double GateX=126.5, GateY=62, GateHeading=24;
+    public static double GateX=127, GateY=62, GateHeading=24;
     private ElapsedTime shootTimer = new ElapsedTime();
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime loopTimer = new ElapsedTime();

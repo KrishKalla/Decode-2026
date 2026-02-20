@@ -21,12 +21,12 @@ import org.firstinspires.ftc.teamcode.util.constants;
 import org.firstinspires.ftc.teamcode.util.storage;
 
 @Config
-@Autonomous(name = "Red 18 Safe Auto")
+@Autonomous(name = "Red 18 RP Auto")
 public class Red_18_RP extends OpMode {
 
     public double TURRET_ANGLE;
 
-    public static double GateX=126.5, GateY=62, GateHeading=24;
+    public static double GateX=127, GateY=62, GateHeading=24;
     private ElapsedTime shootTimer = new ElapsedTime();
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime loopTimer = new ElapsedTime();
