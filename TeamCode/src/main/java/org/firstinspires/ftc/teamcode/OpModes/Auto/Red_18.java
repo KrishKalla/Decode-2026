@@ -49,13 +49,13 @@ public class Red_18 extends OpMode {
     // Pose definitions
     private final Pose startPose = new Pose(119.40, 126.79, Math.toRadians(0));
     private final Pose scorePose = new Pose(89, 78, Math.toRadians(0));
-    private final Pose pickup1Pose = new Pose(115, 60, Math.toRadians(0));
+    private final Pose pickup1Pose = new Pose(115, 59, Math.toRadians(0));
     private final Pose midPickup1 = new Pose(90, 59);
 
     private final Pose gatePose = new Pose(GateX, GateY, Math.toRadians(GateHeading));
 
     private final Pose midcenterPickupPose = new Pose(91.4,89.2);
-    private final Pose centerPickupPose = new Pose(115, 82, Math.toRadians(0));
+    private final Pose centerPickupPose = new Pose(115, 84, Math.toRadians(0));
 
     private final Pose midFarPickup = new Pose(86.271, 31.767);
     private final Pose farPickupPose = new Pose(115, 36, Math.toRadians(0));
@@ -101,7 +101,7 @@ public class Red_18 extends OpMode {
         llhandler.alliance(alliance);
         llhandler.start();
 
-        constants.shooter.TARGET_RPM = 800;
+        constants.shooter.TARGET_RPM = 790;
         constants.shooter.Hood_pos = 0.68;
         TURRET_ANGLE = -132;
         buildPaths();
