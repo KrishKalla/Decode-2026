@@ -121,7 +121,6 @@ public class Red_18 extends OpMode {
         autonomousPathUpdate();
 
         shooter.update();
-        //shooter.calculateParams();
         turret.hardwareUpdate(turret.update(goalPose));
 
         storage.lastRedAutoPose = follower.getPose();
