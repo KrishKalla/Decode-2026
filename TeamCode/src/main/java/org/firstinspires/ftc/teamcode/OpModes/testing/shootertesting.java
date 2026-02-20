@@ -31,6 +31,7 @@ public class shootertesting extends OpMode {
 
     public static int alliance = 1;
     private LLHandler llhandler;
+    private final Pose goalPose = new Pose(storage.RED_X, storage.RED_Y);
 
     public void init() {
         shooter = new shooter();
@@ -63,10 +64,10 @@ public class shootertesting extends OpMode {
 
         if (ON) {
             shooter.calculateParams();
-            turret.setManualAngle(MANUAL_Turret);
+            turret.hardwareUpdate(turret.update(goalPose));
         } else {
             shooter.setHood(constants.shooter.Hood_pos);
-            turret.setManualAngle(MANUAL_Turret);
+            turret.hardwareUpdate(turret.update(MANUAL_Turret));
         }
 
         if (gamepad1.right_trigger > 0.3) {
