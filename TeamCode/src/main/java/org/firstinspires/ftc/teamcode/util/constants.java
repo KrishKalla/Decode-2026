@@ -7,8 +7,8 @@ public class constants {
 
     //General Constants
     public static double ROBOT_MASS = 11.97; //kg
-    public static double FORWARD_OFFSET = 2.9331; //in
-    public static double LATERAL_OFFSET = -6.24015; //in
+    public static double FORWARD_OFFSET = 2.933071; //in
+    public static double LATERAL_OFFSET = -6.39953385827; //in
     public static double NOMINAL_VOLTAGE = 13.5;
     public static double LIMELIGHT_HEIGHT = 0.41; //deg
     public static double LIMELIGHT_MOUNT_ANGLE = 17.45128; //deg --> rad

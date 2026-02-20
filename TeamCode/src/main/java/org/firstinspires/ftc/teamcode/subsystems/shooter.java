@@ -121,7 +121,7 @@ public class shooter {
             hoodTrackingState = "TRACKING";
             filterDistance(previousDistance);
             double[] interp = LUT.get(ema);
-            setHood(interp[1]);
+            constants.shooter.Hood_pos=interp[1];
             constants.shooter.TARGET_RPM = interp[0];
         }
     }
@@ -142,6 +142,8 @@ public class shooter {
             motorLeft.setPower(0);
             motorRight.setPower(0);
         }
+
+        setHood(constants.shooter.Hood_pos);
     }
 
     public double calculate() {

@@ -26,7 +26,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name = "Red 21 Auto")
 public class Red_21 extends OpMode {
 
-    public static double TURRET_ANGLE = -25;
+    public static double TURRET_ANGLE = -132;
     private ElapsedTime shootTimer = new ElapsedTime();
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime loopTimer = new ElapsedTime();
@@ -47,18 +47,20 @@ public class Red_21 extends OpMode {
 
     // Pose definitions
     private final Pose startPose = new Pose(119.40, 125.26, Math.toRadians(0));
-    private final Pose scorePose = new Pose(87.767, 82.764, Math.toRadians(-20));
-    private final Pose pickup1Pose = new Pose(113, 60, Math.toRadians(0));
-    private final Pose midPickup1 = new Pose(87.440, 56.941);
+    private final Pose scorePose = new Pose(89, 78, Math.toRadians(0));
+    private final Pose pickup1Pose = new Pose(115, 59, Math.toRadians(0));
+    private final Pose midPickup1 = new Pose(90, 59);
 
     private final Pose gateApproachPose = new Pose(125, 60.25, Math.toRadians(30));
     private final Pose midGatePose = new Pose(101.751, 56.946);
     private final Pose gatePose = new Pose(125, 55.7, Math.toRadians(47.5));
 
-    private final Pose centerPickupPose = new Pose(113, 84, Math.toRadians(0));
+    private final Pose midcenterPickupPose = new Pose(91.4,89.2);
+    private final Pose centerPickupPose = new Pose(115, 84, Math.toRadians(0));
+
     private final Pose midFarPickup = new Pose(86.271, 31.767);
-    private final Pose farPickupPose = new Pose(113, 36, Math.toRadians(0));
-    private final Pose parkPose = new Pose(83.128, 105.965, Math.toRadians(-70));
+    private final Pose farPickupPose = new Pose(115, 36, Math.toRadians(0));
+    private final Pose parkPose = new Pose(83.128, 103, Math.toRadians(-70));
 
     // ---- PATH OBJECTS ----
     private PathChain Path1;
@@ -121,15 +123,11 @@ public class Red_21 extends OpMode {
         follower.update();
         autonomousPathUpdate();
 
-        if (!Auto_hood) {
-            shooter.setHood(constants.shooter.Hood_pos);
-        }
-        else{
+        if (Auto_hood) {
             shooter.calculateParams();
         }
-
         shooter.update();
-        turret.update(TURRET_ANGLE);
+        turret.hardwareUpdate(turret.update(goalPose));
 
         storage.lastRedAutoPose = follower.getPose();
 
@@ -204,8 +202,9 @@ public class Red_21 extends OpMode {
 
         // Path7: Score to center pickup (MOVED HERE - between 1st and 2nd gate)
         Path7 = follower.pathBuilder().addPath(
-                        new BezierLine(
+                        new BezierCurve(
                                 scorePose,
+                                midcenterPickupPose,
                                 centerPickupPose
                         )
                 ).setLinearHeadingInterpolation(scorePose.getHeading(), centerPickupPose.getHeading())

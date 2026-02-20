@@ -81,9 +81,6 @@ public class States_Red extends OpMode {
                     } else if (AUTO && Mode==1) {
                         shooter.far();
                     }
-                    else{
-                        shooter.setHood(constants.shooter.Hood_pos);
-                    }
 
                     if (alliance == 1 && AUTO_AIM) {
                         servoUpdate = turret.update(new Pose(storage.BLUE_X, storage.BLUE_Y));

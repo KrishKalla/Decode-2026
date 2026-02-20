@@ -28,7 +28,7 @@ public class Red_18 extends OpMode {
 
     public double TURRET_ANGLE;
 
-    public static double GateX=129, GateY=62, GateHeading=30;
+    public static double GateX=127.5, GateY=62, GateHeading=15;
     private ElapsedTime shootTimer = new ElapsedTime();
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime loopTimer = new ElapsedTime();
@@ -49,13 +49,13 @@ public class Red_18 extends OpMode {
     // Pose definitions
     private final Pose startPose = new Pose(119.40, 126.79, Math.toRadians(0));
     private final Pose scorePose = new Pose(89, 78, Math.toRadians(0));
-    private final Pose pickup1Pose = new Pose(115, 60, Math.toRadians(0));
+    private final Pose pickup1Pose = new Pose(115, 59, Math.toRadians(0));
     private final Pose midPickup1 = new Pose(90, 59);
 
     private final Pose gatePose = new Pose(GateX, GateY, Math.toRadians(GateHeading));
 
     private final Pose midcenterPickupPose = new Pose(91.4,89.2);
-    private final Pose centerPickupPose = new Pose(115, 82, Math.toRadians(0));
+    private final Pose centerPickupPose = new Pose(115, 84, Math.toRadians(0));
 
     private final Pose midFarPickup = new Pose(86.271, 31.767);
     private final Pose farPickupPose = new Pose(115, 36, Math.toRadians(0));
@@ -101,7 +101,7 @@ public class Red_18 extends OpMode {
         llhandler.alliance(alliance);
         llhandler.start();
 
-        constants.shooter.TARGET_RPM = 800;
+        constants.shooter.TARGET_RPM = 790;
         constants.shooter.Hood_pos = 0.68;
         TURRET_ANGLE = -132;
         buildPaths();
@@ -110,6 +110,15 @@ public class Red_18 extends OpMode {
     @Override
     public void start() {
         runtime.reset();
+        shooter.update();
+
+        llhandler.poll();
+        follower.update();
+        autonomousPathUpdate();
+
+        turret.hardwareUpdate(turret.update(goalPose));
+
+        storage.lastRedAutoPose = follower.getPose();
     }
 
     @Override
@@ -121,6 +130,7 @@ public class Red_18 extends OpMode {
         autonomousPathUpdate();
 
         shooter.update();
+        shooter.setHood(constants.shooter.Hood_pos);
         //shooter.calculateParams();
         turret.hardwareUpdate(turret.update(goalPose));
 
@@ -421,8 +431,8 @@ public class Red_18 extends OpMode {
                         shooter.setStopper(true);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
                         TURRET_ANGLE=-78;
-                        constants.shooter.TARGET_RPM = 700;
-                        constants.shooter.Hood_pos = 0.6;
+                        constants.shooter.TARGET_RPM = 740;
+                        constants.shooter.Hood_pos = 0.58;
                         follower.followPath(Path10,false);
                         shotWaitStarted = false;
                         setPathState(10);
