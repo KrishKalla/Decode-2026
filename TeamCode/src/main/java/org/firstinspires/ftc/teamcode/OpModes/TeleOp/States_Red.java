@@ -138,31 +138,34 @@ public class States_Red extends OpMode {
             intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
         }
         else if(gamepad1.right_stick_button){
-                intake.setIntake(constants.INTAKE_PRESETS.GATE);
+            intake.setIntake(constants.INTAKE_PRESETS.GATE);
         }
         else {
             intake.setIntake(constants.INTAKE_PRESETS.OFF);
         }
 
+
+
         //Open Stopper
-        if (gamepad1.left_bumper) {
+        if (gamepad2.right_stick_button){
             shooter.setStopper(false);
         }
 
-        //GP2
-        if (gamepad2.left_trigger > 0.3) {
-            shooter.flywheelPreset(constants.FLYWHEEL.OFF);
-        }
+
+        //Switch Modes
         if (gamepad2.right_trigger > 0.3) {
-            shooter.flywheelPreset(constants.FLYWHEEL.ON);
+            Mode=0;//close
+        }
+        if (gamepad2.left_trigger> 0.3) {
+            Mode=1;//far
         }
 
-        //Manual Controls for Hood
+        //Far Mode Vs Close Mode
         if (gamepad2.right_bumper) {
-            Mode=0;
+            storage.RED_X+=2;
         }
         if (gamepad2.left_bumper) {
-            Mode=1;
+            storage.RED_X-=2;
         }
 
         //Close Zone Set points
@@ -226,6 +229,8 @@ public class States_Red extends OpMode {
         telemetry.addData("Counter", storage.counter);
         telemetry.addData("Loop Timer", timer.milliseconds());
         telemetry.addData("New Servo Pos", servoUpdate);
+        telemetry.addData("Turret Error", turret.getError());
+        telemetry.addData("Goal Pose X",storage.BLUE_X);
         telemetry.update();
     }
 

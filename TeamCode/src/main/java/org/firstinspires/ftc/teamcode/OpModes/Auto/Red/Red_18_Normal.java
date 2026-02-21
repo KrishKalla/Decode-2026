@@ -23,8 +23,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
-@Autonomous(name = "Red 18 OldGate Auto")
-public class Red_18_OldGate extends OpMode {
+@Autonomous(name = "Red 18 Nomarl Auto")
+public class Red_18_Normal extends OpMode {
 
     public static double TURRET_ANGLE = -132;
     private ElapsedTime shootTimer = new ElapsedTime();
@@ -110,7 +110,6 @@ public class Red_18_OldGate extends OpMode {
         llhandler.start();
         constants.shooter.TARGET_RPM = 790;
         constants.shooter.Hood_pos = 0.69;
-        TURRET_ANGLE = -132;
         buildPaths();
     }
 

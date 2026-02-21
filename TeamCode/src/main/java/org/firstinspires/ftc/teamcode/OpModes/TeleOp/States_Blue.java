@@ -144,25 +144,28 @@ public class States_Blue extends OpMode {
             intake.setIntake(constants.INTAKE_PRESETS.OFF);
         }
 
+
+
         //Open Stopper
-        if (gamepad1.left_bumper) {
+        if (gamepad2.right_stick_button){
             shooter.setStopper(false);
         }
 
-        //GP2
-        if (gamepad2.left_trigger > 0.3) {
-            shooter.flywheelPreset(constants.FLYWHEEL.OFF);
-        }
+
+        //Switch Modes
         if (gamepad2.right_trigger > 0.3) {
-            shooter.flywheelPreset(constants.FLYWHEEL.ON);
+            Mode=0;//close
+        }
+        if (gamepad2.left_trigger> 0.3) {
+            Mode=1;//far
         }
 
-        //Manual Controls for Hood
+        //Far Mode Vs Close Mode
         if (gamepad2.right_bumper) {
-            Mode=0;
+            storage.BLUE_X+=2;
         }
         if (gamepad2.left_bumper) {
-            Mode=1;
+            storage.BLUE_X-=2;
         }
 
         //Close Zone Set points
@@ -193,13 +196,13 @@ public class States_Blue extends OpMode {
         //Fix Turret Pose Left
         if (gamepad2.dpad_left){
             AUTO_AIM=false;
-            turret.setManualAngle(-135);
+            turret.setManualAngle(135);
         }
 
         //Fix Turret Pose Right
         if (gamepad2.dpad_right){
             AUTO_AIM=false;
-            turret.setManualAngle(45);
+            turret.setManualAngle(-45);
         }
 
         //Fix Turret Pose Middle
@@ -226,6 +229,8 @@ public class States_Blue extends OpMode {
         telemetry.addData("Counter", storage.counter);
         telemetry.addData("Loop Timer", timer.milliseconds());
         telemetry.addData("New Servo Pos", servoUpdate);
+        telemetry.addData("Turret Error", turret.getError());
+        telemetry.addData("Goal Pose X",storage.BLUE_X);
         telemetry.update();
     }
 
