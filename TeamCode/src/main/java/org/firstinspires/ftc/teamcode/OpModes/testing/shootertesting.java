@@ -99,6 +99,7 @@ public class shootertesting extends OpMode {
         telemetry.addData("Turret Angle", turret.getCurrentAngle());
         telemetry.addData("Turret Target", turret.getTargetAngle());
         telemetry.addData("Turret Error", turret.getError());
+
         telemetry.addData("Mode", ON ? "AUTO" : "MANUAL");
         telemetry.addLine(intake.toString());
         telemetry.update();
