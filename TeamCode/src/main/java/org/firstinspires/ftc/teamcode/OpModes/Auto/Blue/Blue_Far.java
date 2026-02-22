@@ -21,7 +21,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
-@Autonomous(name = "Red Far Auto")
+@Autonomous(name = "Blue Far Auto")
 public class Blue_Far extends OpMode {
 
     private ElapsedTime shootTimer = new ElapsedTime();
@@ -41,8 +41,9 @@ public class Blue_Far extends OpMode {
     private int pathState = 0;
 
     // Pose definitions
-    private final Pose startPose = new Pose(89.129, 7.000, Math.toRadians(90));
-    private final Pose scorePose = new Pose(107, 7.000, Math.toRadians(90));
+    private final Pose startPose = new Pose(54.871, 7.000, Math.toRadians(90));
+    private final Pose scorePose = new Pose(37.000, 7.000, Math.toRadians(90));
+
 
     // ---- PATH OBJECTS ----
     private PathChain Path1;
@@ -108,8 +109,8 @@ public class Blue_Far extends OpMode {
     private void buildPaths() {
         Path1 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(54.871, 8.000),
-                                new Pose(37.000, 8.000)
+                                startPose,
+                                scorePose
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90))
                 .build();

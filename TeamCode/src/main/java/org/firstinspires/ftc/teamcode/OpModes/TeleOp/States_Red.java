@@ -120,7 +120,9 @@ public class States_Red extends OpMode {
     public void loop() {
         timer.reset();
         follower.update();
-        turret.hardwareUpdate(servoUpdate);
+        if(AUTO_AIM) {
+            turret.hardwareUpdate(servoUpdate);
+        }
         follower.setTeleOpDrive(
                 -gamepad1.left_stick_y,
                 -gamepad1.left_stick_x,
@@ -147,7 +149,7 @@ public class States_Red extends OpMode {
 
 
         //Open Stopper
-        if (gamepad2.right_stick_button){
+        if (gamepad2.right_stick_button||gamepad1.left_bumper){
             shooter.setStopper(false);
         }
 
@@ -230,7 +232,7 @@ public class States_Red extends OpMode {
         telemetry.addData("Loop Timer", timer.milliseconds());
         telemetry.addData("New Servo Pos", servoUpdate);
         telemetry.addData("Turret Error", turret.getError());
-        telemetry.addData("Goal Pose X",storage.BLUE_X);
+        telemetry.addData("Goal Pose X",storage.RED_X);
         telemetry.update();
     }
 

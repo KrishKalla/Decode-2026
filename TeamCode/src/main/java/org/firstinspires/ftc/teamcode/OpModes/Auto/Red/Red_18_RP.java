@@ -27,11 +27,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Red_18_RP extends OpMode {
 
     public static double TURRET_ANGLE = -132;
+
     private ElapsedTime shootTimer = new ElapsedTime();
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime loopTimer = new ElapsedTime();
     private double shootingtime = 0.7;
-    private static double gateIntakeTime = 0.7;
+    private static double gateIntakeTime = 1.0;
     private boolean IsShot=false;
 
     private boolean Auto_hood = true;
@@ -48,14 +49,14 @@ public class Red_18_RP extends OpMode {
     private int pathState = 0;
 
     // Pose definitions
-    private final Pose startPose = new Pose(119.40, 126.79, Math.toRadians(0));
+    private final Pose startPose = new Pose(118.40, 126.79, Math.toRadians(0));
     private final Pose scorePose = new Pose(89, 78, Math.toRadians(0));
     private final Pose pickup1Pose = new Pose(115, 59, Math.toRadians(0));
     private final Pose midPickup1 = new Pose(90, 59);
 
     private final Pose gateApproachPose = new Pose(127, 61, Math.toRadians(30));
     private final Pose midGatePose = new Pose(120, 54);
-    private final Pose gatePose = new Pose(130, 55, Math.toRadians(47.5));
+    private final Pose gatePose = new Pose(129, 55, Math.toRadians(47.5));
 
     private final Pose midcenterPickupPose = new Pose(91.4,89.2);
     private final Pose centerPickupPose = new Pose(115, 84, Math.toRadians(0));
@@ -110,6 +111,7 @@ public class Red_18_RP extends OpMode {
         llhandler.start();
         constants.shooter.TARGET_RPM = 790;
         constants.shooter.Hood_pos = 0.69;
+        storage.RED_X=138;
         buildPaths();
     }
 

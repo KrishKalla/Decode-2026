@@ -30,11 +30,12 @@ public class Blue_18_Normal extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime loopTimer = new ElapsedTime();
     private double shootingtime = 0.7;
-    private static double gateIntakeTime = 0.7;
+    private static double gateIntakeTime = 1.25;
 
     private boolean Auto_hood = true;
     private boolean shotWaitStarted = false;
     private boolean moveshootfinished = false;
+    private boolean IsShot=false;
 
     private LLHandler llhandler;
     private static final int alliance = 1;
@@ -46,20 +47,20 @@ public class Blue_18_Normal extends OpMode {
     private int pathState = 0;
 
     // Pose definitions (X flipped: x = 144 - redX, Y unchanged, heading + 180)
-    private final Pose startPose           = new Pose(25.60,  126.79, Math.toRadians(180));
+    private final Pose startPose           = new Pose(26.60,  127, Math.toRadians(180));
     private final Pose scorePose           = new Pose(55,     78,     Math.toRadians(180));
-    private final Pose pickup1Pose         = new Pose(29,     59,     Math.toRadians(180));
+    private final Pose pickup1Pose         = new Pose(27,     59,     Math.toRadians(180));
     private final Pose midPickup1          = new Pose(54,     59);
 
-    private final Pose gateApproachPose    = new Pose(15,     61,     Math.toRadians(150));
-    private final Pose midGatePose         = new Pose(22,     54);
-    private final Pose gatePose            = new Pose(12,     55,     Math.toRadians(132.5));
+    private final Pose gateApproachPose    = new Pose(14.5,     63,     Math.toRadians(150));
+    private final Pose midGatePose         = new Pose(24,     54);
+    private final Pose gatePose            = new Pose(12.5,     55,     Math.toRadians(132.5));
 
     private final Pose midcenterPickupPose = new Pose(52.6,   89.2);
-    private final Pose centerPickupPose    = new Pose(29,     84,     Math.toRadians(180));
+    private final Pose centerPickupPose    = new Pose(27,     84,     Math.toRadians(180));
 
     private final Pose midFarPickup        = new Pose(57.729, 31.767);
-    private final Pose farPickupPose       = new Pose(29,     36,     Math.toRadians(180));
+    private final Pose farPickupPose       = new Pose(27,     36,     Math.toRadians(180));
     private final Pose parkPose            = new Pose(60.872, 103,    Math.toRadians(250));
 
     // ---- PATH OBJECTS ----
@@ -107,6 +108,7 @@ public class Blue_18_Normal extends OpMode {
         constants.shooter.TARGET_RPM = 790;
         constants.shooter.Hood_pos = 0.69;
         TURRET_ANGLE = 132;
+        storage.BLUE_X=6.7;
 
         buildPaths();
     }
@@ -224,9 +226,13 @@ public class Blue_18_Normal extends OpMode {
                         follower.setMaxPower(0.2);
                         shootTimer.reset();
                         shotWaitStarted = true;
+                    }
+                    if(shootTimer.seconds()>=0.5&&!IsShot)
+                    {
                         intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
                     }
-                    if (shootTimer.seconds() >= shootingtime) {
+                    if (shootTimer.seconds() >= shootingtime+0.5) {
+                        IsShot=true;
                         follower.setMaxPower(1);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
                         shooter.setStopper(true);
@@ -241,7 +247,7 @@ public class Blue_18_Normal extends OpMode {
                 if (!follower.isBusy()) {
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
                     shooter.setStopper(false);
-                    follower.followPath(Path3, true);
+                    follower.followPath(Path3, false);
                     setPathState(3);
                 }
                 break;
@@ -257,7 +263,7 @@ public class Blue_18_Normal extends OpMode {
                     if (shootTimer.seconds() >= shootingtime) {
                         shooter.setStopper(true);
                         intake.setIntake(constants.INTAKE_PRESETS.GATE);
-                        follower.followPath(Path4, true);
+                        follower.followPath(Path4, false);
                         shotWaitStarted = false;
                         setPathState(4);
                     }
@@ -268,7 +274,7 @@ public class Blue_18_Normal extends OpMode {
                 // Gate approach to gate (FIRST TIME)
                 if (!follower.isBusy()) {
                     intake.setIntake(constants.INTAKE_PRESETS.ON);
-                    follower.followPath(Path5, true);
+                    follower.followPath(Path5, false);
                     setPathState(5);
                 }
                 break;
@@ -285,7 +291,7 @@ public class Blue_18_Normal extends OpMode {
                         follower.setMaxPower(1);
                         intake.setIntake(constants.INTAKE_PRESETS.OFF);
                         shooter.setStopper(false);
-                        follower.followPath(Path6, true);
+                        follower.followPath(Path6, false);
                         shotWaitStarted = false;
                         setPathState(6);
                     }
@@ -315,7 +321,7 @@ public class Blue_18_Normal extends OpMode {
                 if (!follower.isBusy()) {
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
                     shooter.setStopper(false);
-                    follower.followPath(Path8, true);
+                    follower.followPath(Path8, false);
                     setPathState(8);
                 }
                 break;
@@ -331,7 +337,7 @@ public class Blue_18_Normal extends OpMode {
                     if (shootTimer.seconds() >= shootingtime) {
                         shooter.setStopper(true);
                         intake.setIntake(constants.INTAKE_PRESETS.GATE);
-                        follower.followPath(Path9, true);
+                        follower.followPath(Path9, false);
                         shotWaitStarted = false;
                         setPathState(9);
                     }
@@ -342,7 +348,7 @@ public class Blue_18_Normal extends OpMode {
                 // Gate approach to gate (SECOND TIME)
                 if (!follower.isBusy()) {
                     intake.setIntake(constants.INTAKE_PRESETS.ON);
-                    follower.followPath(Path10, true);
+                    follower.followPath(Path10, false);
                     setPathState(10);
                 }
                 break;
@@ -359,7 +365,7 @@ public class Blue_18_Normal extends OpMode {
                         follower.setMaxPower(1);
                         intake.setIntake(constants.INTAKE_PRESETS.OFF);
                         shooter.setStopper(false);
-                        follower.followPath(Path11, true);
+                        follower.followPath(Path11, false);
                         shotWaitStarted = false;
                         setPathState(11);
                     }
@@ -377,7 +383,7 @@ public class Blue_18_Normal extends OpMode {
                     if (shootTimer.seconds() >= shootingtime) {
                         shooter.setStopper(true);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
-                        follower.followPath(Path15, true);
+                        follower.followPath(Path15, false);
                         shotWaitStarted = false;
                         setPathState(12);
                     }
@@ -389,8 +395,8 @@ public class Blue_18_Normal extends OpMode {
                 if (!follower.isBusy()) {
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
                     shooter.setStopper(false);
-                    follower.followPath(Path16, true);
-                    constants.shooter.TARGET_RPM = 710;
+                    follower.followPath(Path16, false);
+                    constants.shooter.TARGET_RPM = 720;
                     constants.shooter.Hood_pos = 0.60;
                     setPathState(13);
                 }
