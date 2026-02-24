@@ -54,14 +54,16 @@ public class Red_21_Normal extends OpMode {
     // Pose definitions
     private final Pose startPose = new Pose(118.40, 126.79, Math.toRadians(0));
     private final Pose scorePose = new Pose(89, 78, Math.toRadians(0));
-    private final Pose pickup1Pose = new Pose(115, 59, Math.toRadians(0));
-    private final Pose midPickup1 = new Pose(90, 59);
+    private final Pose pickup1Pose = new Pose(115, 60, Math.toRadians(0));
+    private final Pose midPickup1 = new Pose(90, 60);
 
+
+    private final Pose gateOpenPose = new Pose(127, 75, Math.toRadians(0));
     private final Pose gateApproachPose = new Pose(127, 61, Math.toRadians(30));
     private final Pose midGatePose = new Pose(120, 54);
     private final Pose gatePose = new Pose(129, 55, Math.toRadians(47.5));
 
-    private final Pose midcenterPickupPose = new Pose(77,79);
+    private final Pose midcenterPickupPose = new Pose(82,83);
     private final Pose centerPickupPose = new Pose(115, 84, Math.toRadians(0));
 
     private final Pose midFarPickup = new Pose(86.271, 31.767);
@@ -165,18 +167,18 @@ public class Red_21_Normal extends OpMode {
         Path2 = follower.pathBuilder().addPath(
                         new BezierLine(
                                 centerPickupPose,
-                                gateApproachPose
+                                gateOpenPose
                         )
-                ).setLinearHeadingInterpolation(centerPickupPose.getHeading(), gateApproachPose.getHeading())
+                ).setLinearHeadingInterpolation(centerPickupPose.getHeading(), gateOpenPose.getHeading())
                 .build();
 
         // Path3: First pickup back to score
         Path3 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                gateApproachPose,
+                                gateOpenPose,
                                 scorePose
                         )
-                ).setLinearHeadingInterpolation(gateApproachPose.getHeading(), scorePose.getHeading())
+                ).setLinearHeadingInterpolation(gateOpenPose.getHeading(), scorePose.getHeading())
                 .build();
 
         // Path4: Score to gate approach
