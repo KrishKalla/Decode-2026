@@ -164,7 +164,7 @@ public class shooter {
         scale = Math.max(minVoltageCompensation, Math.min(maxVoltageCompensation, scale));
         power *= scale;
 
-        power = Math.max(-1.0, Math.min(1.0, power));
+        power = Math.max(0, Math.min(1.0, power));
         return power;
     }
 

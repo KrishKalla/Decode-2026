@@ -51,7 +51,7 @@ public class turretTestingNew extends OpMode {
     }
 
     public void loop() {
-        Pose goalPose = new Pose(storage.BLUE_X, storage.BLUE_Y);
+        Pose goalPose = new Pose(storage.RED_X, storage.RED_Y);
         follower.update();
         if (manual) {
             turret.hardwareUpdate(turret.update(MANUAL));

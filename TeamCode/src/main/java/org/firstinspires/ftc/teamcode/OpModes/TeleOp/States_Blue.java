@@ -27,11 +27,9 @@ public class States_Blue extends OpMode {
     private LLHandler llhandler;
 
     private ElapsedTime timer;
-    private ElapsedTime threadTimer = new ElapsedTime();
     private int alliance = 1;
+    private int loopCounter = 0;
 
-    Thread thread;
-    Runnable r;
 
     private volatile double servoUpdate;
 
@@ -44,6 +42,9 @@ public class States_Blue extends OpMode {
 
     @Override
     public void init() {
+
+        storage.BLUE_X = 6.7;
+
         follower = Constants.createFollower(hardwareMap);
         if (alliance == 1) {
             follower.setStartingPose(storage.lastBlueAutoPose);
@@ -67,31 +68,6 @@ public class States_Blue extends OpMode {
         timer = new ElapsedTime();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        r = new Runnable() {
-            @Override
-            public void run() {
-                while(true) {
-                    threadTimer.reset();
-                    llhandler.poll();
-                    shooter.update();
-//                    shooter.updateBatteryVoltage();
-
-                    if (AUTO && Mode==0) {
-                        shooter.calculateParams();
-                    } else if (AUTO && Mode==1) {
-                        shooter.far();
-                    }
-
-                    if (alliance == 1 && AUTO_AIM) {
-                        servoUpdate = turret.update(new Pose(storage.BLUE_X, storage.BLUE_Y));
-                    } else if (alliance == 0  && AUTO_AIM){
-                        servoUpdate = turret.update(new Pose(storage.RED_X, storage.RED_Y));
-                    }
-                }
-            }
-        };
-
-        thread = new Thread(r);
     }
 
     @Override
@@ -111,23 +87,60 @@ public class States_Blue extends OpMode {
         AUTO_AIM = true;
         shooter.setStopper(true);
 
-        thread.start();
-
         timer.reset();
     }
 
     @Override
     public void loop() {
+
         timer.reset();
+
+        // 1️⃣ Update drivetrain pose
         follower.update();
+
+        // 2️⃣ Update SRS hub
+
+        // 3️⃣ Vision
+        llhandler.poll();
+
+        // 4️⃣ Shooter
+        shooter.update();
+
+        loopCounter++;
+
+        if (AUTO && Mode == 0 && loopCounter % 2 == 0) {
+            shooter.calculateParams();
+        } else if (AUTO && Mode == 1) {
+            shooter.far();
+        }
+
+        // 5️⃣ Turret targeting
+        if (AUTO_AIM) {
+            if (alliance == 1) {
+                servoUpdate = turret.update(new Pose(storage.BLUE_X, storage.BLUE_Y));
+            } else {
+                servoUpdate = turret.update(new Pose(storage.RED_X, storage.RED_Y));
+            }
+        }
+
+        // 6️⃣ Apply turret servo
         turret.hardwareUpdate(servoUpdate);
+
+        // 7️⃣ Drive control
         follower.setTeleOpDrive(
                 -gamepad1.left_stick_y,
                 -gamepad1.left_stick_x,
                 -gamepad1.right_stick_x,
-                true //robot centric
+                true
         );
 
+        // 8️⃣ Intake + driver controls
+        handleDriverControls();
+
+        // 9️⃣ Telemetry LAST
+        updateTelemetry();
+    }
+    private void handleDriverControls() {
         //Intake
         if (gamepad1.right_trigger > 0.3) {
             intake.setIntake(constants.INTAKE_PRESETS.ON);
@@ -143,14 +156,6 @@ public class States_Blue extends OpMode {
         else {
             intake.setIntake(constants.INTAKE_PRESETS.OFF);
         }
-
-
-
-        //Open Stopper
-        if (gamepad2.right_stick_button){
-            shooter.setStopper(false);
-        }
-
 
         //Switch Modes
         if (gamepad2.right_trigger > 0.3) {
@@ -215,8 +220,9 @@ public class States_Blue extends OpMode {
         if (gamepad2.dpad_down){
             AUTO_AIM=true;
         }
-        updateTelemetry();
     }
+
+
 
     public void updateTelemetry() {
         telemetry.addLine(follower.getPose().toString());
@@ -234,8 +240,4 @@ public class States_Blue extends OpMode {
         telemetry.update();
     }
 
-    @Override
-    public void stop(){
-        thread.interrupt();
-    }
 }
