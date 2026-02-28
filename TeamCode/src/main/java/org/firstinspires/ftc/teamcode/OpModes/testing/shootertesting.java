@@ -66,7 +66,6 @@ public class shootertesting extends OpMode {
             shooter.calculateParams();
             turret.hardwareUpdate(turret.update(goalPose));
         } else {
-            shooter.setHood(constants.shooter.Hood_pos);
             turret.hardwareUpdate(turret.update(MANUAL_Turret));
         }
 

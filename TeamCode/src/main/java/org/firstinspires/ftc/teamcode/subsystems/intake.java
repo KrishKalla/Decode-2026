@@ -8,8 +8,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.util.constants;
 
+import java.util.Objects;
+
 public class intake {
 
+    private static final double BALL_DEBOUNCE_MS = 600;
     private DcMotorEx motorL;
     private DcMotorEx motorR;
     public Servo servoL;
@@ -20,16 +23,36 @@ public class intake {
 
     private String intakeState;
     private boolean extended;
-    private boolean stalled = false;
+    private boolean transfer_stalled = false;
+    private boolean intake_stalled = false;
     private ElapsedTime stallTimer;
+
+
+
+    private boolean spikeActive = false;
+    private ElapsedTime spikeTimer = new ElapsedTime();
+
+
+    private double transfer_reduction=0.7;
+
+    private static final long INTAKE_STALL_DEBOUNCE_MS = 500; // ignore first 0.5s spike
+    private ElapsedTime intake_stallTimer = new ElapsedTime();
+
+
+    // ===== Stall Detection =====
+    private boolean stallActive = false;
+    private ElapsedTime stallDetectTimer = new ElapsedTime();
+
+    private boolean firstspike=false;
 
     public intake(){
 
     }
 
     public void init(HardwareMap map) {
+
         intakeState = "INIT";
-        stallTimer = new ElapsedTime();
+
 
         motorL = map.get(DcMotorEx.class, "intakeL");
         motorL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -54,36 +77,63 @@ public class intake {
         extended = false;
     }
 
+    public void update() {
+        updateStallDetection();
+        if (transfer_stalled && intakeState.equals("ON")) {
+            transfer_reduction=1;
+        }
+        if(Objects.equals(intakeState, "TRANSFERRING")){
+            transfer_reduction=0.7;
+            transfer_stalled=false;
+        }
+    }
+    private void updateStallDetection() {
+
+        double current = getTransferCurrent();
+
+        if (current > constants.intake.STALL_CURRENT_THRESHOLD  && intakeState.equals("ON")) {
+            transfer_stalled=true;
+        }
+    }
+
+
+
+
     public void setIntake(constants.INTAKE_PRESETS state) {
         switch(state) {
             case ON:
                 intakeState = "ON";
                 setDirection(1);
-                setPower(constants.intake.INTAKE_POWER);
+                setPowerR(constants.intake.INTAKE_POWER);
+                setPowerL(constants.intake.INTAKE_POWER-transfer_reduction);
                 setExtension(constants.INTAKE_EXTENSION.EXTENDED);
                 break;
             case OFF:
                 intakeState = "OFF";
                 setDirection(1);
-                setPower(0);
+                setPowerR(0);
+                setPowerL(0);
                 setExtension(constants.INTAKE_EXTENSION.RETRACTED);
                 break;
             case REJECT:
                 intakeState = "REJECT";
                 setDirection(-1);
-                setPower(constants.intake.INTAKE_POWER);
+                setPowerR(constants.intake.INTAKE_POWER);
+                setPowerL(constants.intake.INTAKE_POWER);
                 setExtension(constants.INTAKE_EXTENSION.RETRACTED);
                 break;
             case TRANSFERING:
-                intakeState = "TRANSFERING";
+                intakeState = "TRANSFERRING";
                 setDirection(1);
-                setPower(constants.intake.TRANSFER_POWER);
+                setPowerL(constants.intake.TRANSFER_POWER);
+                setPowerR(constants.intake.TRANSFER_POWER);
                 setExtension(constants.INTAKE_EXTENSION.RETRACTED);
                 break;
             case GATE:
                 intakeState = "GATE";
                 setDirection(1);
-                setPower(0);
+                setPowerR(0);
+                setPowerL(0);
                 setExtension(constants.INTAKE_EXTENSION.GATE);
                 break;
         }
@@ -122,9 +172,12 @@ public class intake {
         }
     }
 
-    private void setPower(double d) {
-        motorL.setPower(d);
+    private void setPowerR(double d) {
         motorR.setPower(d);
+    }
+
+    private void setPowerL(double d) {
+        motorL.setPower(d);
     }
 
     private DcMotorEx.Direction flip(DcMotorEx.Direction dir) {
@@ -134,10 +187,21 @@ public class intake {
     }
 
     public String toString() {
-        return "DIRECTION: " + motorL.getDirection() + "\n" +
-                "POWER: " + motorL.getPower() + "\n" +
-                "STATE: " + getIntakeState() + "\n" +
-                "CURRENT: " + (motorL.getCurrent(CurrentUnit.AMPS) + motorR.getCurrent(CurrentUnit.AMPS))/2;
+        return "STATE: " + intakeState + "\n" +
+                "POWER L: " + motorL.getPower() + "\n" +
+                "POWER R: " + motorR.getPower() + "\n" +
+                "INTAKE CURRENT: " + getIntakeCurrent() + "\n" +
+                "TRANSFER CURRENT: " + getTransferCurrent() + "\n" +
+                "BALL COUNT: " + constants.intake.ballCount + "\n" +
+                "TRANSFER STALLED: " + transfer_stalled + "\n" +
+                "INTAKE STALLED: " + intake_stalled;
+    }
+
+    public double getIntakeCurrent() {
+        return motorR.getCurrent(CurrentUnit.AMPS);
+    }
+    public double getTransferCurrent() {
+        return motorL.getCurrent(CurrentUnit.AMPS);
     }
 
     public String getIntakeState() {

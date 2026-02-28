@@ -41,6 +41,9 @@ public class shooter {
     private boolean flywheelState;
     private boolean stopped = true;
 
+
+
+
     public shooter() {
 
     }
@@ -121,14 +124,14 @@ public class shooter {
             hoodTrackingState = "TRACKING";
             filterDistance(previousDistance);
             double[] interp = LUT.get(ema);
-            constants.shooter.Hood_pos= interp[1];
+            constants.shooter.Target_Hood= interp[1];
             constants.shooter.TARGET_RPM = interp[0];
         }
     }
 
     public void far(){
         constants.shooter.TARGET_RPM=940;
-        constants.shooter.Hood_pos=0.6767;
+        constants.shooter.Target_Hood=0.6767;
     }
 
     public void update() {
@@ -155,6 +158,7 @@ public class shooter {
         double setpoint = constants.shooter.TARGET_RPM;
         double error = setpoint - rpm;
 
+        constants.shooter.Hood_pos=constants.shooter.Target_Hood;
         double feedforward = constants.shooter.kS + constants.shooter.kV * setpoint;
         double feedback = constants.shooter.kP * error;
 

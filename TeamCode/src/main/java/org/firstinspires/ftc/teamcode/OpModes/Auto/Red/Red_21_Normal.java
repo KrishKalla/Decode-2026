@@ -30,8 +30,8 @@ public class Red_21_Normal extends OpMode {
     private ElapsedTime shootTimer = new ElapsedTime();
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime loopTimer = new ElapsedTime();
-    private double shootingtime = 0.7;
-    private static double gateIntakeTime = 1.0;
+    private double shootingtime = 0.45;
+    private static double gateIntakeTime = 1.2;
     private boolean IsShot=false;
 
     private boolean Auto_hood = true;
@@ -53,22 +53,22 @@ public class Red_21_Normal extends OpMode {
 
     // Pose definitions
     private final Pose startPose = new Pose(118.40, 126.79, Math.toRadians(0));
-    private final Pose scorePose = new Pose(89, 78, Math.toRadians(0));
-    private final Pose pickup1Pose = new Pose(115, 60, Math.toRadians(0));
-    private final Pose midPickup1 = new Pose(90, 60);
+    private final Pose scorePose = new Pose(92, 76, Math.toRadians(0));
+    private final Pose pickup1Pose = new Pose(113, 60, Math.toRadians(0));
+    private final Pose midPickup1 = new Pose(70, 55.5);
 
 
     private final Pose gateOpenPose = new Pose(127, 75, Math.toRadians(0));
-    private final Pose gateApproachPose = new Pose(127, 61, Math.toRadians(30));
-    private final Pose midGatePose = new Pose(120, 54);
-    private final Pose gatePose = new Pose(129, 55, Math.toRadians(47.5));
+    private final Pose gateApproachPose = new Pose(127, 62, Math.toRadians(30));
+    private final Pose midGatePose = new Pose(121, 59);
+    private final Pose gatePose = new Pose(127.5, 57, Math.toRadians(50));
 
-    private final Pose midcenterPickupPose = new Pose(82,83);
-    private final Pose centerPickupPose = new Pose(115, 84, Math.toRadians(0));
+    private final Pose midcenterPickupPose = new Pose(90,84.5);
+    private final Pose centerPickupPose = new Pose(113, 84, Math.toRadians(0));
 
     private final Pose midFarPickup = new Pose(86.271, 31.767);
-    private final Pose farPickupPose = new Pose(115, 36, Math.toRadians(0));
-    private final Pose parkPose = new Pose(83.128, 103, Math.toRadians(-70));
+    private final Pose farPickupPose = new Pose(113, 36, Math.toRadians(0));
+    private final Pose parkPose = new Pose(83.128, 103, Math.toRadians(-45));
 
     // ---- PATH OBJECTS ----
     private PathChain Path1;
@@ -115,7 +115,7 @@ public class Red_21_Normal extends OpMode {
         llhandler.alliance(alliance);
         llhandler.start();
         constants.shooter.TARGET_RPM = 790;
-        constants.shooter.Hood_pos = ShootingHood;
+        constants.shooter.Target_Hood = ShootingHood;
         storage.RED_X=138;
         buildPaths();
     }
@@ -157,35 +157,25 @@ public class Red_21_Normal extends OpMode {
         Path1 = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 startPose,
-                                midcenterPickupPose,
-                                centerPickupPose
+                                midPickup1,
+                                pickup1Pose
                         )
-                ).setLinearHeadingInterpolation(startPose.getHeading(), centerPickupPose.getHeading())
-                .build();
-
-        // Path2: Score to first pickup
-        Path2 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                centerPickupPose,
-                                gateOpenPose
-                        )
-                ).setLinearHeadingInterpolation(centerPickupPose.getHeading(), gateOpenPose.getHeading())
+                ).setLinearHeadingInterpolation(startPose.getHeading(), pickup1Pose.getHeading())
                 .build();
 
         // Path3: First pickup back to score
         Path3 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                gateOpenPose,
+                                pickup1Pose,
                                 scorePose
                         )
-                ).setLinearHeadingInterpolation(gateOpenPose.getHeading(), scorePose.getHeading())
+                ).setLinearHeadingInterpolation(pickup1Pose.getHeading(), scorePose.getHeading())
                 .build();
 
         // Path4: Score to gate approach
         Path4 = follower.pathBuilder().addPath(
-                        new BezierCurve(
+                        new BezierLine(
                                 scorePose,
-                                midGatePose,
                                 gateApproachPose
                         )
                 ).setLinearHeadingInterpolation(scorePose.getHeading(), gateApproachPose.getHeading())
@@ -195,6 +185,7 @@ public class Red_21_Normal extends OpMode {
         Path5 = follower.pathBuilder().addPath(
                         new BezierLine(
                                 gateApproachPose,
+
                                 gatePose
                         )
                 ).setLinearHeadingInterpolation(gateApproachPose.getHeading(), gatePose.getHeading())
@@ -213,26 +204,25 @@ public class Red_21_Normal extends OpMode {
         Path7 = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 scorePose,
-                                midPickup1,
-                                pickup1Pose
+                                midcenterPickupPose,
+                                centerPickupPose
                         )
-                ).setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Pose.getHeading())
+                ).setLinearHeadingInterpolation(scorePose.getHeading(), centerPickupPose.getHeading())
                 .build();
 
         // Path8: Center pickup back to score (MOVED HERE)
         Path8 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                pickup1Pose,
+                                centerPickupPose,
                                 scorePose
                         )
-                ).setLinearHeadingInterpolation(pickup1Pose.getHeading(), scorePose.getHeading())
+                ).setLinearHeadingInterpolation(centerPickupPose.getHeading(), scorePose.getHeading())
                 .build();
 
         // Path9: Score to gate approach (second time)
         Path9 = follower.pathBuilder().addPath(
-                        new BezierCurve(
+                        new BezierLine(
                                 scorePose,
-                                midGatePose,
                                 gateApproachPose
                         )
                 ).setLinearHeadingInterpolation(scorePose.getHeading(), gateApproachPose.getHeading())
@@ -256,36 +246,8 @@ public class Red_21_Normal extends OpMode {
                 ).setLinearHeadingInterpolation(gatePose.getHeading(), scorePose.getHeading())
                 .build();
 
-        // Path12: Score to gate approach (third time)
+        // Path12: Intake Third Row
         Path12 = follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                scorePose,
-                                midGatePose,
-                                gateApproachPose
-                        )
-                ).setLinearHeadingInterpolation(scorePose.getHeading(), gateApproachPose.getHeading())
-                .build();
-
-        // Path13: Gate approach to gate (third time)
-        Path13 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                gateApproachPose,
-                                gatePose
-                        )
-                ).setLinearHeadingInterpolation(gateApproachPose.getHeading(), gatePose.getHeading())
-                .build();
-
-        // Path14: Gate back to score (third time)
-        Path14 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                gatePose,
-                                scorePose
-                        )
-                ).setLinearHeadingInterpolation(gatePose.getHeading(), scorePose.getHeading())
-                .build();
-
-        // Path15: Score to far pickup
-        Path15 = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 scorePose,
                                 midFarPickup,
@@ -294,10 +256,37 @@ public class Red_21_Normal extends OpMode {
                 ).setLinearHeadingInterpolation(scorePose.getHeading(), farPickupPose.getHeading())
                 .build();
 
-        // Path16: Far pickup to park
-        Path16 = follower.pathBuilder().addPath(
+        // Path13: score far pickup
+        Path13 = follower.pathBuilder().addPath(
                         new BezierLine(
                                 farPickupPose,
+                                scorePose
+                        )
+                ).setLinearHeadingInterpolation(farPickupPose.getHeading(), scorePose.getHeading())
+                .build();
+
+        // Path14: Go to gate
+        Path14 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                scorePose,
+                                gateApproachPose
+                        )
+                ).setLinearHeadingInterpolation(scorePose.getHeading(), gateApproachPose.getHeading())
+                .build();
+
+        // Path15: Intake from gate
+        Path15 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                gateApproachPose,
+                                gatePose
+                        )
+                ).setLinearHeadingInterpolation(gateApproachPose.getHeading(), gatePose.getHeading())
+                .build();
+
+        // Path16: Gate to park
+        Path16 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                gatePose,
                                 parkPose
                         )
                 ).setLinearHeadingInterpolation(parkPose.getHeading(), parkPose.getHeading())
@@ -321,7 +310,7 @@ public class Red_21_Normal extends OpMode {
                     intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
 
                 }
-                if (shootTimer.seconds() >= ShootingMoment+0.5){
+                if (shootTimer.seconds() >= ShootingMoment+0.4){
                     follower.setMaxPower(1);
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
                     shooter.setStopper(true);
@@ -333,18 +322,10 @@ public class Red_21_Normal extends OpMode {
 
             case 1:
                 // go to near pickup
-                constants.shooter.Hood_pos=0.69;
+                constants.shooter.Target_Hood=0.69;
                 intake.setIntake(constants.INTAKE_PRESETS.ON);
                 shooter.setStopper(true);
-                setPathState(99);
-                break;
-
-            case 99://Open Gate
-                if(!follower.isBusy()){
-                    intake.setIntake(constants.INTAKE_PRESETS.GATE);
-                    follower.followPath(Path2, false);
-                    setPathState(2);
-                }
+                setPathState(2);
                 break;
 
             case 2:
@@ -490,9 +471,7 @@ public class Red_21_Normal extends OpMode {
                         shooter.setStopper(true);
                         follower.setMaxPower(1);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
-                        follower.followPath(Path15, false);
-                        constants.shooter.TARGET_RPM = 720;
-                        constants.shooter.Hood_pos = 0.59;
+                        follower.followPath(Path12, false);
                         shotWaitStarted = false;
                         setPathState(12);
                     }
@@ -504,15 +483,13 @@ public class Red_21_Normal extends OpMode {
                 if (!follower.isBusy()) {
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
                     shooter.setStopper(false);
-                    constants.shooter.TARGET_RPM = 790;
-                    constants.shooter.Hood_pos = 0.69;
-                    follower.followPath(Path12, false);
+                    follower.followPath(Path13, false);
                     setPathState(13);
                 }
                 break;
 
             case 13:
-                // Gate approach to gate (THIRD TIME)
+                // Score and then Gate approach to gate (THIRD TIME)
                 if (!follower.isBusy()) {
                     if (!shotWaitStarted) {
                         intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
@@ -522,7 +499,7 @@ public class Red_21_Normal extends OpMode {
                     if (shootTimer.seconds() >= shootingtime) {
                         shooter.setStopper(true);
                         intake.setIntake(constants.INTAKE_PRESETS.GATE);
-                        follower.followPath(Path13, false);
+                        follower.followPath(Path14, false);
                         shotWaitStarted = false;
                         setPathState(14);
                     }
@@ -533,7 +510,7 @@ public class Red_21_Normal extends OpMode {
                 // Gate approach to gate (THIRD TIME)
                 if (!follower.isBusy()) {
                     intake.setIntake(constants.INTAKE_PRESETS.ON);
-                    follower.followPath(Path14, false);
+                    follower.followPath(Path15, false);
                     setPathState(15);
                 }
                 break;
@@ -550,9 +527,10 @@ public class Red_21_Normal extends OpMode {
                         follower.setMaxPower(1);
                         intake.setIntake(constants.INTAKE_PRESETS.OFF);
                         shooter.setStopper(false);
-                        follower.followPath(Path15, false);
+                        follower.followPath(Path16, false);
                         constants.shooter.TARGET_RPM = 720;
-                        constants.shooter.Hood_pos = 0.59;
+                        constants.shooter.Target_Hood = 0.59;
+                        storage.RED_X-=1;
                         shotWaitStarted = false;
                         setPathState(16);
                     }

@@ -24,9 +24,8 @@ public class intaketesting extends OpMode {
 
     @Override
     public void start() {
-        ;
-    }
 
+    }
     public void loop() {
         if (mode==1) {
             intake.setIntake(constants.INTAKE_PRESETS.ON);
@@ -40,7 +39,10 @@ public class intaketesting extends OpMode {
         else if (mode==4){
             intake.setIntake(constants.INTAKE_PRESETS.GATE);
         }
+        intake.update();
         telemetry.addLine(intake.toString());
+        telemetry.addData("Intake Current", intake.getIntakeCurrent());
+        telemetry.addData("Transfer Current", intake.getTransferCurrent());
         telemetry.update();
     }
 }

@@ -106,7 +106,7 @@ public class Blue_18_RP extends OpMode {
         llhandler.alliance(alliance);
         llhandler.start();
         constants.shooter.TARGET_RPM = 790;
-        constants.shooter.Hood_pos = 0.69;
+        constants.shooter.Target_Hood = 0.69;
         TURRET_ANGLE = 132;
         storage.BLUE_X=6.7;
 
@@ -408,7 +408,7 @@ public class Blue_18_RP extends OpMode {
                     shooter.setStopper(false);
                     follower.followPath(Path16, true);
                     constants.shooter.TARGET_RPM = 710;
-                    constants.shooter.Hood_pos = 0.60;
+                    constants.shooter.Target_Hood = 0.60;
                     setPathState(13);
                 }
                 break;

@@ -22,7 +22,9 @@ public class constants {
     public static class intake {
         public static boolean REVERSED = false;
         public static double INTAKE_POWER = 1;
-        public static double TRANSFER_POWER = 0.9;
+        public static double TRANSFER_POWER = 1;
+        public static int ballCount=0;
+        public static double STALL_CURRENT_THRESHOLD = 2.1;
     }
 
     public enum INTAKE_PRESETS {
@@ -62,7 +64,9 @@ public class constants {
        public static double PASSTHROUGH = 0.85;
        public static double STOP = 0.475;
        public static double SHOT_LOAD = 65;
+       public static double Target_Hood = 0.18;
        public static double Hood_pos = 0.18;
+       public static double Hood_delta =0.01;
     }
 
     public enum HOOD {

@@ -72,6 +72,7 @@ public class States_Blue extends OpMode {
 
     @Override
     public void init_loop() {
+        intake.update();
         updateTelemetry();
     }
 
@@ -97,8 +98,6 @@ public class States_Blue extends OpMode {
 
         // 1️⃣ Update drivetrain pose
         follower.update();
-
-        // 2️⃣ Update SRS hub
 
         // 3️⃣ Vision
         llhandler.poll();
@@ -148,6 +147,7 @@ public class States_Blue extends OpMode {
         } else if (gamepad1.left_trigger > 0.3) {
             intake.setIntake(constants.INTAKE_PRESETS.REJECT);
         } else if (gamepad1.right_bumper) {
+            shooter.setStopper(false);
             intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
         }
         else if(gamepad1.right_stick_button){
@@ -237,6 +237,7 @@ public class States_Blue extends OpMode {
         telemetry.addData("New Servo Pos", servoUpdate);
         telemetry.addData("Turret Error", turret.getError());
         telemetry.addData("Goal Pose X",storage.BLUE_X);
+        telemetry.addData("Transfer Powered",intake.getTransferCurrent());
         telemetry.update();
     }
 

@@ -118,6 +118,7 @@ public class States_Red extends OpMode {
 
     @Override
     public void loop() {
+        intake.update();
         timer.reset();
         follower.update();
         if(AUTO_AIM) {
@@ -137,6 +138,7 @@ public class States_Red extends OpMode {
         } else if (gamepad1.left_trigger > 0.3) {
             intake.setIntake(constants.INTAKE_PRESETS.REJECT);
         } else if (gamepad1.right_bumper) {
+            shooter.setStopper(false);
             intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
         }
         else if(gamepad1.right_stick_button){
@@ -233,6 +235,7 @@ public class States_Red extends OpMode {
         telemetry.addData("New Servo Pos", servoUpdate);
         telemetry.addData("Turret Error", turret.getError());
         telemetry.addData("Goal Pose X",storage.RED_X);
+        telemetry.addData("Transfer Powered",intake.getTransferCurrent());
         telemetry.update();
     }
 
