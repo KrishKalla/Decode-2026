@@ -151,17 +151,17 @@ public class States_Red extends OpMode {
 
 
         //Open Stopper
-        if (gamepad2.right_stick_button||gamepad1.left_bumper){
+        if (gamepad1.left_bumper){
             shooter.setStopper(false);
         }
 
 
         //Switch Modes
         if (gamepad2.right_trigger > 0.3) {
-            Mode=0;//close
+            follower.setHeading(25);//close
         }
         if (gamepad2.left_trigger> 0.3) {
-            Mode=1;//far
+            follower.setHeading(0);//far
         }
 
         //Far Mode Vs Close Mode
