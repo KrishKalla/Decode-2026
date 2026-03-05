@@ -52,7 +52,7 @@ public class Red_21_RP extends OpMode {
     private int pathState = 0;
 
     // Pose definitions
-    private final Pose startPose = new Pose(116.40, 126.79, Math.toRadians(0));
+    private final Pose startPose = new Pose(115.75, 126.79, Math.toRadians(0));
     private final Pose scorePose = new Pose(92, 76, Math.toRadians(0));
     private final Pose pickup1Pose = new Pose(113, 60, Math.toRadians(0));
     private final Pose midPickup1 = new Pose(70, 55.5);

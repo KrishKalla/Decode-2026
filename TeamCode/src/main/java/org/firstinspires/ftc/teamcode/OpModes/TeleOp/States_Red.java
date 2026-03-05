@@ -3,8 +3,11 @@ package org.firstinspires.ftc.teamcode.OpModes.TeleOp;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.pedropathing.control.PIDFCoefficients;
+import com.pedropathing.control.PIDFController;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.MathFunctions;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -40,6 +43,14 @@ public class States_Red extends OpMode {
     public static boolean AUTO_AIM = true;
 
     private int Mode=0;//Short
+
+    //Heading Lock
+    double targetHeading = Math.toRadians(20); // Radians
+    public static double heading_P=0.467;
+    public static double heading_D=0.05;
+    public static double heading_F=0.03;
+    PIDFController controller = new PIDFController(new PIDFCoefficients(heading_P, 0, heading_D, heading_F));
+    boolean headingLock = false;
 
 
     @Override
@@ -118,18 +129,23 @@ public class States_Red extends OpMode {
 
     @Override
     public void loop() {
+
+        controller.updateError(getHeadingError());
+        controller.setCoefficients(new PIDFCoefficients(heading_P, 0, heading_D, heading_F));
+
+        if (headingLock)
+            follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, controller.run(),true);
+        else
+            follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x,true);
+
+        Method:
+
         intake.update();
         timer.reset();
         follower.update();
         if(AUTO_AIM) {
             turret.hardwareUpdate(servoUpdate);
         }
-        follower.setTeleOpDrive(
-                -gamepad1.left_stick_y,
-                -gamepad1.left_stick_x,
-                -gamepad1.right_stick_x,
-                true //robot centric
-        );
 
         //Intake
         if (gamepad1.right_trigger > 0.3) {
@@ -141,7 +157,7 @@ public class States_Red extends OpMode {
             shooter.setStopper(false);
             intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
         }
-        else if(gamepad1.right_stick_button){
+        else if(gamepad1.left_stick_button){
             intake.setIntake(constants.INTAKE_PRESETS.GATE);
         }
         else {
@@ -157,11 +173,16 @@ public class States_Red extends OpMode {
 
 
         //Switch Modes
-        if (gamepad2.right_trigger > 0.3) {
-            follower.setHeading(25);//close
+        if (gamepad1.right_stick_button) {
+            targetHeading=Math.toRadians(25);
+            headingLock=true;
         }
-        if (gamepad2.left_trigger> 0.3) {
-            follower.setHeading(0);//far
+        else if (gamepad2.right_trigger> 0.3) {
+            targetHeading=Math.toRadians(0);
+            headingLock=true;
+        }
+        else{
+            headingLock=false;
         }
 
         //Far Mode Vs Close Mode
@@ -237,6 +258,10 @@ public class States_Red extends OpMode {
         telemetry.addData("Goal Pose X",storage.RED_X);
         telemetry.addData("Transfer Powered",intake.getTransferCurrent());
         telemetry.update();
+    }
+
+    public double getHeadingError() {
+        return MathFunctions.getTurnDirection(follower.getHeading(), targetHeading) * MathFunctions.getSmallestAngleDifference(follower.getPose().getHeading(),targetHeading);
     }
 
     @Override
