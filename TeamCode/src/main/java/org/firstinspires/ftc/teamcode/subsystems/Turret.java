@@ -232,7 +232,7 @@ public class Turret {
     }
 
     public double angleToServoPosition(double angle) {
-        return 0.5 + (angle / SERVO_TO_TURRET_RATIO) / 355;
+        return 0.538888 + (angle / SERVO_TO_TURRET_RATIO) / 355;
     }
 
     public double angleToServoDelta(double angle) {
