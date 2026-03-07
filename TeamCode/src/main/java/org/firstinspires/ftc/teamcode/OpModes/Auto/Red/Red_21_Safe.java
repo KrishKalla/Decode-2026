@@ -26,7 +26,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name = "Red 21 Auto - Safe")
 public class Red_21_Safe extends OpMode {
 
-    public static double gateposex = 129;
+    public static double turret_offset=0;
+    public static double gateposex = 130;
+    public static double gateposey = 61.5;
     private ElapsedTime shootTimer = new ElapsedTime();
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime loopTimer = new ElapsedTime();
@@ -54,17 +56,16 @@ public class Red_21_Safe extends OpMode {
     // Pose definitions
     private final Pose startPose = new Pose(115.75, 126.79, Math.toRadians(0));
     private final Pose scorePose = new Pose(92, 76, Math.toRadians(0));
-    private final Pose pickup1Pose = new Pose(113, 60, Math.toRadians(0));
+    private final Pose pickup1Pose = new Pose(116, 59, Math.toRadians(0));
     private final Pose midPickup1 = new Pose(70, 55.5);
 
-
-    private final Pose gateApproachPose = new Pose(gateposex, 60, Math.toRadians(20));
+    private final Pose gateApproachPose = new Pose(gateposex, gateposey, Math.toRadians(20));
 
     private final Pose midcenterPickupPose = new Pose(90,84.5);
-    private final Pose centerPickupPose = new Pose(113, 84, Math.toRadians(0));
+    private final Pose centerPickupPose = new Pose(116, 84, Math.toRadians(0));
 
     private final Pose midFarPickup = new Pose(86.271, 31.767);
-    private final Pose farPickupPose = new Pose(113, 36, Math.toRadians(0));
+    private final Pose farPickupPose = new Pose(116, 36, Math.toRadians(0));
     private final Pose parkPose = new Pose(83.128, 103, Math.toRadians(-45));
 
     // ---- PATH OBJECTS ----
@@ -110,6 +111,7 @@ public class Red_21_Safe extends OpMode {
         constants.shooter.TARGET_RPM = 790;
         constants.shooter.Target_Hood = ShootingHood;
         storage.RED_X=138;
+        turret_offset=1;
         buildPaths();
     }
 
@@ -127,7 +129,8 @@ public class Red_21_Safe extends OpMode {
         //shooter.calculateParams();
         shooter.update();
         intake.update();
-        turret.hardwareUpdate(turret.update(goalPose));
+
+        turret.hardwareUpdate(turret.update(goalPose)+turret.angleToServoDelta(turret_offset));
 
         storage.lastRedAutoPose = follower.getPose();
 
@@ -142,7 +145,6 @@ public class Red_21_Safe extends OpMode {
         telemetry.addData("lldist", llhandler.getLatestResult()[2]);
         telemetry.update();
     }
-
 
     // ---- BUILD PATHS ----
     private void buildPaths() {
@@ -279,6 +281,7 @@ public class Red_21_Safe extends OpMode {
                 if (shootTimer.seconds() >= ShootingMoment+0.4){
                     follower.setMaxPower(1);
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
+                    turret_offset=0;
                     shooter.setStopper(true);
                     IsShot=true;
                     shotWaitStarted = false;
@@ -443,6 +446,7 @@ public class Red_21_Safe extends OpMode {
                         intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
                         shootTimer.reset();
                         shotWaitStarted = true;
+                        gateposey=62;
                     }
                     if (shootTimer.seconds() >= shootingtime) {
                         shooter.setStopper(true);
@@ -469,7 +473,7 @@ public class Red_21_Safe extends OpMode {
                         follower.followPath(Path16, false);
                         constants.shooter.TARGET_RPM = 720;
                         constants.shooter.Target_Hood = 0.59;
-                        storage.RED_X-=1;
+                        turret_offset=0;
                         shotWaitStarted = false;
                         setPathState(16);
                     }
@@ -513,8 +517,6 @@ public class Red_21_Safe extends OpMode {
                 break;
 
             case -1:
-
-
                 requestOpModeStop();
                 break;
         }

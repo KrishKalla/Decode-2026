@@ -30,7 +30,7 @@ public class Red_21_RP extends OpMode {
     private ElapsedTime shootTimer = new ElapsedTime();
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime loopTimer = new ElapsedTime();
-    private double shootingtime = 0.45;
+    private double shootingtime = 0.5;
     private static double gateIntakeTime = 2;
     private boolean IsShot=false;
 
@@ -54,11 +54,10 @@ public class Red_21_RP extends OpMode {
     // Pose definitions
     private final Pose startPose = new Pose(115.75, 126.79, Math.toRadians(0));
     private final Pose scorePose = new Pose(92, 76, Math.toRadians(0));
-    private final Pose pickup1Pose = new Pose(113, 60, Math.toRadians(0));
+    private final Pose pickup1Pose = new Pose(113, 61, Math.toRadians(0));
     private final Pose midPickup1 = new Pose(70, 55.5);
 
-
-    private final Pose gateApproachPose = new Pose(129, 60, Math.toRadians(20));
+    private final Pose gateApproachPose = new Pose(128, 61, Math.toRadians(20));
 
     private final Pose midcenterPickupPose = new Pose(90,84.5);
     private final Pose centerPickupPose = new Pose(113, 84, Math.toRadians(0));

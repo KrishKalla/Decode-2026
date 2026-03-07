@@ -228,9 +228,14 @@ public class Turret {
         right.setPosition(angleToServoPosition(angle));
     }
 
-    private double angleToServoPosition(double angle) {
+    public double angleToServoPosition(double angle) {
         return 0.5 + (angle / SERVO_TO_TURRET_RATIO) / 355;
     }
+
+    public double angleToServoDelta(double angle) {
+        return (angle / SERVO_TO_TURRET_RATIO) / 355;
+    }
+
 
     private double clamp(double pos, double low, double high) {
         return (Math.max(low, Math.min(high, pos)));

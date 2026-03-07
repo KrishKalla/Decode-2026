@@ -74,6 +74,8 @@ public class States_Red extends OpMode {
         turret.init(hardwareMap, follower);
         shooter.init(hardwareMap, llhandler);
 
+        storage.RED_X=138;
+
 
         timer = new ElapsedTime();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -187,10 +189,10 @@ public class States_Red extends OpMode {
 
         //Far Mode Vs Close Mode
         if (gamepad2.right_bumper) {
-            storage.RED_X+=2;
+            storage.RED_X+=1;
         }
         if (gamepad2.left_bumper) {
-            storage.RED_X-=2;
+            storage.RED_X-=1;
         }
 
         //Close Zone Set points
