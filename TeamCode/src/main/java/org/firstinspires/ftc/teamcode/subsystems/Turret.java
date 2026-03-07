@@ -19,6 +19,8 @@ import org.firstinspires.ftc.teamcode.util.storage;
 public class Turret {
     private FtcDashboard dashboard;
 
+    public double SERVO_Pose =0;
+
     //Hardware
     private Servo left;
     private Servo right;
@@ -27,14 +29,14 @@ public class Turret {
     private SRSHub.Config config = new SRSHub.Config();
 
     //Constants
-    public static double SERVO_TO_TURRET_RATIO = 1.3333333;
+    public static double SERVO_TO_TURRET_RATIO = 1.333333333;
     private static final double ENCODER_TO_TURRET_RATIO = 108/21.0;
     private static final int ENCODER_TICKS_PER_REV = 1024;
     private static final double MIN_ANGLE = -135;
     private static final double MAX_ANGLE = 135.0;
     private static final double TICKS_PER_TURRET_DEGREE =
             (ENCODER_TICKS_PER_REV / 360.0) * ENCODER_TO_TURRET_RATIO;
-    public static double TURRET_OFFSET = -2.7266;
+    public static double TURRET_OFFSET = -2.7265858268;
     public static int ENCODER_DIRECTION = 1;
     public static int DIRECTION = 1;
     public static double SERVO_MAX = 0.85;
@@ -176,6 +178,7 @@ public class Turret {
     public void hardwareUpdate(double pos) {
         left.setPosition(pos);
         right.setPosition(pos);
+        SERVO_Pose=pos;
     }
 
     public double normalizeAngle(double angle) {
@@ -266,6 +269,7 @@ public class Turret {
         packet.put("Turret Y", turretY);
         packet.put("Turret Field Heading", Math.toDegrees(turretHeading));
         packet.put("Turret Absolute Heading", Math.toDegrees(turretAngle));
+        packet.put("Servo Pos", SERVO_Pose);
     }
 
     public int getDelta() {
