@@ -27,13 +27,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Red_21_Safe extends OpMode {
 
     public static double turret_offset=0;
-    public static double gateposex = 130;
-    public static double gateposey = 61.5;
+    public static double gateposex = 130.5;
+    public static double gateposey = 61;
     private ElapsedTime shootTimer = new ElapsedTime();
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime loopTimer = new ElapsedTime();
     private double shootingtime = 0.45;
-    private static double gateIntakeTime = 1.7;
+    private static double gateIntakeTime = 1.5;
     private boolean IsShot=false;
 
     private boolean Auto_hood = true;
@@ -46,7 +46,7 @@ public class Red_21_Safe extends OpMode {
     //Moving While Shooting
     public static double Power=0.5;
     public static double ShootingMoment=1.4;
-    public static double ShootingHood=0.3;
+    public static double ShootingHood=0.35 ;
     // ---- Pathing ----
     private Follower follower;
 
@@ -61,8 +61,8 @@ public class Red_21_Safe extends OpMode {
 
     private final Pose gateApproachPose = new Pose(gateposex, gateposey, Math.toRadians(20));
 
-    private final Pose midcenterPickupPose = new Pose(90,84.5);
-    private final Pose centerPickupPose = new Pose(116, 84, Math.toRadians(0));
+    private final Pose midcenterPickupPose = new Pose(90,88);
+    private final Pose centerPickupPose = new Pose(116, 84.5, Math.toRadians(0));
 
     private final Pose midFarPickup = new Pose(86.271, 31.767);
     private final Pose farPickupPose = new Pose(116, 36, Math.toRadians(0));
@@ -108,7 +108,7 @@ public class Red_21_Safe extends OpMode {
 
         llhandler.alliance(alliance);
         llhandler.start();
-        constants.shooter.TARGET_RPM = 790;
+        constants.shooter.TARGET_RPM = 780;
         constants.shooter.Target_Hood = ShootingHood;
         storage.RED_X=138;
         turret_offset=1;
@@ -281,7 +281,6 @@ public class Red_21_Safe extends OpMode {
                 if (shootTimer.seconds() >= ShootingMoment+0.4){
                     follower.setMaxPower(1);
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
-                    turret_offset=0;
                     shooter.setStopper(true);
                     IsShot=true;
                     shotWaitStarted = false;
@@ -293,6 +292,7 @@ public class Red_21_Safe extends OpMode {
                 // go to near pickup
                 constants.shooter.Target_Hood=0.69;
                 intake.setIntake(constants.INTAKE_PRESETS.ON);
+                turret_offset=0;
                 shooter.setStopper(true);
                 setPathState(2);
                 break;
@@ -311,15 +311,19 @@ public class Red_21_Safe extends OpMode {
                 // Score and go to gate approach (FIRST TIME)
                 if (!follower.isBusy()) {
                     if (!shotWaitStarted) {
-                        intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
+                        follower.setMaxPower(0.2);
                         shootTimer.reset();
                         shotWaitStarted = true;
+                        IsShot=false;
+                        intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
                     }
                     if (shootTimer.seconds() >= shootingtime) {
-                        shooter.setStopper(true);
+                        IsShot = true;
+                        follower.setMaxPower(1);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
-                        follower.followPath(Path4, false);
+                        shooter.setStopper(true);
                         shotWaitStarted = false;
+                        follower.followPath(Path4, false);
                         setPathState(5);
                     }
                 }
@@ -348,13 +352,16 @@ public class Red_21_Safe extends OpMode {
                 // Score and go to CENTER pickup
                 if (!follower.isBusy()) {
                     if (!shotWaitStarted) {
+                        follower.setMaxPower(0.2);
                         intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
                         shootTimer.reset();
                         shotWaitStarted = true;
                     }
                     if (shootTimer.seconds() >= shootingtime) {
+                        follower.setMaxPower(1);
                         shooter.setStopper(true);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
+                        turret_offset=0;
                         follower.followPath(Path7, false);
                         shotWaitStarted = false;
                         setPathState(7);
@@ -376,11 +383,13 @@ public class Red_21_Safe extends OpMode {
                 // Score and go to gate approach (SECOND TIME)
                 if (!follower.isBusy()) {
                     if (!shotWaitStarted) {
+                        follower.setMaxPower(0.2);
                         intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
                         shootTimer.reset();
                         shotWaitStarted = true;
                     }
                     if (shootTimer.seconds() >= shootingtime) {
+                        follower.setMaxPower(1);
                         shooter.setStopper(true);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
                         follower.followPath(Path9, false);
@@ -443,12 +452,14 @@ public class Red_21_Safe extends OpMode {
                 // Score and then Gate approach to gate (THIRD TIME)
                 if (!follower.isBusy()) {
                     if (!shotWaitStarted) {
+                        follower.setMaxPower(0.2);
                         intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
                         shootTimer.reset();
                         shotWaitStarted = true;
                         gateposey=62;
                     }
                     if (shootTimer.seconds() >= shootingtime) {
+                        follower.setMaxPower(1);
                         shooter.setStopper(true);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
                         follower.followPath(Path14, false);
@@ -471,9 +482,9 @@ public class Red_21_Safe extends OpMode {
                         intake.setIntake(constants.INTAKE_PRESETS.OFF);
                         shooter.setStopper(false);
                         follower.followPath(Path16, false);
-                        constants.shooter.TARGET_RPM = 720;
+                        constants.shooter.TARGET_RPM = 710;
                         constants.shooter.Target_Hood = 0.59;
-                        turret_offset=0;
+                        turret_offset=1;
                         shotWaitStarted = false;
                         setPathState(16);
                     }
