@@ -95,7 +95,6 @@ public class Red_21_Safe extends OpMode {
         shooter = new shooter();
         intake = new intake();
         turret = new Turret();
-        llhandler = new LLHandler(hardwareMap, alliance);
         follower = Constants.createFollower(hardwareMap);
         follower.setPose(startPose);
 
@@ -106,12 +105,10 @@ public class Red_21_Safe extends OpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        llhandler.alliance(alliance);
-        llhandler.start();
         constants.shooter.TARGET_RPM = 780;
         constants.shooter.Target_Hood = ShootingHood;
         storage.RED_X=138;
-        turret_offset=1;
+        turret_offset=1.5;
         buildPaths();
     }
 
@@ -123,10 +120,8 @@ public class Red_21_Safe extends OpMode {
     @Override
     public void loop() {
         loopTimer.reset();
-        llhandler.poll();
         follower.update();
         autonomousPathUpdate();
-        //shooter.calculateParams();
         shooter.update();
         intake.update();
 
@@ -281,6 +276,8 @@ public class Red_21_Safe extends OpMode {
                 if (shootTimer.seconds() >= ShootingMoment+0.4){
                     follower.setMaxPower(1);
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
+                    constants.shooter.Target_Hood=0.69;
+                    turret_offset=0;
                     shooter.setStopper(true);
                     IsShot=true;
                     shotWaitStarted = false;
@@ -290,9 +287,7 @@ public class Red_21_Safe extends OpMode {
 
             case 1:
                 // go to near pickup
-                constants.shooter.Target_Hood=0.69;
                 intake.setIntake(constants.INTAKE_PRESETS.ON);
-                turret_offset=0;
                 shooter.setStopper(true);
                 setPathState(2);
                 break;
@@ -314,11 +309,9 @@ public class Red_21_Safe extends OpMode {
                         follower.setMaxPower(0.2);
                         shootTimer.reset();
                         shotWaitStarted = true;
-                        IsShot=false;
                         intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
                     }
                     if (shootTimer.seconds() >= shootingtime) {
-                        IsShot = true;
                         follower.setMaxPower(1);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
                         shooter.setStopper(true);

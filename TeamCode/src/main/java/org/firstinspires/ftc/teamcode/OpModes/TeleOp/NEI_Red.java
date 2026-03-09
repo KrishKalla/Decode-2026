@@ -3,8 +3,11 @@ package org.firstinspires.ftc.teamcode.OpModes.TeleOp;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.pedropathing.control.PIDFCoefficients;
+import com.pedropathing.control.PIDFController;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.MathFunctions;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -18,8 +21,8 @@ import org.firstinspires.ftc.teamcode.util.constants;
 import org.firstinspires.ftc.teamcode.util.storage;
 
 @Config
-@TeleOp(name = "Blue Close TeleOp ", group = "1")
-public class States_Blue extends OpMode {
+@TeleOp(name = "Red Close TeleOp ", group = "1")
+public class NEI_Red extends OpMode {
     private Follower follower;
     private intake intake;
     private Turret turret;
@@ -27,9 +30,11 @@ public class States_Blue extends OpMode {
     private LLHandler llhandler;
 
     private ElapsedTime timer;
-    private int alliance = 1;
-    private int loopCounter = 0;
+    private ElapsedTime threadTimer = new ElapsedTime();
+    private int alliance = 0;
 
+    Thread thread;
+    Runnable r;
 
     private volatile double servoUpdate;
 
@@ -39,12 +44,17 @@ public class States_Blue extends OpMode {
 
     private int Mode=0;//Short
 
+    //Heading Lock
+    double targetHeading = Math.toRadians(20); // Radians
+    public static double heading_P=0.467;
+    public static double heading_D=0.05;
+    public static double heading_F=0.03;
+    PIDFController controller = new PIDFController(new PIDFCoefficients(heading_P, 0, heading_D, heading_F));
+    boolean headingLock = false;
+
 
     @Override
     public void init() {
-
-        storage.BLUE_X = 6.7;
-
         follower = Constants.createFollower(hardwareMap);
         if (alliance == 1) {
             follower.setStartingPose(storage.lastBlueAutoPose);
@@ -64,15 +74,41 @@ public class States_Blue extends OpMode {
         turret.init(hardwareMap, follower);
         shooter.init(hardwareMap, llhandler);
 
+        storage.RED_X=138;
+
 
         timer = new ElapsedTime();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
+        r = new Runnable() {
+            @Override
+            public void run() {
+                while(true) {
+                    threadTimer.reset();
+                    llhandler.poll();
+                    shooter.update();
+//                    shooter.updateBatteryVoltage();
+
+                    if (AUTO && Mode==0) {
+                        shooter.calculateParams();
+                    } else if (AUTO && Mode==1) {
+                        shooter.far();
+                    }
+
+                    if (alliance == 1 && AUTO_AIM) {
+                        servoUpdate = turret.update(new Pose(storage.BLUE_X, storage.BLUE_Y));
+                    } else if (alliance == 0  && AUTO_AIM){
+                        servoUpdate = turret.update(new Pose(storage.RED_X, storage.RED_Y));
+                    }
+                }
+            }
+        };
+
+        thread = new Thread(r);
     }
 
     @Override
     public void init_loop() {
-        intake.update();
         updateTelemetry();
     }
 
@@ -88,58 +124,31 @@ public class States_Blue extends OpMode {
         AUTO_AIM = true;
         shooter.setStopper(true);
 
+        thread.start();
+
         timer.reset();
     }
 
     @Override
     public void loop() {
 
+        controller.updateError(getHeadingError());
+        controller.setCoefficients(new PIDFCoefficients(heading_P, 0, heading_D, heading_F));
+
+        if (headingLock)
+            follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, controller.run(),true);
+        else
+            follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x,true);
+
+        Method:
+
+        intake.update();
         timer.reset();
-
-        // 1️⃣ Update drivetrain pose
         follower.update();
-
-        // 3️⃣ Vision
-        llhandler.poll();
-
-        // 4️⃣ Shooter
-        shooter.update();
-
-        loopCounter++;
-
-        if (AUTO && Mode == 0 && loopCounter % 2 == 0) {
-            shooter.calculateParams();
-        } else if (AUTO && Mode == 1) {
-            shooter.far();
+        if(AUTO_AIM) {
+            turret.hardwareUpdate(servoUpdate);
         }
 
-        // 5️⃣ Turret targeting
-        if (AUTO_AIM) {
-            if (alliance == 1) {
-                servoUpdate = turret.update(new Pose(storage.BLUE_X, storage.BLUE_Y));
-            } else {
-                servoUpdate = turret.update(new Pose(storage.RED_X, storage.RED_Y));
-            }
-        }
-
-        // 6️⃣ Apply turret servo
-        turret.hardwareUpdate(servoUpdate);
-
-        // 7️⃣ Drive control
-        follower.setTeleOpDrive(
-                -gamepad1.left_stick_y,
-                -gamepad1.left_stick_x,
-                -gamepad1.right_stick_x,
-                true
-        );
-
-        // 8️⃣ Intake + driver controls
-        handleDriverControls();
-
-        // 9️⃣ Telemetry LAST
-        updateTelemetry();
-    }
-    private void handleDriverControls() {
         //Intake
         if (gamepad1.right_trigger > 0.3) {
             intake.setIntake(constants.INTAKE_PRESETS.ON);
@@ -150,27 +159,47 @@ public class States_Blue extends OpMode {
             shooter.setStopper(false);
             intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
         }
-        else if(gamepad1.right_stick_button){
+        else if(gamepad1.left_stick_button){
             intake.setIntake(constants.INTAKE_PRESETS.GATE);
         }
         else {
             intake.setIntake(constants.INTAKE_PRESETS.OFF);
         }
 
-        //Switch Modes
-        if (gamepad2.right_trigger > 0.3) {
-            Mode=0;//close
+
+
+        //Open Stopper
+        if (gamepad1.left_bumper){
+            shooter.setStopper(false);
         }
-        if (gamepad2.left_trigger> 0.3) {
-            Mode=1;//far
+
+
+        //Switch Modes
+        if (gamepad1.right_stick_button) {
+            targetHeading=Math.toRadians(25);
+            headingLock=true;
+        }
+        else if (gamepad2.right_trigger> 0.3) {
+            targetHeading=Math.toRadians(0);
+            headingLock=true;
+        }
+        else{
+            headingLock=false;
+        }
+
+
+
+        //Human Player Zone Reloc
+        if(gamepad2.right_stick_button){
+            follower.setPose(new Pose(6.55,8,Math.toRadians(-90)));
         }
 
         //Far Mode Vs Close Mode
         if (gamepad2.right_bumper) {
-            storage.BLUE_X+=2;
+            storage.RED_X+=1;
         }
         if (gamepad2.left_bumper) {
-            storage.BLUE_X-=2;
+            storage.RED_X-=1;
         }
 
         //Close Zone Set points
@@ -201,13 +230,13 @@ public class States_Blue extends OpMode {
         //Fix Turret Pose Left
         if (gamepad2.dpad_left){
             AUTO_AIM=false;
-            turret.setManualAngle(135);
+            turret.setManualAngle(-135);
         }
 
         //Fix Turret Pose Right
         if (gamepad2.dpad_right){
             AUTO_AIM=false;
-            turret.setManualAngle(-45);
+            turret.setManualAngle(45);
         }
 
         //Fix Turret Pose Middle
@@ -220,9 +249,8 @@ public class States_Blue extends OpMode {
         if (gamepad2.dpad_down){
             AUTO_AIM=true;
         }
+        updateTelemetry();
     }
-
-
 
     public void updateTelemetry() {
         telemetry.addLine(follower.getPose().toString());
@@ -236,9 +264,17 @@ public class States_Blue extends OpMode {
         telemetry.addData("Loop Timer", timer.milliseconds());
         telemetry.addData("New Servo Pos", servoUpdate);
         telemetry.addData("Turret Error", turret.getError());
-        telemetry.addData("Goal Pose X",storage.BLUE_X);
+        telemetry.addData("Goal Pose X",storage.RED_X);
         telemetry.addData("Transfer Powered",intake.getTransferCurrent());
         telemetry.update();
     }
 
+    public double getHeadingError() {
+        return MathFunctions.getTurnDirection(follower.getHeading(), targetHeading) * MathFunctions.getSmallestAngleDifference(follower.getPose().getHeading(),targetHeading);
+    }
+
+    @Override
+    public void stop(){
+        thread.interrupt();
+    }
 }
