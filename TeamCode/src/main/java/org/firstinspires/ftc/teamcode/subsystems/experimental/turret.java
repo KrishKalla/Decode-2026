@@ -39,6 +39,7 @@ public class turret {
     public static double SERVO_MAX = 0.85;
     public static double SERVO_MIN = 0.15;
     public static int ZERO = 423;
+    public static double SERVO_ZERO = 0.5;
     public static double SLOP = 3;
     public static double TOLERANCE = 0.5;
 
@@ -168,7 +169,7 @@ public class turret {
     }
 
     public double angleToServoPosition(double angle) {
-        return 0.5 + (angle / SERVO_TO_TURRET_RATIO) / 355;
+        return SERVO_ZERO + (angle / SERVO_TO_TURRET_RATIO) / 355;
     }
 
     public double angleToServoDelta(double angle) {
