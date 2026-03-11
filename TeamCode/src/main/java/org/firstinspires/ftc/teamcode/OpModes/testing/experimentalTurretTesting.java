@@ -77,6 +77,7 @@ public class experimentalTurretTesting extends OpMode {
         telemetry.addData("turret current", turret.getCurrentAngle());
         telemetry.addData("counter", storage.counter);
         telemetry.addData("zero", turret.ZERO);
+        telemetry.addData("within boundary", boundaryDetection());
         telemetry.update();
 
 
@@ -99,5 +100,18 @@ public class experimentalTurretTesting extends OpMode {
         packet.put("Is Aimed", turret.isAimed());
 
         dashboard.sendTelemetryPacket(packet);
+    }
+
+    public boolean boundaryDetection() {
+        double px = follower.getPose().getX();
+        double py = follower.getPose().getY();
+
+        double d1 = (px - 72) * (144-72) - (0 - 72) * (py - 72);
+        double d2 = (px - 144) * (72 - 144) - (72 - 144) * (py - 144);
+        double d3 = (px - 0) * (144 - 144) - (144 - 0) * (py - 144);
+
+        boolean hasNeg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+        boolean hasPos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+        return !(hasNeg && hasPos);
     }
 }
