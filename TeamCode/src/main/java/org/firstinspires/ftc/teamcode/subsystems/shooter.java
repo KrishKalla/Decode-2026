@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
+
 import androidx.annotation.NonNull;
 
 import com.pedropathing.control.PIDFController;
 import com.pedropathing.localization.PoseTracker;
+import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -13,6 +16,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
 import org.firstinspires.ftc.teamcode.util.LUT;
 import org.firstinspires.ftc.teamcode.util.constants;
+import org.firstinspires.ftc.teamcode.util.shooterConstants;
+
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.MathFunctions;
 
 public class shooter {
     public DcMotorEx motorLeft;
@@ -211,6 +218,51 @@ public class shooter {
             stopped = true;
         }
     }
+
+
+//    public Vector calculateShotVectorAndUpdateTurret(double robotHeading) {
+//        //constants
+//        double g = 32.174 * 12;
+//        double x = robotToGoalVector.getMagnitude() - shooterConstants.PASS_THROUGH_POINT_RADIUS;
+//        double y = shooterConstants.SCORE_HEIGHT;
+//        double a = shooterConstants.SCORE_ANGLE;
+//        //calculate initial launch components
+//        double hoodAngle = MathFunctions.clamp(Math.atan(2 * y / x - Math. tan(a)), shooterConstants.HOOD_MAX_ANGLE,
+//                shooterConstants.HOOD_MIN_ANGLE);
+//
+//        double flywheelSpeed = Math.sqrt(g * x * x / (2 * Math. pow(Math.cos(hoodAngle), 2) * (x * Math.tan (hoodAngle) - y)));
+//        //get robot velocity and convert it into parallel and perpendicular components
+//        Vector robotVelocity = hardware.poseTracker.getVelocity();
+//
+//        double coordinateTheta = robotVelocity.getTheta() - robotToGoalVector.getTheta();
+//
+//        double parallelComponent = -Math.cos(coordinateTheta) * robotVelocity.getMagnitude();
+//        double perpendicularComponent = Math.sin(coordinateTheta) * robotVelocity.getMagnitude();
+//
+//        //velocity compensation variables
+//        double vz = flywheelSpeed * Math.sin(hoodAngle);
+//        double time = x / (flywheelSpeed * Math.cos(hoodAngle));
+//        double ivr = x / time + parallelComponent;
+//        double nvr = Math.sqrt(ivr * ivr + perpendicularComponent * perpendicularComponent);
+//        double ndr = nvr * time;
+//        //recalculate launch components
+//        hoodAngle = MathFunctions.clamp (Math.atan(vz / nvr), shooterConstants. HOOD_MAX_ANGLE,
+//                shooterConstants.HOOD_MIN_ANGLE);
+//
+//        flywheelSpeed = Math.sqrt(g * ndr * ndr / (2 * Math. pow(Math. cos (hoodAngle), 2) * (ndr * Math. tan(hoodAngle) - y)));
+//
+//        //update turret
+//        double turretVelComp0ffset = Math.atan(perpendicularComponent / ivr);
+//        double turretAngle = Math. toDegrees(robotHeading - robotToGoalVector.getTheta() + turretVelComp0ffset);
+//
+//        if (turretAngle > 180) {
+//            turretAngle -= 360;
+//        }
+//
+//        constants.shooter.TARGET_RPM=shooterConstants.getFlywheelTicksFromVelocity(flywheelSpeed);
+//    }
+
+
 
     @NonNull
     @Override
