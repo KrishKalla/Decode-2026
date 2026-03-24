@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.subsystems.Turret;
+import org.firstinspires.ftc.teamcode.subsystems.experimental.turret;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
 import org.firstinspires.ftc.teamcode.util.SOTM;
 import org.firstinspires.ftc.teamcode.util.storage;
@@ -19,20 +19,20 @@ import org.firstinspires.ftc.teamcode.util.storage;
 @TeleOp(name = "Experimental Turret Testing", group = "testing")
 @Config
 public class experimentalTurretTesting extends OpMode {
-    private Turret turret;
+    private turret turret;
     private LLHandler llhandler;
     private Follower follower;
     private int alliance = 1;
     private FtcDashboard dashboard;
     public static boolean manual = false;
     public static boolean RESET = false;
-    public static double MANUAL = 90;
+    public static double MANUAL = 0;
 
     Pose goalPose;
 
     public void init() {
         dashboard = FtcDashboard.getInstance();
-        turret = new Turret();
+        turret = new turret();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         llhandler = new LLHandler(hardwareMap, alliance);
         follower = Constants.createFollower(hardwareMap);
@@ -60,19 +60,19 @@ public class experimentalTurretTesting extends OpMode {
         follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x,true);
         follower.update();
         if (manual) {
-            turret.hardwareUpdate(turret.update(MANUAL));
+            turret.update(MANUAL);
         } else if (RESET) {
             turret.TEST_RESET_ONLY();
         }else {
-            llhandler.poll();
-            SOTM.calculate(follower.getVelocity().getXComponent(), follower.getVelocity().getYComponent());
-            turret.hardwareUpdate(turret.update(SOTM.getAdjustedGoal()));
+//            llhandler.poll();
+//            SOTM.calculate(follower.getVelocity().getXComponent(), follower.getVelocity().getYComponent());
+//            turret.hardwareUpdate(turret.update(SOTM.getAdjustedGoal()));
         }
-
-        telemetry.addData("pose", SOTM.getAdjustedGoal().toString());
-        telemetry.addData("vx", follower.getVelocity().getXComponent());
-        telemetry.addData("vy", follower.getVelocity().getYComponent());
-        telemetry.addData("turret enc", turret.getDelta() );
+        turret.periodic();
+//        telemetry.addData("pose", SOTM.getAdjustedGoal().toString());
+//        telemetry.addData("vx", follower.getVelocity().getXComponent());
+//        telemetry.addData("vy", follower.getVelocity().getYComponent());
+        telemetry.addData("turret enc", turret.getDelta());
         telemetry.addData("turret target", turret.getTargetAngle());
         telemetry.addData("turret current", turret.getCurrentAngle());
         telemetry.addData("counter", storage.counter);
@@ -98,6 +98,7 @@ public class experimentalTurretTesting extends OpMode {
         packet.put("Current Angle", turret.getCurrentAngle());
         packet.put("Error", turret.getError());
         packet.put("Is Aimed", turret.isAimed());
+        packet.put("Is Correcting", turret.isCorrecting());
 
         dashboard.sendTelemetryPacket(packet);
     }

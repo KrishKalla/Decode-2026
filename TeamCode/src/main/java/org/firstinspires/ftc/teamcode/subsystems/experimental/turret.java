@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
@@ -13,6 +14,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.hardware.SRSHub;
 import org.firstinspires.ftc.teamcode.util.storage;
 
+
+@Config
 public class turret {
     private FtcDashboard dashboard;
 
@@ -39,8 +42,8 @@ public class turret {
     public static double SERVO_MAX = 0.85;
     public static double SERVO_MIN = 0.15;
     public static int ZERO = 423;
-    public static double SERVO_ZERO = 0.5;
-    public static double SLOP = 3;
+    public static double SERVO_ZERO = 0.427;
+    public static double SLOP = 10;
     public static double TOLERANCE = 0.5;
 
     private double target;
@@ -48,6 +51,7 @@ public class turret {
     private double pos;
 
     private boolean aimed;
+    private boolean correcting;
 
 
     public void init(HardwareMap map, Follower follower) {
@@ -99,12 +103,14 @@ public class turret {
         } else {
             aimed = false;
             if (Math.abs(getError()) < SLOP) {
+                correcting = true;
                 double servoDelta = angleToServoDelta(getError());
                 double currentPos = pos;
                 double targetPos = currentPos + servoDelta;
                 targetPos = clamp(targetPos, SERVO_MIN, SERVO_MAX);
                 hardwareUpdate(targetPos);
             } else {
+                correcting = false;
                 pos = angleToServoPosition(target);
                 pos = clamp(pos, SERVO_MIN, SERVO_MAX);
                 hardwareUpdate(pos);
@@ -238,4 +244,6 @@ public class turret {
     public boolean isAimed() {
         return aimed;
     }
+
+    public boolean isCorrecting() {return correcting;}
 }

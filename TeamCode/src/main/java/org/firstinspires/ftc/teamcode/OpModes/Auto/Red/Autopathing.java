@@ -287,15 +287,15 @@ public abstract class Autopathing extends OpMode {
                 break;
         }
     }
-    public void CloseRow(int nextState){
-        rowIntakeAndScore(path_score_centerPickup, path_centerPickup_score, nextState);
-    }
-    public void MiddleRow(int nextState){
-        rowIntakeAndScore(path_score_near, path_centerPickup_score, nextState);
-    }
-    public void CloseRow(int nextState){
-        rowIntakeAndScore(path_score_centerPickup, path_centerPickup_score, nextState);
-    }
+//    public void CloseRow(int nextState){
+//        rowIntakeAndScore(path_score_centerPickup, path_centerPickup_score, nextState);
+//    }
+//    public void MiddleRow(int nextState){
+//        rowIntakeAndScore(path_score_near, path_centerPickup_score, nextState);
+//    }
+//    public void CloseRow(int nextState){
+//        rowIntakeAndScore(path_score_centerPickup, path_centerPickup_score, nextState);
+//    }
 
     // =========================================================
     // ACTION: Gate Intake and Score
