@@ -43,6 +43,9 @@ public class intaketesting extends OpMode {
         telemetry.addLine(intake.toString());
         telemetry.addData("Intake Current", intake.getIntakeCurrent());
         telemetry.addData("Transfer Current", intake.getTransferCurrent());
+        telemetry.addData("isBlocked", intake.isBlocked());
+        telemetry.addData("EMAs", intake.getEMAs());
+        telemetry.addData("Raws", intake.getRaw());
         telemetry.update();
     }
 }

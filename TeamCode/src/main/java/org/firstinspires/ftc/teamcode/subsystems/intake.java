@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -17,6 +18,8 @@ public class intake {
     private DcMotorEx motorR;
     public Servo servoL;
     public Servo servoR;
+    private AnalogInput breakbeamL;
+    private AnalogInput breakbeamR;
 
     private DcMotorEx.Direction defaultL;
     private DcMotorEx.Direction defaultR;
@@ -25,6 +28,12 @@ public class intake {
     private boolean extended;
     private boolean transfer_stalled = false;
     private boolean intake_stalled = false;
+    private boolean blocked = false;
+    public static double breakbeamThreshold = 0.4;
+    public static double alpha = 0.2;
+    private double emaL = 0;
+    private double emaR = 0;
+
     private ElapsedTime stallTimer;
 
 
@@ -74,17 +83,26 @@ public class intake {
         defaultL = motorL.getDirection();
         defaultR = motorR.getDirection();
 
+
+        breakbeamL = map.get(AnalogInput.class, "breakbeamL");
+        breakbeamR = map.get(AnalogInput.class, "breakbeamR");
+
         extended = false;
     }
 
     public void update() {
         updateStallDetection();
+        updateBreakbeams();
         if (transfer_stalled && intakeState.equals("ON")) {
             transfer_reduction=1;
         }
         if(Objects.equals(intakeState, "TRANSFERRING")){
             transfer_reduction=0.7;
             transfer_stalled=false;
+        }
+
+        if (Objects.equals(intakeState, "REJECT")) {
+            transfer_stalled = false;
         }
     }
     private void updateStallDetection() {
@@ -96,17 +114,49 @@ public class intake {
         }
     }
 
+    private void updateBreakbeams() {
+        double L = breakbeamL.getVoltage();
+        double R = breakbeamR.getVoltage();
 
+        if (emaL == 0) {
+            emaL = L;
+        } else {
+            emaL = alpha * L + (1-alpha) * emaL;
+        }
 
+        if (emaR == 0) {
+            emaR = R;
+        } else {
+            emaR = alpha * R + (1-alpha) * emaR;
+        }
+
+        boolean rawBlocked = (emaL < breakbeamThreshold) || (emaR < breakbeamThreshold);
+
+        if (rawBlocked) {
+            if (!blocked) {
+                blocked = true;
+            }
+        } else  {
+            if (blocked) {
+                blocked = false;
+            }
+        }
+
+        if (blocked && transfer_stalled && Objects.equals(intakeState, "ON")) {
+            setIntake(constants.INTAKE_PRESETS.OFF);
+        }
+    }
 
     public void setIntake(constants.INTAKE_PRESETS state) {
         switch(state) {
             case ON:
                 intakeState = "ON";
-                setDirection(1);
-                setPowerR(constants.intake.INTAKE_POWER);
-                setPowerL(constants.intake.INTAKE_POWER-transfer_reduction);
-                setExtension(constants.INTAKE_EXTENSION.EXTENDED);
+                if (!blocked) {
+                    setDirection(1);
+                    setPowerR(constants.intake.INTAKE_POWER);
+                    setPowerL(constants.intake.INTAKE_POWER - transfer_reduction);
+                    setExtension(constants.INTAKE_EXTENSION.EXTENDED);
+                }
                 break;
             case OFF:
                 intakeState = "OFF";
@@ -210,5 +260,17 @@ public class intake {
 
     public boolean isExtended() {
         return extended;
+    }
+
+    public boolean isBlocked() {
+        return blocked;
+    }
+
+    public String getEMAs() {
+        return emaL + ", " + emaR;
+    }
+
+    public String getRaw() {
+        return breakbeamL.getVoltage() + ", " + breakbeamR.getVoltage();
     }
 }
