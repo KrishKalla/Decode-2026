@@ -153,6 +153,7 @@ public class NEI_Blue extends OpMode {
         }
         else if(gamepad1.right_stick_button){
             intake.setIntake(constants.INTAKE_PRESETS.GATE);
+            //intake.getIntakeCurrent();
         }
         else {
             intake.setIntake(constants.INTAKE_PRESETS.OFF);
