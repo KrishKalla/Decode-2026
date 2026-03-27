@@ -72,7 +72,6 @@ public class NEI_Blue extends OpMode {
 
     @Override
     public void init_loop() {
-        intake.update();
         updateTelemetry();
     }
 
@@ -93,6 +92,8 @@ public class NEI_Blue extends OpMode {
 
     @Override
     public void loop() {
+
+        intake.update();
 
         timer.reset();
 
