@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class intaketesting extends OpMode {
     private intake intake;
     public static int mode=0;
+    public static double l_servo=0.67,r_servo=0.67;
 
     public void init() {
         intake = new intake();
