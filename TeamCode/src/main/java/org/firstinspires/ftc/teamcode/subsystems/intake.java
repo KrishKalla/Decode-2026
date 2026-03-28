@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.util.constants;
 
 import java.util.Objects;
 
+@Config
 public class intake {
 
     private static final double BALL_DEBOUNCE_MS = 600;
