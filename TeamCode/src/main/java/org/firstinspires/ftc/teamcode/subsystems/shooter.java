@@ -48,9 +48,6 @@ public class shooter {
     private boolean flywheelState;
     private boolean stopped = true;
 
-
-
-
     public shooter() {
 
     }
@@ -162,7 +159,7 @@ public class shooter {
 
         rpm = (rpmL + rpmR) / 2;
 
-        double setpoint = constants.shooter.TARGET_RPM;
+        double setpoint = getTargetRPM();
         double error = setpoint - rpm;
 
         constants.shooter.Hood_pos=constants.shooter.Target_Hood;
@@ -219,6 +216,40 @@ public class shooter {
         }
     }
 
+    public boolean needsPriority(double rpmTolerance) {
+        return flywheelState && Math.abs(getTargetRPM() - getRPM()) > rpmTolerance;
+    }
+
+    public double getRPMError() {
+        return getTargetRPM() - getRPM();
+    }
+
+    public double getRobotSpeed() {
+        if (poseTracker == null || poseTracker.getVelocity() == null) return 0.0;
+        return poseTracker.getVelocity().getMagnitude();
+    }
+
+    public double getTargetRPM() {
+        return constants.shooter.TARGET_RPM + constants.movingRpmGain * getRobotSpeed();
+    }
+
+    public boolean atTargetRPM(double tolerance) {
+        return Math.abs(getTargetRPM() - getRPM()) <= tolerance;
+    }
+
+    public double getDriveScale() {
+        if (!flywheelState) return constants.driveScaleNormal;
+
+        double rpmError = Math.abs(getTargetRPM() - getRPM());
+
+        if (rpmError > constants.rpmToleranceHigh) {
+            return constants.driveScaleHeavy;
+        } else if (rpmError > constants.rpmToleranceLow) {
+            return constants.driveScaleMedium;
+        } else {
+            return constants.driveScaleNormal;
+        }
+    }
 
 //    public Vector calculateShotVectorAndUpdateTurret(double robotHeading) {
 //        //constants

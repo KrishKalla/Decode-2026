@@ -80,4 +80,16 @@ public class constants {
         OFF,
         ON
     }
+
+    // need to be tunedddd
+
+    public static double rpmToleranceLow = 25;
+    public static double rpmToleranceHigh = 60;
+
+    public static double driveScaleNormal = 1.0;
+    public static double driveScaleMedium = 0.75;
+    public static double driveScaleHeavy = 0.55;
+
+    public static double movingRpmGain = 6.0;
+
 }
