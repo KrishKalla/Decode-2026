@@ -20,6 +20,8 @@ public class constants {
     //Intake Constants
     @Config
     public static class intake {
+        public static double breakbeamThreshold = 0.8;
+        public static double alpha = 0.2;
         public static boolean REVERSED = false;
         public static double INTAKE_POWER = 1;
         public static double TRANSFER_POWER = 1;

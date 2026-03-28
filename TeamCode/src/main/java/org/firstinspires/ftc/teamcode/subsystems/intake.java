@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.util.constants;
 
 import java.util.Objects;
 
-@Config
 public class intake {
 
     private static final double BALL_DEBOUNCE_MS = 600;
@@ -31,8 +30,6 @@ public class intake {
     private boolean transfer_stalled = false;
     private boolean intake_stalled = false;
     private boolean blocked = false;
-    public static double breakbeamThreshold = 0.4;
-    public static double alpha = 0.2;
     private double emaL = 0;
     private double emaR = 0;
 
@@ -123,16 +120,16 @@ public class intake {
         if (emaL == 0) {
             emaL = L;
         } else {
-            emaL = alpha * L + (1-alpha) * emaL;
+            emaL = constants.intake.alpha * L + (1-constants.intake.alpha) * emaL;
         }
 
         if (emaR == 0) {
             emaR = R;
         } else {
-            emaR = alpha * R + (1-alpha) * emaR;
+            emaR = constants.intake.alpha * R + (1-constants.intake.alpha) * emaR;
         }
 
-        boolean rawBlocked = (emaL < breakbeamThreshold) || (emaR < breakbeamThreshold);
+        boolean rawBlocked = (emaL < constants.intake.breakbeamThreshold) || (emaR < constants.intake.breakbeamThreshold);
 
         if (rawBlocked) {
             if (!blocked) {
