@@ -7,7 +7,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.subsystems.Turret;
+import org.firstinspires.ftc.teamcode.subsystems.turret;
 import org.firstinspires.ftc.teamcode.subsystems.intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
@@ -25,7 +25,7 @@ public class shootertesting extends OpMode {
     private boolean automatedDrive;
     private shooter shooter;
     private intake intake;
-    private Turret turret;
+    private turret turret;
     private Follower follower;
     public static double MANUAL_Turret =0;
 
@@ -36,7 +36,7 @@ public class shootertesting extends OpMode {
     public void init() {
         shooter = new shooter();
         intake = new intake();
-        turret = new Turret();
+        turret = new turret();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         llhandler = new LLHandler(hardwareMap, alliance);
         shooter.init(hardwareMap, llhandler);
@@ -64,9 +64,11 @@ public class shootertesting extends OpMode {
 
         if (ON) {
             shooter.calculateParams();
-            turret.hardwareUpdate(turret.update(goalPose));
+            turret.update(goalPose);
+            turret.periodic();
         } else {
-            turret.hardwareUpdate(turret.update(MANUAL_Turret));
+            turret.update(MANUAL_Turret);
+            turret.periodic();
         }
 
         if (gamepad1.right_trigger > 0.3) {
