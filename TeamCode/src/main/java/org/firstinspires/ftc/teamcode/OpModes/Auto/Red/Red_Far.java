@@ -8,7 +8,7 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.subsystems.Turret;
+import org.firstinspires.ftc.teamcode.subsystems.turret;
 import org.firstinspires.ftc.teamcode.subsystems.intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
@@ -49,7 +49,7 @@ public class Red_Far extends OpMode {
 
     private intake intake;
     private shooter shooter;
-    private Turret turret;
+    private turret turret;
 
     private Pose goalPose = new Pose(storage.RED_X, storage.RED_Y);
 
@@ -57,7 +57,7 @@ public class Red_Far extends OpMode {
     public void init() {
         shooter = new shooter();
         intake = new intake();
-        turret = new Turret();
+        turret = new turret();
         llhandler = new LLHandler(hardwareMap, alliance);
         follower = Constants.createFollower(hardwareMap);
         follower.setPose(startPose);
@@ -65,7 +65,6 @@ public class Red_Far extends OpMode {
         shooter.init(hardwareMap, llhandler);
         intake.init(hardwareMap);
         turret.init(hardwareMap, follower);
-        turret.zeroTurret();
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -90,7 +89,6 @@ public class Red_Far extends OpMode {
         follower.update();
         autonomousPathUpdate();
         //shooter.update();
-        turret.hardwareUpdate(turret.update(0));
 
         storage.lastRedAutoPose = follower.getPose();
 
@@ -99,7 +97,6 @@ public class Red_Far extends OpMode {
         telemetry.addData("Heading", Math.toDegrees(follower.getPose().getHeading()));
         telemetry.addData("RPM", shooter.getRPM());
         telemetry.addData("Time", runtime.seconds());
-        telemetry.addData("Turret Error", turret.getError());
         telemetry.addData("Loop Time", loopTimer.milliseconds());
         telemetry.addData("Path State", pathState);
         telemetry.update();

@@ -10,7 +10,7 @@ import com.pedropathing.geometry.BezierLine;
 
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.subsystems.Turret;
+import org.firstinspires.ftc.teamcode.subsystems.turret;
 import org.firstinspires.ftc.teamcode.subsystems.intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
@@ -26,7 +26,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name = "Red 21 Auto - RP")
 public class Red_21_RP extends OpMode {
 
-    public static double TURRET_ANGLE = -132;
+    public static double turret_ANGLE = -132;
     private ElapsedTime shootTimer = new ElapsedTime();
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime loopTimer = new ElapsedTime();
@@ -78,7 +78,7 @@ public class Red_21_RP extends OpMode {
 
     private intake intake;
     private shooter shooter;
-    private Turret turret;
+    private turret turret;
 
     private Pose goalPose = new Pose(storage.RED_X, storage.RED_Y);
 
@@ -88,7 +88,7 @@ public class Red_21_RP extends OpMode {
         // ---- Subsystems ----
         shooter = new shooter();
         intake = new intake();
-        turret = new Turret();
+        turret = new turret();
         llhandler = new LLHandler(hardwareMap, alliance);
         follower = Constants.createFollower(hardwareMap);
         follower.setPose(startPose);
@@ -96,7 +96,6 @@ public class Red_21_RP extends OpMode {
         shooter.init(hardwareMap, llhandler);
         intake.init(hardwareMap);
         turret.init(hardwareMap,follower);
-        turret.zeroTurret();
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -131,8 +130,8 @@ public class Red_21_RP extends OpMode {
         telemetry.addData("Heading", Math.toDegrees(follower.getPose().getHeading()));
         telemetry.addData("RPM",shooter.getRPM());
         telemetry.addData("Time", runtime.seconds());
-        telemetry.addData("Turret Target", turret.getTargetAngle());
-        telemetry.addData("Turret Current", turret.getCurrentAngle());
+        telemetry.addData("turret Target", turret.getTargetAngle());
+        telemetry.addData("turret Current", turret.getCurrentAngle());
         telemetry.addData("Loop Time", loopTimer.milliseconds());
         telemetry.addData("lldist", llhandler.getLatestResult()[2]);
         telemetry.update();

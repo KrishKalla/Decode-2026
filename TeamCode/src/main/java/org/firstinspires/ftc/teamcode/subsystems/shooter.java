@@ -124,10 +124,11 @@ public class shooter {
 
 
     public void calculateParams() {
-        previousDistance = handler.getLatestResult()[2];
-        if (previousDistance == -1001) {
+        double dist = handler.getLatestResult()[2];
+        if (dist == -1001) {
             hoodTrackingState = "MISSING";
         } else {
+            previousDistance = Math.sqrt(Math.pow(dist, 2) - Math.pow(constants.APRIL_TAG_HEIGHT - constants.LIMELIGHT_HEIGHT, 2));
             hoodTrackingState = "TRACKING";
             filterDistance(previousDistance);
             double[] interp = LUT.get(ema);
@@ -157,8 +158,8 @@ public class shooter {
 
     public double calculate() {
 
-        double rpmL = motorLeft.getVelocity();
-        double rpmR = motorRight.getVelocity();
+        double rpmL = -motorLeft.getVelocity();
+        double rpmR = -motorRight.getVelocity();
 
         rpm = (rpmL + rpmR) / 2;
 
@@ -283,7 +284,7 @@ public class shooter {
     }
 
     public double getRPM() {
-        return ((motorLeft.getVelocity() + motorRight.getVelocity())/2);
+        return ((-(motorLeft.getVelocity() + motorRight.getVelocity())/2));
     }
     public double getHoodAngle() {
         return left.getPosition();

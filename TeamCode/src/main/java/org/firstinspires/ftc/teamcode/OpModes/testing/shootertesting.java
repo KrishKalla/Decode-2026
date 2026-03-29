@@ -94,7 +94,7 @@ public class shootertesting extends OpMode {
         telemetry.addData("HOOD POS", shooter.getHoodAngle());
         telemetry.addData("Target_RPM: ", constants.shooter.TARGET_RPM);
         telemetry.addData("Target_Hood: ", constants.shooter.Hood_pos);
-        telemetry.addData("lldist", llhandler.getLatestResult()[2]);
+        telemetry.addData("lldist converted", Math.sqrt(Math.pow(llhandler.getLatestResult()[2], 2) - Math.pow(constants.APRIL_TAG_HEIGHT - constants.LIMELIGHT_HEIGHT, 2)));
         telemetry.addData("Turret Angle", turret.getCurrentAngle());
         telemetry.addData("Turret Target", turret.getTargetAngle());
         telemetry.addData("Turret Error", turret.getError());

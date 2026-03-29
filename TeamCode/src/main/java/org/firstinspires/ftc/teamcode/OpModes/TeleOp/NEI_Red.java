@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.subsystems.Turret;
+import org.firstinspires.ftc.teamcode.subsystems.turret;
 import org.firstinspires.ftc.teamcode.subsystems.intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.util.storage;
 public class NEI_Red extends OpMode {
     private Follower follower;
     private intake intake;
-    private Turret turret;
+    private turret turret;
     private shooter shooter;
     private LLHandler llhandler;
 
@@ -41,6 +41,7 @@ public class NEI_Red extends OpMode {
     public static double MANUAL_TURRET = 0;
     public static boolean AUTO = true;
     public static boolean AUTO_AIM = true;
+    private final Pose goalpose = new Pose(storage.RED_X, storage.RED_Y);;
 
     private int Mode=0;//Short
 
@@ -65,7 +66,7 @@ public class NEI_Red extends OpMode {
         follower.update();
 
         intake = new intake();
-        turret = new Turret();
+        turret = new turret();
         shooter = new shooter();
         llhandler = new LLHandler(hardwareMap, alliance);
         llhandler.alliance(alliance);
@@ -87,18 +88,11 @@ public class NEI_Red extends OpMode {
                     threadTimer.reset();
                     llhandler.poll();
                     shooter.update();
-//                    shooter.updateBatteryVoltage();
-
+                    shooter.updateBatteryVoltage();
                     if (AUTO && Mode==0) {
                         shooter.calculateParams();
                     } else if (AUTO && Mode==1) {
                         shooter.far();
-                    }
-
-                    if (alliance == 1 && AUTO_AIM) {
-                        servoUpdate = turret.update(new Pose(storage.BLUE_X, storage.BLUE_Y));
-                    } else if (alliance == 0  && AUTO_AIM){
-                        servoUpdate = turret.update(new Pose(storage.RED_X, storage.RED_Y));
                     }
                 }
             }
@@ -140,13 +134,13 @@ public class NEI_Red extends OpMode {
         else
             follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x,true);
 
-        Method:
 
         intake.update();
         timer.reset();
         follower.update();
         if(AUTO_AIM) {
-            turret.hardwareUpdate(servoUpdate);
+            turret.update(goalpose);
+            turret.periodic();
         }
 
         //Intake

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystems.experimental;
+package org.firstinspires.ftc.teamcode.subsystems;
 
 import androidx.annotation.NonNull;
 
@@ -41,10 +41,11 @@ public class turret {
     public static int DIRECTION = 1;
     public static double SERVO_MAX = 0.85;
     public static double SERVO_MIN = 0.15;
-    public static int ZERO = 423;
-    public static double SERVO_ZERO = 0.427;
-    public static double SLOP = 10;
-    public static double TOLERANCE = 0.5;
+    public static int ZERO = 797;
+    public static double SERVO_ZERO = 0.5;
+    public static double SLOP = 3;
+    public static double TOLERANCE = 0;
+    public static double ALPHA = 0.65;
 
     private double target;
     private int lastPos;
@@ -106,7 +107,7 @@ public class turret {
                 correcting = true;
                 double servoDelta = angleToServoDelta(getError());
                 double currentPos = pos;
-                double targetPos = currentPos + servoDelta;
+                double targetPos = currentPos + servoDelta*ALPHA;
                 targetPos = clamp(targetPos, SERVO_MIN, SERVO_MAX);
                 hardwareUpdate(targetPos);
             } else {
@@ -175,11 +176,11 @@ public class turret {
     }
 
     public double angleToServoPosition(double angle) {
-        return SERVO_ZERO + (angle / SERVO_TO_TURRET_RATIO) / 355;
+        return SERVO_ZERO + (angle / SERVO_TO_TURRET_RATIO) / 353.5;
     }
 
     public double angleToServoDelta(double angle) {
-        return (angle / SERVO_TO_TURRET_RATIO) / 355;
+        return (angle / SERVO_TO_TURRET_RATIO) / 353.5;
     }
 
 
