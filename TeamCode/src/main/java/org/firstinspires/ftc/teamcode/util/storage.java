@@ -11,7 +11,7 @@ public class storage {
     public static double BLUE_X = 6.7;
     public static double BLUE_Y = 140;
 
-    public static double RED_X = 140;
+    public static double RED_X = 142;
     public static double RED_Y = 140;
 
     public static int counter = 0;

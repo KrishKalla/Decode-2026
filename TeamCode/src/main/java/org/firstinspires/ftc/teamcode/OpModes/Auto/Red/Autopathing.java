@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.subsystems.Turret;
+import org.firstinspires.ftc.teamcode.subsystems.turret;
 import org.firstinspires.ftc.teamcode.subsystems.intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
@@ -48,7 +48,7 @@ public abstract class Autopathing extends OpMode {
     public Follower  follower;
     public intake    intake;
     public shooter   shooter;
-    public Turret    turret;
+    public turret    turret;
     public LLHandler llhandler;
 
     public Pose goalPose;
@@ -100,7 +100,7 @@ public abstract class Autopathing extends OpMode {
     public void init() {
         shooter  = new shooter();
         intake   = new intake();
-        turret   = new Turret();
+        turret   = new turret();
         follower = Constants.createFollower(hardwareMap);
         follower.setPose(startPose);
 
@@ -134,7 +134,7 @@ public abstract class Autopathing extends OpMode {
         shooter.update();
         intake.update();
 
-        turret.hardwareUpdate(turret.update(goalPose) + turret.angleToServoDelta(turret_offset));
+        turret.update(goalPose);
         storage.lastRedAutoPose = follower.getPose();
 
         telemetry.addData("Path State", pathState);

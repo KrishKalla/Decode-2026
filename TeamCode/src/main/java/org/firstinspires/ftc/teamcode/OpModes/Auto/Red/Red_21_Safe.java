@@ -33,7 +33,7 @@ public class Red_21_Safe extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime loopTimer = new ElapsedTime();
     private double shootingtime = 0.45;
-    private static double gateIntakeTime = 1.3;
+    private static double gateIntakeTime = 1.4;
     private boolean IsShot=false;
 
     private boolean Auto_hood = true;
@@ -47,6 +47,7 @@ public class Red_21_Safe extends OpMode {
     public static double Power=0.5;
     public static double ShootingMoment=1.67;
     public static double ShootingHood=0.35 ;
+
     // ---- Pathing ----
     private Follower follower;
 
@@ -55,7 +56,7 @@ public class Red_21_Safe extends OpMode {
 
     // Pose definitions
     private final Pose startPose = new Pose(114.4, 126.259, Math.toRadians(0));
-    private final Pose scorePose = new Pose(90, 80, Math.toRadians(0));
+    private final Pose scorePose = new Pose(88, 76, Math.toRadians(0));
     private final Pose pickup1Pose = new Pose(120, 61, Math.toRadians(0));
     private final Pose midPickup1 = new Pose(70, 55.5);
 
@@ -86,7 +87,7 @@ public class Red_21_Safe extends OpMode {
     private shooter shooter;
     private turret turret;
 
-    private Pose goalPose = new Pose(storage.RED_X, storage.RED_Y);
+    private Pose goalPose = new Pose(storage.RED_X-2, storage.RED_Y);
 
     @Override
     public void init() {
@@ -105,7 +106,7 @@ public class Red_21_Safe extends OpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        constants.shooter.TARGET_RPM = 1500;
+        constants.shooter.TARGET_RPM = 1300;
         constants.shooter.Target_Hood = ShootingHood;
         buildPaths();
     }
@@ -272,6 +273,8 @@ public class Red_21_Safe extends OpMode {
 
                 }
                 if (shootTimer.seconds() >= ShootingMoment+0.4){
+                    goalPose = new Pose(storage.RED_X, storage.RED_Y);
+                    constants.shooter.TARGET_RPM = 1500;
                     follower.setMaxPower(1);
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
                     constants.shooter.Target_Hood=0.69;
@@ -473,7 +476,7 @@ public class Red_21_Safe extends OpMode {
                         intake.setIntake(constants.INTAKE_PRESETS.OFF);
                         shooter.setStopper(false);
                         follower.followPath(Path16, false);
-                        constants.shooter.TARGET_RPM = 710*2;
+                        constants.shooter.TARGET_RPM = 1400;
                         constants.shooter.Target_Hood = 0.59;
                         turret_offset=1;
                         shotWaitStarted = false;

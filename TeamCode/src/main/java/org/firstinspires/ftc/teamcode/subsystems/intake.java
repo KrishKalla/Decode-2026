@@ -29,7 +29,7 @@ public class intake {
     private boolean extended;
     private boolean transfer_stalled = false;
     private boolean intake_stalled = false;
-    private boolean blocked = false;
+    public boolean blocked = false;
     private double emaL = 0;
     private double emaR = 0;
 
@@ -142,7 +142,7 @@ public class intake {
         }
 
         if (blocked && transfer_stalled && Objects.equals(intakeState, "ON")) {
-            setIntake(constants.INTAKE_PRESETS.OFF);
+//            setIntake(constants.INTAKE_PRESETS.OFF);
         }
     }
 
@@ -179,10 +179,10 @@ public class intake {
                 setExtension(constants.INTAKE_EXTENSION.RETRACTED);
                 break;
             case GATE:
-                intakeState = "GATE";
+                intakeState = "GATE INTAKE";
                 setDirection(1);
-                setPowerR(0);
-                setPowerL(0);
+                setPowerR(constants.intake.INTAKE_POWER);
+                setPowerL(constants.intake.INTAKE_POWER);
                 setExtension(constants.INTAKE_EXTENSION.GATE);
                 break;
         }

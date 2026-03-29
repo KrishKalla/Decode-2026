@@ -20,7 +20,7 @@ public class constants {
     //Intake Constants
     @Config
     public static class intake {
-        public static double breakbeamThreshold = 0.4;
+        public static double breakbeamThreshold = 0.6;
         public static double alpha = 0.2;
         public static boolean REVERSED = false;
         public static double INTAKE_POWER = 1;
@@ -41,8 +41,8 @@ public class constants {
     public enum INTAKE_EXTENSION {
 
         RETRACTED(0.375, 0.35),
-        GATE(0.745,0.72),
-        EXTENDED(0.69, 0.665);
+        GATE(0.715,0.665),
+        EXTENDED(0.71, 0.675);
 
         public final double left;
         public final double right;
