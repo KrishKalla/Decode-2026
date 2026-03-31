@@ -41,17 +41,17 @@ public class NEI_Red extends OpMode {
     public static double MANUAL_TURRET = 0;
     public static boolean AUTO = true;
     public static boolean AUTO_AIM = true;
-    private final Pose goalpose = new Pose(storage.RED_X, storage.RED_Y);;
+    private final Pose goalpose = new Pose(storage.RED_X, storage.RED_Y);
 
     private int Mode=0;//Short
 
     //Heading Lock
-    double targetHeading = Math.toRadians(22); // Radians
-    public static double heading_P=0;
-    public static double heading_D=0;
-    public static double heading_F=0;
+    double targetHeading = Math.toRadians(21); // Radians
+    public static double heading_P=0.7;
+    public static double heading_D=0.0000001;
+    public static double heading_F=0.001;
     public static PIDFController controller = new PIDFController(new PIDFCoefficients(heading_P, 0, heading_D, heading_F));
-    boolean headingLock = false;
+    public static boolean headingLock = false;
 
     @Override
     public void init() {
@@ -122,7 +122,7 @@ public class NEI_Red extends OpMode {
     @Override
     public void loop() {
 
-        controller.setCoefficients(new PIDFCoefficients(heading_P, 0, heading_D, heading_F));
+        controller = new PIDFController(new PIDFCoefficients(heading_P, 0, heading_D, heading_F));
         controller.updateError(getHeadingError());
 
         if (headingLock)
@@ -136,7 +136,7 @@ public class NEI_Red extends OpMode {
         follower.update();
         if(AUTO_AIM) {
             turret.update(goalpose);
-            turret.periodic();
+            //turret.periodic();
         }
 
         //Intake

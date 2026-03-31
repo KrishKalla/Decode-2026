@@ -46,7 +46,7 @@ public class Red_21_Safe extends OpMode {
     //Moving While Shooting
     public static double Power=0.5;
     public static double ShootingMoment=1.67;
-    public static double ShootingHood=0.35 ;
+    public static double ShootingHood=0.45 ;
 
     // ---- Pathing ----
     private Follower follower;
@@ -56,11 +56,12 @@ public class Red_21_Safe extends OpMode {
 
     // Pose definitions
     private final Pose startPose = new Pose(114.4, 126.259, Math.toRadians(0));
-    private final Pose scorePose = new Pose(88, 76, Math.toRadians(0));
+    private final Pose scorePose = new Pose(86, 76, Math.toRadians(0));
     private final Pose pickup1Pose = new Pose(120, 61, Math.toRadians(0));
-    private final Pose midPickup1 = new Pose(70, 55.5);
+    private final Pose midPickup1 = new Pose(70, 58);
 
     private final Pose gateApproachPose = new Pose(gateposex, gateposey, Math.toRadians(20));
+    private final Pose midgatePose = new Pose(106,60);
 
     private final Pose midcenterPickupPose = new Pose(90,84);
     private final Pose centerPickupPose = new Pose(120, 80, Math.toRadians(0));
@@ -87,7 +88,7 @@ public class Red_21_Safe extends OpMode {
     private shooter shooter;
     private turret turret;
 
-    private Pose goalPose = new Pose(storage.RED_X-2, storage.RED_Y);
+    private Pose goalPose = new Pose(storage.RED_X, storage.RED_Y);
 
     @Override
     public void init() {
@@ -163,8 +164,9 @@ public class Red_21_Safe extends OpMode {
 
         // Path4: Score to gate approach
         Path4 = follower.pathBuilder().addPath(
-                        new BezierLine(
+                        new BezierCurve(
                                 scorePose,
+                                midgatePose,
                                 gateApproachPose
                         )
                 ).setLinearHeadingInterpolation(scorePose.getHeading(), gateApproachPose.getHeading())
@@ -201,8 +203,9 @@ public class Red_21_Safe extends OpMode {
 
         // Path9: Score to gate approach (second time)
         Path9 = follower.pathBuilder().addPath(
-                        new BezierLine(
+                        new BezierCurve(
                                 scorePose,
+                                midgatePose,
                                 gateApproachPose
                         )
                 ).setLinearHeadingInterpolation(scorePose.getHeading(), gateApproachPose.getHeading())
@@ -238,8 +241,9 @@ public class Red_21_Safe extends OpMode {
 
         // Path14: Go to gate
         Path14 = follower.pathBuilder().addPath(
-                        new BezierLine(
+                        new BezierCurve(
                                 scorePose,
+                                midgatePose,
                                 gateApproachPose
                         )
                 ).setLinearHeadingInterpolation(scorePose.getHeading(), gateApproachPose.getHeading())
