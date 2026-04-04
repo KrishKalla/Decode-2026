@@ -73,10 +73,10 @@ public class shootertesting extends OpMode {
             turret.periodic();
         }
 
-        if (gamepad1.right_trigger > 0.3||ON) {
+        if (gamepad1.right_trigger > 0.3) {
             intake.setIntake(constants.INTAKE_PRESETS.ON);
         }
-        if (gamepad1.left_trigger > 0.3||Transfering) {
+        if (gamepad1.left_trigger > 0.3) {
             intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
         }
 
@@ -85,11 +85,11 @@ public class shootertesting extends OpMode {
             shooter.setStopper(false);
         }
 
-        if (gamepad1.right_bumper||Stopper) {
+        if (gamepad1.right_bumper) {
             shooter.setStopper(true);
         }
 
-        if (gamepad1.cross||!Stopper) {
+        if (gamepad1.cross) {
             shooter.setStopper(false);
         }
 
