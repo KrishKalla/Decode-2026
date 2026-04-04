@@ -92,7 +92,7 @@ public class intake {
     public void update() {
         updateStallDetection();
         updateBreakbeams();
-        if (transfer_stalled && intakeState.equals("ON")) {
+        if (transfer_stalled && (intakeState.equals("ON")||intakeState.equals("Gate"))) {
             transfer_reduction=1;
         }
         if(Objects.equals(intakeState, "TRANSFERRING")){
@@ -109,7 +109,7 @@ public class intake {
 
         double current = getTransferCurrent();
 
-        if (current > constants.intake.STALL_CURRENT_THRESHOLD  && intakeState.equals("ON")) {
+        if (current > constants.intake.STALL_CURRENT_THRESHOLD  && (intakeState.equals("ON")||intakeState.equals("Gate"))) {
             transfer_stalled=true;
         }
     }
@@ -183,7 +183,7 @@ public class intake {
                 intakeState = "GATE INTAKE";
                 setDirection(1);
                 setPowerR(constants.intake.INTAKE_POWER);
-                setPowerL(constants.intake.INTAKE_POWER);
+                setPowerL(constants.intake.INTAKE_POWER - transfer_reduction);
                 setExtension(constants.INTAKE_EXTENSION.GATE);
                 break;
         }

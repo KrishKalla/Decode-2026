@@ -237,6 +237,7 @@ public class NEI_Red extends OpMode {
 
     public void updateTelemetry() {
         telemetry.addLine(follower.getPose().toString());
+        telemetry.addLine(intake.toString());
         telemetry.addLine("≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡SHOOTER≡≡≡≡≡≡≡≡≡≡≡≡≡≡");
         //ADD REGRESSION VALUE (IF WE HAVE ONE)
         telemetry.addData("RPM", shooter.getRPM());
