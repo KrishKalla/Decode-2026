@@ -136,7 +136,7 @@ public class NEI_Red extends OpMode {
         follower.update();
         if(AUTO_AIM) {
             turret.update(goalpose);
-            //turret.periodic();
+            turret.periodic();
         }
 
         //Intake

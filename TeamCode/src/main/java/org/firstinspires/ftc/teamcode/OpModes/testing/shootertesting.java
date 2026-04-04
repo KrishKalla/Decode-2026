@@ -21,6 +21,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @Config
 public class shootertesting extends OpMode {
     public static boolean ON = false;
+    public static boolean Transfering = false;
+    public static boolean Stopper = false;
     public static boolean Intake = false;
     private boolean automatedDrive;
     private shooter shooter;
@@ -64,17 +66,17 @@ public class shootertesting extends OpMode {
 
         if (ON) {
             shooter.calculateParams();
-            turret.update(goalPose);
+            turret.update(MANUAL_Turret);
             turret.periodic();
         } else {
             turret.update(MANUAL_Turret);
             turret.periodic();
         }
 
-        if (gamepad1.right_trigger > 0.3) {
+        if (gamepad1.right_trigger > 0.3||ON) {
             intake.setIntake(constants.INTAKE_PRESETS.ON);
         }
-        if (gamepad1.left_trigger > 0.3) {
+        if (gamepad1.left_trigger > 0.3||Transfering) {
             intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
         }
 
@@ -83,11 +85,11 @@ public class shootertesting extends OpMode {
             shooter.setStopper(false);
         }
 
-        if (gamepad1.right_bumper) {
+        if (gamepad1.right_bumper||Stopper) {
             shooter.setStopper(true);
         }
 
-        if (gamepad1.cross) {
+        if (gamepad1.cross||!Stopper) {
             shooter.setStopper(false);
         }
 

@@ -102,6 +102,7 @@ public class intake {
 
         if (Objects.equals(intakeState, "REJECT")) {
             transfer_stalled = false;
+            transfer_reduction=0.7;
         }
     }
     private void updateStallDetection() {
@@ -142,7 +143,7 @@ public class intake {
         }
 
         if (blocked && transfer_stalled && Objects.equals(intakeState, "ON")) {
-//            setIntake(constants.INTAKE_PRESETS.OFF);
+            setIntake(constants.INTAKE_PRESETS.OFF);
         }
     }
 
