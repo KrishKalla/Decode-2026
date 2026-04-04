@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.util.storage;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "shooter testing")
+@TeleOp(name = "shooter testing", group = "testing")
 @Config
 public class shootertesting extends OpMode {
     public static boolean ON = false;
@@ -95,6 +95,7 @@ public class shootertesting extends OpMode {
 
         telemetry.addLine(shooter.toString());
         telemetry.addData("RPM: ", shooter.getRPM());
+        telemetry.addData("Power:", shooter.getPower());
         telemetry.addData("HOOD POS", shooter.getHoodAngle());
         telemetry.addData("Target_RPM: ", constants.shooter.TARGET_RPM);
         telemetry.addData("Target_Hood: ", constants.shooter.Hood_pos);

@@ -58,9 +58,9 @@ public class shooter {
     public void init(HardwareMap map, LLHandler handler) {
         motorLeft = map.get(DcMotorEx.class, "leftShooter");
         motorRight = map.get(DcMotorEx.class, "rightShooter");
-        motorRight.setDirection(DcMotorEx.Direction.REVERSE);
-        motorLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        motorRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motorLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        motorLeft.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        motorRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
         left = map.get(Servo.class, "leftHood");
         right = map.get(Servo.class, "rightHood");
@@ -147,8 +147,8 @@ public class shooter {
 
         if (flywheelState) {
             power = calculate();
-            motorLeft.setPower(power);
-            motorRight.setPower(power);
+            motorLeft.setPower(-power);
+            motorRight.setPower(-power);
         } else {
             motorLeft.setPower(0);
             motorRight.setPower(0);
@@ -158,8 +158,8 @@ public class shooter {
 
     public double calculate() {
 
-        double rpmL = -motorLeft.getVelocity();
-        double rpmR = -motorRight.getVelocity();
+        double rpmL = motorLeft.getVelocity();
+        double rpmR = motorRight.getVelocity();
 
         rpm = (rpmL + rpmR) / 2;
 
@@ -176,7 +176,7 @@ public class shooter {
         scale = Math.max(minVoltageCompensation, Math.min(maxVoltageCompensation, scale));
         power *= scale;
 
-        power = Math.max(0, Math.min(1.0, power));
+        power = Math.max(constants.shooter.CLAMP_NEG_POWER, Math.min(1.0, power));
         return power;
     }
 
@@ -284,7 +284,7 @@ public class shooter {
     }
 
     public double getRPM() {
-        return ((-(motorLeft.getVelocity() + motorRight.getVelocity())/2));
+        return (((motorLeft.getVelocity() + motorRight.getVelocity())/2));
     }
     public double getHoodAngle() {
         return left.getPosition();

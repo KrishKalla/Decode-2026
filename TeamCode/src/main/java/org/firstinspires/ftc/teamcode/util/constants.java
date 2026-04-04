@@ -56,14 +56,15 @@ public class constants {
     //Shooter Constants
     @Config
     public static class shooter {
-       public static double kP = 0.005;
-       public static double kS = 0.0001;
-       public static double kV = 0.0000001;
+       public static double kP = 0.0033;
+       public static double kS = 0.06;
+       public static double kV = 0.00033;
        public static double TARGET_RPM = 800;
        public static double alpha = 0.225;
        public static double step = 0.02;
        public static double MIN_ANGLE = 0.18;
        public static double PASSTHROUGH = 0.85;
+       public static double CLAMP_NEG_POWER = -0.3;
        public static double STOP = 0.475;
        public static double SHOT_LOAD = 65;
        public static double Target_Hood = 0.18;
