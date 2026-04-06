@@ -32,6 +32,7 @@ public class turret {
     public static double SERVO_TO_TURRET_RATIO = 1.333333333;
     private static final double ENCODER_TO_TURRET_RATIO = 108/21.0;
     private static final int ENCODER_TICKS_PER_REV = 1024;
+    public static double SERVO_DELTA = 0.015;
     private static final double MIN_ANGLE = -135;
     private static final double MAX_ANGLE = 135.0;
     private static final double TICKS_PER_TURRET_DEGREE =
@@ -82,8 +83,8 @@ public class turret {
     }
 
     public void TEST_RESET_ONLY () {
-        left.setPosition(0.5);
-        right.setPosition(0.5);
+        left.setPosition(0.5 + SERVO_DELTA);
+        right.setPosition(0.5 - SERVO_DELTA);
         storage.counter = 0;
     }
 
@@ -120,8 +121,8 @@ public class turret {
     }
 
     public void hardwareUpdate(double pos) {
-        left.setPosition(pos);
-        right.setPosition(pos);
+        left.setPosition(pos + SERVO_DELTA);
+        right.setPosition(pos - SERVO_DELTA);
         SERVO_Pose=pos;
     }
 
