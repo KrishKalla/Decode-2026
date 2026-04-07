@@ -32,7 +32,7 @@ public class turret {
     public static double SERVO_TO_TURRET_RATIO = 1.333333333;
     private static final double ENCODER_TO_TURRET_RATIO = 108/21.0;
     private static final int ENCODER_TICKS_PER_REV = 1024;
-    public static double SERVO_DELTA = 0.015;
+    public static double SERVO_DELTA = 0.01;
     private static final double MIN_ANGLE = -135;
     private static final double MAX_ANGLE = 135.0;
     private static final double TICKS_PER_TURRET_DEGREE =

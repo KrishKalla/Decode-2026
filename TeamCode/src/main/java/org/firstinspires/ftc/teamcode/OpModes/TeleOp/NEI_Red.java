@@ -237,18 +237,17 @@ public class NEI_Red extends OpMode {
 
     public void updateTelemetry() {
         telemetry.addLine(follower.getPose().toString());
+
+        telemetry.addLine("≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡INTAKE≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡");
         telemetry.addLine(intake.toString());
         telemetry.addLine("≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡SHOOTER≡≡≡≡≡≡≡≡≡≡≡≡≡≡");
-        //ADD REGRESSION VALUE (IF WE HAVE ONE)
+        telemetry.addData("AUTO AIM ACTIVE",AUTO_AIM);
+        telemetry.addData("REGRESSION ACTIVE", AUTO);
+        telemetry.addData("EMA", shooter.ema);
         telemetry.addData("RPM", shooter.getRPM());
         telemetry.addData("Hood Angle", shooter.getHoodAngle());
-        telemetry.addData("Auto_Aim",AUTO_AIM);
-        telemetry.addData("Auto_Shooter", AUTO);
         telemetry.addData("Counter", storage.counter);
-        telemetry.addData("Loop Timer", timer.milliseconds());
-        telemetry.addData("New Servo Pos", servoUpdate);
         telemetry.addData("Turret Error", turret.getError());
-        telemetry.addData("Goal Pose X",storage.RED_X);
         telemetry.addData("Transfer Powered",intake.getTransferCurrent());
 
         telemetry.addData("Heading Error", getHeadingError());
