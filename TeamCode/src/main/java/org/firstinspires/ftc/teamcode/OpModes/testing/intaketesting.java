@@ -28,11 +28,19 @@ public class intaketesting extends OpMode {
 
     }
     public void loop() {
+        if (intake.isFull()) {
+            gamepad1.rumble(100);
+        } else {
+            gamepad1.stopRumble();
+        }
+        if (mode==0) {
+            intake.setIntake(constants.INTAKE_PRESETS.OFF);
+        }
         if (mode==1) {
             intake.setIntake(constants.INTAKE_PRESETS.ON);
         }
         else if (mode==2) {
-            intake.setIntake(constants.INTAKE_PRESETS.OFF);
+            intake.setIntake(constants.INTAKE_PRESETS.REJECT);
         }
         else if (mode==3){
             intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
@@ -47,6 +55,12 @@ public class intaketesting extends OpMode {
         telemetry.addData("isBlocked", intake.isBlocked());
         telemetry.addData("EMAs", intake.getEMAs());
         telemetry.addData("Raws", intake.getRaw());
+        telemetry.addData("intakeState", intake.getIntakeState());
+        telemetry.addData("ballCount", intake.ballCount);
+        telemetry.addData("rawEMAs", intake.getEMAs());
+        telemetry.addData("rawSensors", intake.getRaw());
+        telemetry.addData("blocked", intake.blocked);
+        telemetry.addData("inLockout", intake.inLockout);
         telemetry.update();
     }
 }

@@ -32,6 +32,13 @@ public class intake {
     public boolean blocked = false;
     private double emaL = 0;
     private double emaR = 0;
+    private boolean prevBlocked = false;
+    public int ballCount = 0;
+    private static final int MAX_BALLS = 3;
+
+    public ElapsedTime ballCountLockout = new ElapsedTime();
+    private static final double BALL_LOCKOUT_MS = 400;
+    public boolean inLockout = false;
 
     private ElapsedTime stallTimer;
 
@@ -98,10 +105,12 @@ public class intake {
         if(Objects.equals(intakeState, "TRANSFERRING")){
             transfer_reduction=0.7;
             transfer_stalled=false;
+            blocked = false;
         }
 
         if (Objects.equals(intakeState, "REJECT")) {
             transfer_stalled = false;
+            blocked = false;
             transfer_reduction=0.7;
         }
     }
@@ -111,6 +120,8 @@ public class intake {
 
         if (current > constants.intake.STALL_CURRENT_THRESHOLD  && (intakeState.equals("ON")||intakeState.equals("Gate"))) {
             transfer_stalled=true;
+        } else if(intakeState.equals("OFF")||intakeState.equals("REJECT")) {
+            transfer_stalled = false;
         }
     }
 
@@ -118,33 +129,41 @@ public class intake {
         double L = breakbeamL.getVoltage();
         double R = breakbeamR.getVoltage();
 
-        if (emaL == 0) {
-            emaL = L;
-        } else {
-            emaL = constants.intake.alpha * L + (1-constants.intake.alpha) * emaL;
+        emaL = (emaL == 0) ? L : constants.intake.alpha * L + (1 - constants.intake.alpha) * emaL;
+        emaR = (emaR == 0) ? R : constants.intake.alpha * R + (1 - constants.intake.alpha) * emaR;
+
+        boolean rawBlocked = (emaL < constants.intake.breakbeamThreshold)
+                && (emaR < constants.intake.breakbeamThreshold);
+
+        // Lift lockout once beam fully clears regardless of mode
+        if (inLockout && !rawBlocked) {
+            inLockout = false;
         }
 
-        if (emaR == 0) {
-            emaR = R;
-        } else {
-            emaR = constants.intake.alpha * R + (1-constants.intake.alpha) * emaR;
+        switch (intakeState) {
+            case "ON":
+            case "GATE INTAKE":
+                if (rawBlocked && !prevBlocked && !inLockout) {
+                    ballCount = Math.min(ballCount + 1, MAX_BALLS);
+                    inLockout = true;
+                }
+                break;
+
+            case "REJECT":
+                if (!rawBlocked) {
+                    ballCount = 0;
+                }
+                break;
+
+            case "TRANSFERRING":
+                if (!rawBlocked) {
+                    ballCount = 0;
+                }
+                break;
         }
 
-        boolean rawBlocked = (emaL < constants.intake.breakbeamThreshold) || (emaR < constants.intake.breakbeamThreshold);
-
-        if (rawBlocked) {
-            if (!blocked) {
-                blocked = true;
-            }
-        } else  {
-            if (blocked) {
-                blocked = false;
-            }
-        }
-
-        if (blocked && transfer_stalled && Objects.equals(intakeState, "ON")) {
-            setIntake(constants.INTAKE_PRESETS.OFF);
-        }
+        blocked = rawBlocked;
+        prevBlocked = rawBlocked;
     }
 
     public void setIntake(constants.INTAKE_PRESETS state) {
@@ -171,6 +190,7 @@ public class intake {
                 setPowerR(constants.intake.INTAKE_POWER);
                 setPowerL(constants.intake.INTAKE_POWER);
                 setExtension(constants.INTAKE_EXTENSION.RETRACTED);
+                transfer_stalled = false;
                 break;
             case TRANSFERING:
                 intakeState = "TRANSFERRING";
@@ -242,7 +262,8 @@ public class intake {
                 "POWER R: " + motorR.getPower() + "\n" +
                 "INTAKE CURRENT: " + getIntakeCurrent() + "\n" +
                 "TRANSFER CURRENT: " + getTransferCurrent() + "\n" +
-                "BALL COUNT: " + constants.intake.ballCount + "\n" +
+                "BALL COUNT: " + ballCount + "\n" +
+                "EMAs: " + emaL + ", " + emaR + "\n" +
                 "TRANSFER STALLED: " + transfer_stalled + "\n" +
                 "INTAKE STALLED: " + intake_stalled;
     }
@@ -264,6 +285,10 @@ public class intake {
 
     public boolean isBlocked() {
         return blocked;
+    }
+
+    public boolean isFull() {
+        return ballCount >= MAX_BALLS;
     }
 
     public String getEMAs() {

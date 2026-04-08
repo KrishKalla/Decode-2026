@@ -140,7 +140,11 @@ public class NEI_Red extends OpMode {
         }
 
         //Intake
-
+        if (intake.blocked) {
+            gamepad1.rumble(100);
+        } else {
+            gamepad1.stopRumble();
+        }
         if(gamepad1.right_stick_button){
             intake.setIntake(constants.INTAKE_PRESETS.GATE);
         } else if (gamepad1.right_trigger > 0.3) {
