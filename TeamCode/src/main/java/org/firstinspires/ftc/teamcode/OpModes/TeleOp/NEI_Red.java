@@ -6,8 +6,12 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.control.PIDFController;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.MathFunctions;
+import com.pedropathing.paths.HeadingInterpolator;
+import com.pedropathing.paths.Path;
+import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -43,15 +47,28 @@ public class NEI_Red extends OpMode {
     public static boolean AUTO_AIM = true;
     private final Pose goalpose = new Pose(storage.RED_X, storage.RED_Y);
 
-    private int Mode=0;//Short
+    private int Mode = 0; // Short
 
-    //Heading Lock
-    double targetHeading = Math.toRadians(21); // Radians
-    public static double heading_P=0.7;
-    public static double heading_D=0.0000001;
-    public static double heading_F=0.001;
+    // Heading Lock
+    double targetHeading = Math.toRadians(21);
+    public static double heading_P = 0.3;
+    public static double heading_D = 0;
+    public static double heading_F = 0;
     public static PIDFController controller = new PIDFController(new PIDFCoefficients(heading_P, 0, heading_D, heading_F));
     public static boolean headingLock = false;
+
+    // ── Auto Drive-to-Pose ────────────────────────────────────────────────────
+    // Tune these from FTC Dashboard while on the field
+    public static double AUTO_DRIVE_X       = 131;
+    public static double AUTO_DRIVE_Y       = 58.5;
+    public static double AUTO_DRIVE_HEADING = 21; // degrees, converted to radians on use
+
+    public static double AUTO_DRIVE_X2       = 86;
+    public static double AUTO_DRIVE_Y2       = 77;
+    public static double AUTO_DRIVE_HEADING2 = 0;
+
+    private boolean automatedDrive = false;
+    // ─────────────────────────────────────────────────────────────────────────
 
     @Override
     public void init() {
@@ -64,8 +81,8 @@ public class NEI_Red extends OpMode {
 
         follower.update();
 
-        intake = new intake();
-        turret = new turret();
+        intake  = new intake();
+        turret  = new turret();
         shooter = new shooter();
         llhandler = new LLHandler(hardwareMap, alliance);
         llhandler.alliance(alliance);
@@ -74,20 +91,18 @@ public class NEI_Red extends OpMode {
         turret.init(hardwareMap, follower);
         shooter.init(hardwareMap, llhandler);
 
-
-
         timer = new ElapsedTime();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         r = new Runnable() {
             @Override
             public void run() {
-                while(true) {
+                while (true) {
                     threadTimer.reset();
                     llhandler.poll();
                     shooter.update();
                     shooter.updateBatteryVoltage();
-                    if (AUTO && Mode==0) {
+                    if (AUTO && Mode == 0) {
                         shooter.calculateParams();
                     }
                 }
@@ -110,133 +125,181 @@ public class NEI_Red extends OpMode {
 
         shooter.flywheelPreset(constants.FLYWHEEL.ON);
         shooter.hoodPreset(constants.HOOD.AUTO);
-        AUTO = true;
+        AUTO     = true;
         AUTO_AIM = true;
         shooter.setStopper(true);
 
         thread.start();
-
         timer.reset();
     }
 
     @Override
     public void loop() {
 
+        // ── Auto Drive-to-Pose trigger ────────────────────────────────────────
+        // gamepad2.options  → start following a path to the dashboard-configured pose
+        // gamepad2.share    → cancel and return to teleop drive immediately
+        if (gamepad1.square && !automatedDrive) {
+            startAutoDrive_Gate();
+        }
+
+        if (gamepad1.triangle && !automatedDrive) {
+            startAutoDrive_Shoot();
+        }
+
+        if (gamepad1.circle && automatedDrive) {
+            cancelAutoDrive();
+        }
+
+        // When following a path, check if it's finished
+        if (automatedDrive && !follower.isBusy()) {
+            cancelAutoDrive(); // path complete → hand control back
+        }
+        // ─────────────────────────────────────────────────────────────────────
+
         controller = new PIDFController(new PIDFCoefficients(heading_P, 0, heading_D, heading_F));
         controller.updateError(getHeadingError());
 
-        if (headingLock)
-            follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, controller.run(),true);
-        else
-            follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x*0.9,true);
-
+        // Only accept manual drive input when not in auto-drive mode
+        if (!automatedDrive) {
+            if (headingLock)
+                follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, controller.run(), true);
+            else
+                follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x * 0.9, true);
+        }
 
         intake.update();
         timer.reset();
         follower.update();
-        if(AUTO_AIM) {
+
+        if (AUTO_AIM) {
             turret.update(goalpose);
             turret.periodic();
         }
 
-        //Intake
-        if (intake.blocked) {
-            gamepad1.rumble(100);
-        } else {
-            gamepad1.stopRumble();
-        }
-        if(gamepad1.right_stick_button){
-            intake.setIntake(constants.INTAKE_PRESETS.GATE);
-        } else if (gamepad1.right_trigger > 0.3) {
-            intake.setIntake(constants.INTAKE_PRESETS.ON);
-            shooter.setStopper(true);
-        } else if (gamepad1.left_trigger > 0.3) {
-            intake.setIntake(constants.INTAKE_PRESETS.REJECT);
-            intake.blocked=false;
-        } else if (gamepad1.right_bumper) {
-            shooter.setStopper(false);
-            intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
-        } else {
-            intake.setIntake(constants.INTAKE_PRESETS.OFF);
+        // ── Intake controls (skipped during auto-drive — handled automatically) ──
+        if (!automatedDrive) {
+            if (gamepad1.right_stick_button) {
+                intake.setIntake(constants.INTAKE_PRESETS.GATE);
+            } else if (gamepad1.right_trigger > 0.3) {
+                intake.setIntake(constants.INTAKE_PRESETS.ON);
+                shooter.setStopper(true);
+            } else if (gamepad1.left_trigger > 0.3) {
+                intake.setIntake(constants.INTAKE_PRESETS.REJECT);
+                intake.blocked = false;
+            } else if (gamepad1.right_bumper) {
+                shooter.setStopper(false);
+                intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
+            } else {
+                intake.setIntake(constants.INTAKE_PRESETS.OFF);
+            }
         }
 
-
-
-        //Open Stopper
-        if (gamepad1.left_bumper || ((follower.getPose().getY()>=80)&&(follower.getPose().getY()>=follower.getPose().getX()))){
+        // Open stopper
+        if (gamepad1.left_bumper || ((follower.getPose().getY() >= 80) && (follower.getPose().getY() >= follower.getPose().getX()))) {
             shooter.setStopper(false);
         }
 
-
-        //Switch Modes
+        // Switch modes / heading lock
         if (gamepad1.right_stick_button) {
-            targetHeading=Math.toRadians(25);
-            headingLock=true;
+            targetHeading = Math.toRadians(25);
+            headingLock   = true;
             shooter.setStopper(true);
-        }
-        else if (gamepad2.right_trigger> 0.3) {
-            targetHeading=Math.toRadians(0);
-            headingLock=true;
-        }
-        else{
-            headingLock=false;
+        } else if (gamepad2.right_trigger > 0.3) {
+            targetHeading = Math.toRadians(0);
+            headingLock   = true;
+        } else {
+            headingLock = false;
         }
 
-
-
-        //Human Player Zone Reloc
-        if(gamepad2.right_stick_button){
-            follower.setPose(new Pose(6.55,8,Math.toRadians(-90)));
+        // Human Player Zone reloc
+        if (gamepad2.right_stick_button) {
+            follower.setPose(new Pose(6.55, 8, Math.toRadians(-90)));
         }
 
-        //Close Zone Set points
-        //very close = square
-        if (gamepad2.square){
+        // Close Zone set-points
+        if (gamepad2.square) {
             AUTO = false;
-            constants.shooter.TARGET_RPM=660;
-            constants.shooter.Hood_pos=0.30;
-
+            constants.shooter.TARGET_RPM = 660;
+            constants.shooter.Hood_pos   = 0.30;
         }
-        //Medium Range = triangle
-        if (gamepad2.triangle){
+        if (gamepad2.triangle) {
             AUTO = false;
-            constants.shooter.TARGET_RPM=770;
-            constants.shooter.Hood_pos=0.62;
+            constants.shooter.TARGET_RPM = 770;
+            constants.shooter.Hood_pos   = 0.62;
         }
-        //Far Range= circle
-        if (gamepad2.circle){
+        if (gamepad2.circle) {
             AUTO = false;
-            constants.shooter.TARGET_RPM=850;
-            constants.shooter.Hood_pos=0.74;
+            constants.shooter.TARGET_RPM = 850;
+            constants.shooter.Hood_pos   = 0.74;
         }
-
         if (gamepad2.cross) {
             AUTO = true;
         }
 
-        //Fix Turret Pose Left
-        if (gamepad2.dpad_left){
-            AUTO_AIM=false;
+        // Manual turret overrides
+        if (gamepad2.dpad_left) {
+            AUTO_AIM = false;
             turret.setManualAngle(-135);
         }
-
-        //Fix Turret Pose Right
-        if (gamepad2.dpad_right){
-            AUTO_AIM=false;
+        if (gamepad2.dpad_right) {
+            AUTO_AIM = false;
             turret.setManualAngle(45);
         }
-
-        //Fix Turret Pose Middle
-        if (gamepad2.dpad_up){
-            AUTO_AIM=false;
+        if (gamepad2.dpad_up) {
+            AUTO_AIM = false;
             turret.setManualAngle(0);
         }
-
-        //TURN BACK INTO AUTO TURRET
-        if (gamepad2.dpad_down){
-            AUTO_AIM=true;
+        if (gamepad2.dpad_down) {
+            AUTO_AIM = true;
         }
+
         updateTelemetry();
+    }
+
+    /** Builds a path from the current pose to the dashboard-configured target and starts following it. */
+    private void startAutoDrive_Gate() {
+        Pose target = new Pose(AUTO_DRIVE_X, AUTO_DRIVE_Y, Math.toRadians(AUTO_DRIVE_HEADING));
+
+        PathChain chain = follower.pathBuilder()
+                .addPath(new Path(new BezierLine(follower::getPose, target)))
+                .setHeadingInterpolation(
+                        HeadingInterpolator.linearFromPoint(follower::getHeading,
+                                Math.toRadians(AUTO_DRIVE_HEADING), 0.8))
+                .build();
+
+        follower.followPath(chain, true); // true = hold end position
+        automatedDrive = true;
+
+        // Turn intake on and open stopper for the ride
+        intake.setIntake(constants.INTAKE_PRESETS.GATE);
+        shooter.setStopper(true);
+    }
+    private void startAutoDrive_Shoot() {
+        Pose target = new Pose(AUTO_DRIVE_X2, AUTO_DRIVE_Y2, Math.toRadians(AUTO_DRIVE_HEADING2));
+
+        PathChain chain = follower.pathBuilder()
+                .addPath(new Path(new BezierLine(follower::getPose, target)))
+                .setHeadingInterpolation(
+                        HeadingInterpolator.linearFromPoint(follower::getHeading,
+                                Math.toRadians(AUTO_DRIVE_HEADING2), 0.8))
+                .build();
+
+        follower.followPath(chain, true);
+        automatedDrive = true;
+
+        intake.setIntake(constants.INTAKE_PRESETS.OFF);
+        shooter.setStopper(false);
+    }
+
+    /** Cancels an in-progress auto-drive and hands control back to the driver. */
+    private void cancelAutoDrive() {
+        follower.startTeleopDrive(); // re-enable driver input
+        automatedDrive = false;
+
+        // Reset intake/stopper to safe defaults
+        intake.setIntake(constants.INTAKE_PRESETS.OFF);
+        shooter.setStopper(false);
     }
 
     public void updateTelemetry() {
@@ -245,28 +308,29 @@ public class NEI_Red extends OpMode {
         telemetry.addLine("≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡INTAKE≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡");
         telemetry.addLine(intake.toString());
         telemetry.addLine("≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡SHOOTER≡≡≡≡≡≡≡≡≡≡≡≡≡≡");
-        telemetry.addData("AUTO AIM ACTIVE",AUTO_AIM);
-        telemetry.addData("REGRESSION ACTIVE", AUTO);
-        telemetry.addData("EMA", shooter.ema);
-        telemetry.addData("RPM", shooter.getRPM());
-        telemetry.addData("Hood Angle", shooter.getHoodAngle());
-        telemetry.addData("Counter", storage.counter);
-        telemetry.addData("Turret Error", turret.getError());
-        telemetry.addData("Transfer Powered",intake.getTransferCurrent());
-
-        telemetry.addData("Heading Error", getHeadingError());
-        telemetry.addData("Heading Output", controller.run());
-        telemetry.addData("Current Heading", Math.toDegrees(follower.getHeading()));
-        telemetry.addData("Target Heading", Math.toDegrees(targetHeading));
+        telemetry.addData("AUTO AIM ACTIVE",    AUTO_AIM);
+        telemetry.addData("REGRESSION ACTIVE",  AUTO);
+        telemetry.addData("AUTO DRIVE ACTIVE",  automatedDrive); // new
+        telemetry.addData("EMA",                shooter.ema);
+        telemetry.addData("RPM",                shooter.getRPM());
+        telemetry.addData("Hood Angle",         shooter.getHoodAngle());
+        telemetry.addData("Counter",            storage.counter);
+        telemetry.addData("Turret Error",       turret.getError());
+        telemetry.addData("Transfer Powered",   intake.getTransferCurrent());
+        telemetry.addData("Heading Error",      getHeadingError());
+        telemetry.addData("Heading Output",     controller.run());
+        telemetry.addData("Current Heading",    Math.toDegrees(follower.getHeading()));
+        telemetry.addData("Target Heading",     Math.toDegrees(targetHeading));
         telemetry.update();
     }
 
     public double getHeadingError() {
-        return MathFunctions.getTurnDirection(follower.getHeading(), targetHeading) * MathFunctions.getSmallestAngleDifference(follower.getPose().getHeading(),targetHeading);
+        return MathFunctions.getTurnDirection(follower.getHeading(), targetHeading)
+                * MathFunctions.getSmallestAngleDifference(follower.getPose().getHeading(), targetHeading);
     }
 
     @Override
-    public void stop(){
+    public void stop() {
         thread.interrupt();
     }
 }
