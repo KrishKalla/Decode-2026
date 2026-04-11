@@ -155,14 +155,14 @@ class LocalizationTest extends OpMode {
     @Override
     public void loop() {
         follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
+        follower.setHeading((follower.getPose().getHeading()-(follower.getTotalHeading()/(2*Math.PI))*0.0174532925199));
         follower.update();
 
         telemetryM.debug("x:" + follower.getPose().getX());
         telemetryM.debug("y:" + follower.getPose().getY());
-        telemetryM.debug("heading:" + follower.getPose().getHeading());
-        telemetryM.debug("total heading:" + follower.getTotalHeading());
+        telemetryM.debug("heading:" + ((follower.getPose().getHeading()/(2*Math.PI))*360));
+        telemetryM.debug("Absolute Rotation:" + follower.getTotalHeading()/(2*Math.PI));
         telemetryM.update(telemetry);
-
         draw();
     }
 }
