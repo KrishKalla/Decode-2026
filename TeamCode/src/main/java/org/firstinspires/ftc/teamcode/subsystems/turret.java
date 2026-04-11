@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.hardware.SRSHub;
+import org.firstinspires.ftc.teamcode.util.constants;
 import org.firstinspires.ftc.teamcode.util.storage;
 
 
@@ -44,7 +45,7 @@ public class turret {
     public static double SERVO_MIN = 0.15;
     public static int ZERO = 797;
     public static double SERVO_ZERO = 0.5;
-    public static double SLOP = 3;
+    public static double SLOP = 0;
     public static double TOLERANCE = 0;
     public static double ALPHA = 0.65;
 
@@ -91,7 +92,7 @@ public class turret {
 
     public void update(Pose goal) {
         if (goal != null) {
-            setTargetAngle(normalizeAngle(calculateAngleToGoal(goal)));
+            setTargetAngle(normalizeAngle(calculateAngleToGoal(goal))+ constants.shooter.Goal_delta);
         }
     }
 

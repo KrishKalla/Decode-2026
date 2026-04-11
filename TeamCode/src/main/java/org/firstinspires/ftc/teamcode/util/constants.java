@@ -69,7 +69,7 @@ public class constants {
        public static double SHOT_LOAD = 65;
        public static double Target_Hood = 0.18;
        public static double Hood_pos = 0.18;
-       public static double Hood_delta =0.01;
+       public static double Goal_delta =0;
     }
 
     public enum HOOD {

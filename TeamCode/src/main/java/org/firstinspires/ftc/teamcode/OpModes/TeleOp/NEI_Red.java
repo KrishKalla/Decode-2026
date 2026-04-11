@@ -50,7 +50,7 @@ public class NEI_Red extends OpMode {
     private int Mode = 0; // Short
 
     // Heading Lock
-    double targetHeading = Math.toRadians(21);
+    double targetHeading = Math.toRadians(20);
     public static double heading_P = 0.3;
     public static double heading_D = 0;
     public static double heading_F = 0;
@@ -219,44 +219,46 @@ public class NEI_Red extends OpMode {
 
         // Human Player Zone reloc
         if (gamepad2.right_stick_button) {
-            follower.setPose(new Pose(6.55, 8, Math.toRadians(-90)));
+            follower.setY(7.5);
+        }
+        if (gamepad2.left_stick_button){
+            follower.setHeading(0);
         }
 
         // Close Zone set-points
         if (gamepad2.square) {
             AUTO = false;
-            constants.shooter.TARGET_RPM = 660;
+            constants.shooter.TARGET_RPM = 1320;
             constants.shooter.Hood_pos   = 0.30;
         }
         if (gamepad2.triangle) {
             AUTO = false;
-            constants.shooter.TARGET_RPM = 770;
+            constants.shooter.TARGET_RPM = 1500;
             constants.shooter.Hood_pos   = 0.62;
         }
         if (gamepad2.circle) {
             AUTO = false;
-            constants.shooter.TARGET_RPM = 850;
+            constants.shooter.TARGET_RPM = 1800;
             constants.shooter.Hood_pos   = 0.74;
         }
         if (gamepad2.cross) {
             AUTO = true;
         }
 
-        // Manual turret overrides
+        // Manual turret Offset
         if (gamepad2.dpad_left) {
-            AUTO_AIM = false;
-            turret.setManualAngle(-135);
+            constants.shooter.Goal_delta++;
         }
         if (gamepad2.dpad_right) {
-            AUTO_AIM = false;
-            turret.setManualAngle(45);
+            constants.shooter.Goal_delta--;
         }
-        if (gamepad2.dpad_up) {
-            AUTO_AIM = false;
-            turret.setManualAngle(0);
+
+        // Y pose offset
+        if (gamepad2.dpadUpWasPressed()) {
+            follower.setY(follower.getPose().getY()+1);
         }
-        if (gamepad2.dpad_down) {
-            AUTO_AIM = true;
+        if (gamepad2.dpadDownWasPressed()) {
+            follower.setY(follower.getPose().getY()-1);
         }
 
         updateTelemetry();
@@ -309,23 +311,15 @@ public class NEI_Red extends OpMode {
 
     public void updateTelemetry() {
         telemetry.addLine(follower.getPose().toString());
+        telemetry.addData("Turret_delta",-constants.shooter.Goal_delta);
 
-        telemetry.addLine("≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡INTAKE≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡");
-        telemetry.addLine(intake.toString());
-        telemetry.addLine("≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡SHOOTER≡≡≡≡≡≡≡≡≡≡≡≡≡≡");
+        telemetry.addLine("≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡ROBOT≡≡≡≡≡≡≡≡≡≡≡≡≡≡");
         telemetry.addData("AUTO AIM ACTIVE",    AUTO_AIM);
-        telemetry.addData("REGRESSION ACTIVE",  AUTO);
-        telemetry.addData("AUTO DRIVE ACTIVE",  automatedDrive); // new
+        telemetry.addData("REGRESSION ACTIVE",  AUTO);// new
         telemetry.addData("EMA",                shooter.ema);
         telemetry.addData("RPM",                shooter.getRPM());
         telemetry.addData("Hood Angle",         shooter.getHoodAngle());
-        telemetry.addData("Counter",            storage.counter);
-        telemetry.addData("Turret Error",       turret.getError());
-        telemetry.addData("Transfer Powered",   intake.getTransferCurrent());
-        telemetry.addData("Heading Error",      getHeadingError());
-        telemetry.addData("Heading Output",     controller.run());
         telemetry.addData("Current Heading",    Math.toDegrees(follower.getHeading()));
-        telemetry.addData("Target Heading",     Math.toDegrees(targetHeading));
         telemetry.update();
     }
 
