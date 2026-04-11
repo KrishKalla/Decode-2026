@@ -26,12 +26,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name = "Red 21 Auto - RP")
 public class Red_21_RP extends OpMode {
 
-    public static double turret_ANGLE = -132;
     private ElapsedTime shootTimer = new ElapsedTime();
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime loopTimer = new ElapsedTime();
-    private double shootingtime = 0.5;
-    private static double gateIntakeTime = 2;
+    private double shootingtime = 0.45;
+    private static double gateIntakeTime = 1.5;
     private boolean IsShot=false;
 
     private boolean Auto_hood = true;
@@ -52,22 +51,25 @@ public class Red_21_RP extends OpMode {
     private int pathState = 0;
 
     // Pose definitions
-    private final Pose startPose = new Pose(115.75, 126.79, Math.toRadians(0));
-    private final Pose scorePose = new Pose(92, 76, Math.toRadians(0));
-    private final Pose pickup1Pose = new Pose(113, 61, Math.toRadians(0));
-    private final Pose midPickup1 = new Pose(70, 55.5);
+    private final Pose startPose = new Pose(114.4, 126.259, Math.toRadians(0));
+    private final Pose scorePose = new Pose(86, 76, Math.toRadians(0));
+    private final Pose FirstscorePose = new Pose(93, 85, Math.toRadians(0));
+    private final Pose pickup1Pose = new Pose(120, 61, Math.toRadians(0));
+    private final Pose midPickup1 = new Pose(88.2, 60);
 
-    private final Pose gateApproachPose = new Pose(128, 61, Math.toRadians(20));
+    private final Pose gateApproachPose = new Pose(131, 58.5, Math.toRadians(20));
+    private final Pose midgatePose = new Pose(106,60);
 
-    private final Pose midcenterPickupPose = new Pose(90,84.5);
-    private final Pose centerPickupPose = new Pose(113, 84, Math.toRadians(0));
+    private final Pose midcenterPickupPose = new Pose(90,84);
+    private final Pose centerPickupPose = new Pose(120, 80, Math.toRadians(0));
 
-    private final Pose midFarPickup = new Pose(86.271, 31.767);
-    private final Pose farPickupPose = new Pose(113, 36, Math.toRadians(0));
+    private final Pose midFarPickup = new Pose(86.271, 36);
+    private final Pose farPickupPose = new Pose(120, 40, Math.toRadians(0));
     private final Pose parkPose = new Pose(83.128, 103, Math.toRadians(-45));
 
     // ---- PATH OBJECTS ----
     private PathChain Path1;
+    private PathChain Path2;
     private PathChain Path3;
     private PathChain Path4;
     private PathChain Path6;
@@ -89,21 +91,18 @@ public class Red_21_RP extends OpMode {
         shooter = new shooter();
         intake = new intake();
         turret = new turret();
-        llhandler = new LLHandler(hardwareMap, alliance);
         follower = Constants.createFollower(hardwareMap);
         follower.setPose(startPose);
 
         shooter.init(hardwareMap, llhandler);
         intake.init(hardwareMap);
         turret.init(hardwareMap,follower);
+        //turret.zeroTurret();
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        llhandler.alliance(alliance);
-        llhandler.start();
-        constants.shooter.TARGET_RPM = 400;//790 Original
-        constants.shooter.Target_Hood = ShootingHood;
-        storage.RED_X=138;
+        constants.shooter.TARGET_RPM = 1450;
+        constants.shooter.Target_Hood = 0.65;
         buildPaths();
     }
 
@@ -115,13 +114,13 @@ public class Red_21_RP extends OpMode {
     @Override
     public void loop() {
         loopTimer.reset();
-        llhandler.poll();
         follower.update();
         autonomousPathUpdate();
-        //shooter.calculateParams();
         shooter.update();
         intake.update();
-        //turret.hardwareUpdate(turret.update(goalPose));
+
+        turret.update(goalPose);
+        turret.periodic();
 
         storage.lastRedAutoPose = follower.getPose();
 
@@ -130,10 +129,9 @@ public class Red_21_RP extends OpMode {
         telemetry.addData("Heading", Math.toDegrees(follower.getPose().getHeading()));
         telemetry.addData("RPM",shooter.getRPM());
         telemetry.addData("Time", runtime.seconds());
-        telemetry.addData("turret Target", turret.getTargetAngle());
-        telemetry.addData("turret Current", turret.getCurrentAngle());
+        telemetry.addData("Turret Target", turret.getTargetAngle());
+        telemetry.addData("Turret Current", turret.getCurrentAngle());
         telemetry.addData("Loop Time", loopTimer.milliseconds());
-        telemetry.addData("lldist", llhandler.getLatestResult()[2]);
         telemetry.update();
     }
 
@@ -142,12 +140,20 @@ public class Red_21_RP extends OpMode {
     private void buildPaths() {
         // Path1: Start to score position
         Path1 = follower.pathBuilder().addPath(
-                        new BezierCurve(
+                        new BezierLine(
                                 startPose,
+                                FirstscorePose
+                        )
+                ).setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading())
+                .build();
+
+        Path2 = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                scorePose,
                                 midPickup1,
                                 pickup1Pose
                         )
-                ).setLinearHeadingInterpolation(startPose.getHeading(), pickup1Pose.getHeading())
+                ).setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Pose.getHeading())
                 .build();
 
         // Path3: First pickup back to score
@@ -161,8 +167,9 @@ public class Red_21_RP extends OpMode {
 
         // Path4: Score to gate approach
         Path4 = follower.pathBuilder().addPath(
-                        new BezierLine(
+                        new BezierCurve(
                                 scorePose,
+                                gateApproachPose,
                                 gateApproachPose
                         )
                 ).setLinearHeadingInterpolation(scorePose.getHeading(), gateApproachPose.getHeading())
@@ -221,40 +228,35 @@ public class Red_21_RP extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                follower.setMaxPower(Power);
-                //Shoot while moving
-                if (!shotWaitStarted) {
-                    follower.followPath(Path1, false);
-                    intake.setIntake(constants.INTAKE_PRESETS.OFF);
-                    shooter.flywheelPreset(constants.FLYWHEEL.ON);
-                    shooter.setStopper(false);
-                    shootTimer.reset();
-                    shotWaitStarted = true;
-                }
-                if (shootTimer.seconds() >= ShootingMoment && !IsShot) {
-                    intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
-
-                }
-                if (shootTimer.seconds() >= ShootingMoment+0.4){
-                    follower.setMaxPower(1);
-                    intake.setIntake(constants.INTAKE_PRESETS.OFF);
-                    shooter.setStopper(true);
-                    IsShot=true;
-                    shotWaitStarted = false;
-                    setPathState(1);
-                }
-                break;
+                intake.setIntake(constants.INTAKE_PRESETS.OFF);
+                shooter.flywheelPreset(constants.FLYWHEEL.ON);
+                shooter.setStopper(false);
+                follower.followPath(Path1, false);
+                setPathState(1);
 
             case 1:
-                // go to near pickup
-                //constants.shooter.Target_Hood=0.69;
-                intake.setIntake(constants.INTAKE_PRESETS.ON);
-                shooter.setStopper(true);
-                setPathState(2);
+                if (!follower.isBusy()) {
+                    if (!shotWaitStarted) {
+                        follower.setMaxPower(0.2);
+                        shootTimer.reset();
+                        shotWaitStarted = true;
+                        intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
+                    }
+                    if (shootTimer.seconds() >= shootingtime) {
+                        constants.shooter.TARGET_RPM = 1500;
+                        constants.shooter.Target_Hood = 0.69;
+                        follower.setMaxPower(1);
+                        intake.setIntake(constants.INTAKE_PRESETS.ON);
+                        shooter.setStopper(true);
+                        shotWaitStarted = false;
+                        follower.followPath(Path2, false);
+                        setPathState(2);
+                    }
+                }
                 break;
 
             case 2:
-                // Return from gate to score
+                // Return from spike mark to score
                 if (!follower.isBusy()) {
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
                     shooter.setStopper(false);
@@ -264,18 +266,20 @@ public class Red_21_RP extends OpMode {
                 break;
 
             case 3:
-                // Score and go to gate (FIRST TIME)
+                // Score and go to gate approach (FIRST TIME)
                 if (!follower.isBusy()) {
                     if (!shotWaitStarted) {
-                        intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
+                        follower.setMaxPower(0.2);
                         shootTimer.reset();
                         shotWaitStarted = true;
+                        intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
                     }
                     if (shootTimer.seconds() >= shootingtime) {
-                        shooter.setStopper(true);
+                        follower.setMaxPower(1);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
-                        follower.followPath(Path4, false);
+                        shooter.setStopper(true);
                         shotWaitStarted = false;
+                        follower.followPath(Path4, false);
                         setPathState(4);
                     }
                 }
@@ -289,7 +293,7 @@ public class Red_21_RP extends OpMode {
                         shootTimer.reset();
                         shotWaitStarted = true;
                     }
-                    if (shootTimer.seconds() >= gateIntakeTime-0.5) {
+                    if (shootTimer.seconds() >= gateIntakeTime) {
                         follower.setMaxPower(1);
                         intake.setIntake(constants.INTAKE_PRESETS.OFF);
                         shooter.setStopper(false);
@@ -414,6 +418,8 @@ public class Red_21_RP extends OpMode {
                         shooter.setStopper(true);
                         follower.setMaxPower(1);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
+                        constants.shooter.TARGET_RPM = 1450;
+                        constants.shooter.Target_Hood = 0.59;
                         follower.followPath(Path12, false);
                         shotWaitStarted = false;
                         setPathState(12);
@@ -424,8 +430,6 @@ public class Red_21_RP extends OpMode {
                 // Far pickup back to Park
                 if (!follower.isBusy()) {
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
-                    //constants.shooter.TARGET_RPM = 720;
-                    //constants.shooter.Hood_pos = 0.59;
                     shooter.setStopper(false);
                     follower.followPath(Path13, false);
                     setPathState(13);
@@ -433,7 +437,7 @@ public class Red_21_RP extends OpMode {
                 break;
 
             case 13:
-                // Score and then Gate approach to gate (THIRD TIME)
+                // Score
                 if (!follower.isBusy()) {
                     if (!shotWaitStarted) {
                         intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
