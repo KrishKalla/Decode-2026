@@ -44,7 +44,7 @@ public class NEI_Red extends OpMode {
     private volatile double servoUpdate;
 
     public static double RPM_Constraint = 2000;
-    public static double  Dist_offset= 0.1;
+    public static double  Dist_offset= 0.7;
     public static boolean AUTO = true;
     public static boolean AUTO_AIM = true;
     private Pose goalpose = new Pose(storage.RED_X, storage.RED_Y);
