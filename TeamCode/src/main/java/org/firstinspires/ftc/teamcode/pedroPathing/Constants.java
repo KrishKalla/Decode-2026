@@ -21,8 +21,8 @@ public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(constants.ROBOT_MASS)
             .centripetalScaling(0)
-            .headingPIDFCoefficients(new PIDFCoefficients(0.9, 0, 0.0, 0.03))
-            .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.07, 0.1596, 0.00135))
+            .headingPIDFCoefficients(new PIDFCoefficients(0.9, 0, 0.01, 0.03))
+            .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.1, 0.00151, 0.1558))
 
 
 //            .forwardZeroPowerAcceleration(-70.0)
