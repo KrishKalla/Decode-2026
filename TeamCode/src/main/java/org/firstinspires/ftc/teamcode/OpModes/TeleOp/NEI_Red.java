@@ -43,7 +43,7 @@ public class NEI_Red extends OpMode {
 
     private volatile double servoUpdate;
 
-    public static double MANUAL_TURRET = 0;
+    public static double RPM_Constraint = 1600;
     public static boolean AUTO = true;
     public static boolean AUTO_AIM = true;
     private Pose goalpose = new Pose(storage.RED_X, storage.RED_Y);
@@ -104,8 +104,13 @@ public class NEI_Red extends OpMode {
                     llhandler.poll();
                     shooter.update();
                     shooter.updateBatteryVoltage();
-                    if (AUTO && Mode == 0) {
-                        shooter.calculateParams();
+                    if (AUTO) {
+                        if((follower.getVelocity().getXComponent() + follower.getVelocity().getYComponent())<=5){
+                            shooter.calculateParams(RPM_Constraint,0);
+                        }
+                        else {
+                            shooter.calculateParams(RPM_Constraint, turret.SOTM_dist_RED(SOTM.getAdjustedGoal()));
+                        }
                     }
                 }
             }
@@ -140,11 +145,15 @@ public class NEI_Red extends OpMode {
     @Override
     public void loop() {
 
+        if(constants.shooter.TARGET_RPM>=1600){
+            constants.intake.TRANSFER_POWER=0.67;
+        }
+
         if (follower.getPose().getY()>=48){
             goalpose=new Pose(storage.RED_X+2,storage.RED_Y);
         }
         else{
-            goalpose=new Pose(storage.RED_X,storage.RED_Y);
+            goalpose=new Pose(storage.RED_X-1,storage.RED_Y);
         }
         SOTM.setGoalPose(goalpose);
 
@@ -268,11 +277,11 @@ public class NEI_Red extends OpMode {
         }
 
         // Y pose offset
-        if (gamepad2.dpadUpWasPressed()) {
-            follower.setY(follower.getPose().getY()+1);
+        if (gamepad2.dpad_up) {
+            RPM_Constraint=2000;
         }
-        if (gamepad2.dpadDownWasPressed()) {
-            follower.setY(follower.getPose().getY()-1);
+        if (gamepad2.dpad_down) {
+            RPM_Constraint=2000;
         }
 
         updateTelemetry();

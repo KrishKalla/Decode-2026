@@ -123,7 +123,7 @@ public class shooter {
 
 
 
-    public void calculateParams() {
+    public void calculateParams(double constraint, double odo_dist) {
         double dist = handler.getLatestResult()[2];
         if (dist == -1001) {
             hoodTrackingState = "MISSING";
@@ -133,8 +133,14 @@ public class shooter {
 
             filterDistance(previousDistance);
             double[] interp = LUT.get(ema);
+            if(odo_dist!=0){
+                interp = LUT.get(odo_dist);
+            }
             constants.shooter.Target_Hood= interp[1];
             constants.shooter.TARGET_RPM = interp[0];
+            if (constants.shooter.TARGET_RPM>=constraint){
+                constants.shooter.TARGET_RPM=constraint;
+            }
         }
     }
 

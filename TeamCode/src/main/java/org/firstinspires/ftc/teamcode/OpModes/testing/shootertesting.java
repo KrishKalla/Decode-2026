@@ -65,7 +65,7 @@ public class shootertesting extends OpMode {
         shooter.updateBatteryVoltage();
 
         if (ON) {
-            shooter.calculateParams();
+            shooter.calculateParams(2000,0);
             turret.update(goalPose);
             turret.periodic();
         } else {
@@ -100,8 +100,6 @@ public class shootertesting extends OpMode {
         telemetry.addData("Target_RPM: ", constants.shooter.TARGET_RPM);
         telemetry.addData("Target_Hood: ", constants.shooter.Hood_pos);
         telemetry.addData("lldist converted", Math.sqrt(Math.pow(llhandler.getLatestResult()[2], 2) - Math.pow(constants.APRIL_TAG_HEIGHT - constants.LIMELIGHT_HEIGHT, 2)));
-        telemetry.addData("Odo Distance",turret.getOdodistance_RED());
-        telemetry.addData("Distance Diff",Math.sqrt(Math.pow(llhandler.getLatestResult()[2], 2) - Math.pow(constants.APRIL_TAG_HEIGHT - constants.LIMELIGHT_HEIGHT, 2))-turret.getOdodistance_RED());
         telemetry.addData("Turret Angle", turret.getCurrentAngle());
         telemetry.addData("Turret Target", turret.getTargetAngle());
         telemetry.addData("Turret Error", turret.getError());

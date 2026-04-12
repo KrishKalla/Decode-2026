@@ -109,7 +109,7 @@ public class Red_Far extends OpMode {
         follower.update();
         autonomousPathUpdate();
         shooter.update();
-        shooter.calculateParams();
+        shooter.calculateParams(2000,0);
         intake.update();
         turret.update(goalPose);
         turret.periodic();
