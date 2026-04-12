@@ -43,8 +43,8 @@ public class NEI_Red extends OpMode {
 
     private volatile double servoUpdate;
 
-    public static double RPM_Constraint = 2000;
-    public static double  Dist_offset= 0.7;
+    public static double RPM_Constraint = 1600;
+    public static double  Dist_offset= 0.075;
     public static boolean AUTO = true;
     public static boolean AUTO_AIM = true;
     private Pose goalpose = new Pose(storage.RED_X, storage.RED_Y);
@@ -53,7 +53,7 @@ public class NEI_Red extends OpMode {
     private int Mode = 0; // Short
 
     // Heading Lock
-    double targetHeading = Math.toRadians(20);
+    double targetHeading = Math.toRadians(22);
     public static double heading_P = 0.3;
     public static double heading_D = 0;
     public static double heading_F = 0;
@@ -105,13 +105,11 @@ public class NEI_Red extends OpMode {
                     llhandler.poll();
                     shooter.update();
                     shooter.updateBatteryVoltage();
-                    if (AUTO) {
-                        if(Math.abs(follower.getVelocity().getXComponent() + follower.getVelocity().getYComponent())<=5){
+                    if(!AUTO||Math.abs(follower.getVelocity().getXComponent() + follower.getVelocity().getYComponent())<=10){
                             shooter.calculateParams(RPM_Constraint,0);
-                        }
-                        else {
-                            shooter.calculateParams(RPM_Constraint, turret.SOTM_dist_RED(SOTM.getAdjustedGoal())+Dist_offset);
-                        }
+                    }
+                    else {
+                        shooter.calculateParams(RPM_Constraint, 0);
                     }
                 }
             }
@@ -133,7 +131,7 @@ public class NEI_Red extends OpMode {
 
         shooter.flywheelPreset(constants.FLYWHEEL.ON);
         shooter.hoodPreset(constants.HOOD.AUTO);
-        AUTO     = true;
+        AUTO     = false;
         AUTO_AIM = true;
         shooter.setStopper(true);
 
@@ -146,15 +144,11 @@ public class NEI_Red extends OpMode {
     @Override
     public void loop() {
 
-        if(constants.shooter.TARGET_RPM>=1600){
-            constants.intake.TRANSFER_POWER=0.67;
-        }
-
         if (follower.getPose().getY()>=48){
             goalpose=new Pose(storage.RED_X+1,storage.RED_Y);
         }
         else{
-            goalpose=new Pose(storage.RED_X-1,storage.RED_Y);
+            goalpose=new Pose(storage.RED_X-2,storage.RED_Y);
         }
         SOTM.setGoalPose(goalpose);
 
@@ -230,7 +224,7 @@ public class NEI_Red extends OpMode {
 
         // Switch modes / heading lock
         if (gamepad1.right_stick_button) {
-            targetHeading = Math.toRadians(20);
+            targetHeading = Math.toRadians(22);
             headingLock   = true;
             shooter.setStopper(true);
         } else if (gamepad2.right_trigger > 0.3) {
@@ -266,7 +260,7 @@ public class NEI_Red extends OpMode {
             constants.shooter.Hood_pos   = 0.74;
         }
         if (gamepad2.cross) {
-            AUTO = true;
+            AUTO = false;
         }
 
         // Manual turret Offset

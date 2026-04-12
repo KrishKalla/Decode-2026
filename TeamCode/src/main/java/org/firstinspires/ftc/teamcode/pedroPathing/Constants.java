@@ -22,7 +22,7 @@ public class Constants {
             .mass(constants.ROBOT_MASS)
             .centripetalScaling(0)
             .headingPIDFCoefficients(new PIDFCoefficients(0.9, 0, 0.01, 0.03))
-            .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.1, 0.00151, 0.1558))
+            .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.1, 0.15963819, 0.001356))
 
 
 //            .forwardZeroPowerAcceleration(-70.0)
