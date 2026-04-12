@@ -140,6 +140,9 @@ public class shooter {
             constants.shooter.TARGET_RPM = interp[0];
             if (constants.shooter.TARGET_RPM>=constraint){
                 constants.shooter.TARGET_RPM=constraint;
+                if(constraint !=1600 && constants.shooter.TARGET_RPM<=1770){
+                    constants.shooter.TARGET_RPM=1770;
+                }
             }
         }
     }

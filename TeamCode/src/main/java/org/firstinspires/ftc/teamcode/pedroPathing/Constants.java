@@ -17,11 +17,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.util.constants;
 
 public class Constants {
+
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(constants.ROBOT_MASS)
             .centripetalScaling(0)
             .headingPIDFCoefficients(new PIDFCoefficients(0.9, 0, 0.01, 0.03))
-            .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.1, 0.15963819, 0.001356))
+            .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.1, 0.00151, 0.1558))
+
 
 //            .forwardZeroPowerAcceleration(-70.0)
 //            .lateralZeroPowerAcceleration(-75.9)
