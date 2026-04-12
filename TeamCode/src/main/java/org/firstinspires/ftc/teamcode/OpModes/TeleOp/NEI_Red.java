@@ -43,7 +43,8 @@ public class NEI_Red extends OpMode {
 
     private volatile double servoUpdate;
 
-    public static double RPM_Constraint = 1600;
+    public static double RPM_Constraint = 2000;
+    public static double  Dist_offset= 0.1;
     public static boolean AUTO = true;
     public static boolean AUTO_AIM = true;
     private Pose goalpose = new Pose(storage.RED_X, storage.RED_Y);
@@ -105,11 +106,11 @@ public class NEI_Red extends OpMode {
                     shooter.update();
                     shooter.updateBatteryVoltage();
                     if (AUTO) {
-                        if((follower.getVelocity().getXComponent() + follower.getVelocity().getYComponent())<=5){
+                        if(Math.abs(follower.getVelocity().getXComponent() + follower.getVelocity().getYComponent())<=5){
                             shooter.calculateParams(RPM_Constraint,0);
                         }
                         else {
-                            shooter.calculateParams(RPM_Constraint, turret.SOTM_dist_RED(SOTM.getAdjustedGoal()));
+                            shooter.calculateParams(RPM_Constraint, turret.SOTM_dist_RED(SOTM.getAdjustedGoal())+Dist_offset);
                         }
                     }
                 }
@@ -150,7 +151,7 @@ public class NEI_Red extends OpMode {
         }
 
         if (follower.getPose().getY()>=48){
-            goalpose=new Pose(storage.RED_X+2,storage.RED_Y);
+            goalpose=new Pose(storage.RED_X+1,storage.RED_Y);
         }
         else{
             goalpose=new Pose(storage.RED_X-1,storage.RED_Y);
@@ -276,10 +277,11 @@ public class NEI_Red extends OpMode {
             constants.shooter.Goal_delta--;
         }
 
-        // Y pose offset
+        // Close zone
         if (gamepad2.dpad_up) {
-            RPM_Constraint=2000;
+            RPM_Constraint=1600;
         }
+        // Far zone
         if (gamepad2.dpad_down) {
             RPM_Constraint=2000;
         }

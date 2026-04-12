@@ -7,7 +7,7 @@ import com.pedropathing.geometry.Pose;
 public class SOTM {
     private static Pose goalPose = null;
     private static Pose adjustedGoal;
-    public static double K = 0.002;
+    public static double K = 0.9;
 
     public static void setGoalPose(Pose goalPose) {
         SOTM.goalPose = goalPose;
