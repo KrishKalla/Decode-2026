@@ -25,7 +25,7 @@ public class turrettesting extends OpMode {
     private int alliance = 1;
     private FtcDashboard dashboard;
     public static boolean manual = false;
-    public static boolean RESET = false;
+    public static boolean sotm = false;
     public static double MANUAL = 0;
 
     Pose goalPose;
@@ -36,7 +36,7 @@ public class turrettesting extends OpMode {
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         llhandler = new LLHandler(hardwareMap, alliance);
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(72, 72, 0));
+        follower.setStartingPose(storage.lastRedAutoPose);
         follower.update();
         turret.init(hardwareMap, follower);
         turret.reset();
@@ -61,12 +61,9 @@ public class turrettesting extends OpMode {
         follower.update();
         if (manual) {
             turret.update(MANUAL);
-        } else if (RESET) {
-            turret.TEST_RESET_ONLY();
-        }else {
-//            llhandler.poll();
-//            SOTM.calculate(follower.getVelocity().getXComponent(), follower.getVelocity().getYComponent());
-            turret.update(goalPose);
+        } else if (sotm) {
+            SOTM.calculate(follower.getVelocity().getXComponent(), follower.getVelocity().getYComponent());
+            turret.update(SOTM.getAdjustedGoal());
         }
         turret.periodic();
 //        telemetry.addData("pose", SOTM.getAdjustedGoal().toString());

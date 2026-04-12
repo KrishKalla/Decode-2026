@@ -21,6 +21,7 @@ public class turret {
     private FtcDashboard dashboard;
 
     public double SERVO_Pose =0;
+    public static double turret_alpha=-3.5;
 
     //Hardware
     private Servo left;
@@ -101,24 +102,10 @@ public class turret {
     }
 
     public void periodic() {
-        if (Math.abs(getError()) < TOLERANCE) {
-            aimed = true;
-        } else {
-            aimed = false;
-            if (Math.abs(getError()) < SLOP) {
-                correcting = true;
-                double servoDelta = angleToServoDelta(getError());
-                double currentPos = pos;
-                double targetPos = currentPos + servoDelta*ALPHA;
-                targetPos = clamp(targetPos, SERVO_MIN, SERVO_MAX);
-                hardwareUpdate(targetPos);
-            } else {
-                correcting = false;
-                pos = angleToServoPosition(target);
-                pos = clamp(pos, SERVO_MIN, SERVO_MAX);
-                hardwareUpdate(pos);
-            }
-        }
+        correcting = false;
+        pos = angleToServoPosition(target);
+        pos = clamp(pos, SERVO_MIN, SERVO_MAX);
+        hardwareUpdate(pos);
     }
 
     public void hardwareUpdate(double pos) {
@@ -157,6 +144,18 @@ public class turret {
         return new Pose(turretX, turretY, heading);
     }
 
+    public double SOTM_dist_RED(Pose SOTMpose){
+        double Y_offset = 144-12-SOTMpose.getY();
+        double X_offset = 144-14-SOTMpose.getX();
+        return 0.0254*Math.sqrt(Y_offset*Y_offset+X_offset*X_offset);
+    }
+
+    public double SOTM_dist_BLUE(Pose SOTMpose){
+        double Y_offset = 12-SOTMpose.getY();
+        double X_offset = 14-SOTMpose.getX();
+        return 0.0254*Math.sqrt(Y_offset*Y_offset+X_offset*X_offset);
+    }
+
     private double calculateAngleToGoal(@NonNull Pose goal) {
         Pose turretPose = getTurretFieldPose();
 
@@ -178,11 +177,11 @@ public class turret {
     }
 
     public double angleToServoPosition(double angle) {
-        return SERVO_ZERO + (angle / SERVO_TO_TURRET_RATIO) / 353.5;
+        return SERVO_ZERO + (angle / SERVO_TO_TURRET_RATIO) / (353+turret_alpha);
     }
 
     public double angleToServoDelta(double angle) {
-        return (angle / SERVO_TO_TURRET_RATIO) / 353.5;
+        return (angle / SERVO_TO_TURRET_RATIO) / (353.5+turret_alpha);
     }
 
 

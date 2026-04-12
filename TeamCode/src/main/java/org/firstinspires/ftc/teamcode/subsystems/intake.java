@@ -131,51 +131,17 @@ public class intake {
 
         emaL = (emaL == 0) ? L : constants.intake.alpha * L + (1 - constants.intake.alpha) * emaL;
         emaR = (emaR == 0) ? R : constants.intake.alpha * R + (1 - constants.intake.alpha) * emaR;
-
-        boolean rawBlocked = (emaL < constants.intake.breakbeamThreshold)
-                && (emaR < constants.intake.breakbeamThreshold);
-
-        // Lift lockout once beam fully clears regardless of mode
-        if (inLockout && !rawBlocked) {
-            inLockout = false;
-        }
-
-        switch (intakeState) {
-            case "ON":
-            case "GATE INTAKE":
-                if (rawBlocked && !prevBlocked && !inLockout) {
-                    ballCount = Math.min(ballCount + 1, MAX_BALLS);
-                    inLockout = true;
-                }
-                break;
-
-            case "REJECT":
-                if (!rawBlocked) {
-                    ballCount = 0;
-                }
-                break;
-
-            case "TRANSFERRING":
-                if (!rawBlocked) {
-                    ballCount = 0;
-                }
-                break;
-        }
-
-        blocked = rawBlocked;
-        prevBlocked = rawBlocked;
+        blocked = (emaL < constants.intake.breakbeamThreshold) && (emaR < constants.intake.breakbeamThreshold);
     }
 
     public void setIntake(constants.INTAKE_PRESETS state) {
         switch(state) {
             case ON:
                 intakeState = "ON";
-                if (!blocked) {
-                    setDirection(1);
-                    setPowerR(constants.intake.INTAKE_POWER);
-                    setPowerL(constants.intake.INTAKE_POWER - transfer_reduction);
-                    setExtension(constants.INTAKE_EXTENSION.EXTENDED);
-                }
+                setDirection(1);
+                setPowerR(constants.intake.INTAKE_POWER);
+                setPowerL(constants.intake.INTAKE_POWER - transfer_reduction);
+                setExtension(constants.INTAKE_EXTENSION.EXTENDED);
                 break;
             case OFF:
                 intakeState = "OFF";

@@ -130,6 +130,7 @@ public class shooter {
         } else {
             previousDistance = Math.sqrt(Math.pow(dist, 2) - Math.pow(constants.APRIL_TAG_HEIGHT - constants.LIMELIGHT_HEIGHT, 2));
             hoodTrackingState = "TRACKING";
+
             filterDistance(previousDistance);
             double[] interp = LUT.get(ema);
             constants.shooter.Target_Hood= interp[1];
@@ -219,7 +220,6 @@ public class shooter {
             stopped = true;
         }
     }
-
 
 //    public Vector calculateShotVectorAndUpdateTurret(double robotHeading) {
 //        //constants

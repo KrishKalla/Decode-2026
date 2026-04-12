@@ -68,7 +68,7 @@ public class constants {
        public static double STOP = 0.475;
        public static double SHOT_LOAD = 65;
        public static double Target_Hood = 0.18;
-       public static double Hood_pos = 0.18;
+       public static double Hood_pos = 0.2;
        public static double Goal_delta =0;
     }
 

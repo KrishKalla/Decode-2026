@@ -23,7 +23,6 @@ public class SOTM {
                 goalPose.getY() - K * vy
         );
     }
-
     public static Pose getAdjustedGoal() {
         return adjustedGoal;
     }

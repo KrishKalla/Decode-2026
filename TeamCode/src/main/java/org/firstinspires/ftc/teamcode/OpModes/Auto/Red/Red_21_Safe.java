@@ -55,7 +55,7 @@ public class Red_21_Safe extends OpMode {
     private int pathState = 0;
 
     // Pose definitions
-    private final Pose startPose = new Pose(114.4, 126.259, Math.toRadians(0));
+    private final Pose startPose = new Pose(115.23, 125.38, Math.toRadians(0));
     private final Pose scorePose = new Pose(86, 76, Math.toRadians(0));
     private final Pose FirstscorePose = new Pose(93, 85, Math.toRadians(0));
     private final Pose pickup1Pose = new Pose(120, 61, Math.toRadians(0));

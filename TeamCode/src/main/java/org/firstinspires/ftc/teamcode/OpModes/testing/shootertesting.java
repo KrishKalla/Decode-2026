@@ -45,7 +45,7 @@ public class shootertesting extends OpMode {
         intake.init(hardwareMap);
 
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(72, 72, 0));
+        follower.setStartingPose(storage.lastRedAutoPose);
         follower.update();
 
         turret.init(hardwareMap, follower);
@@ -66,7 +66,7 @@ public class shootertesting extends OpMode {
 
         if (ON) {
             shooter.calculateParams();
-            turret.update(MANUAL_Turret);
+            turret.update(goalPose);
             turret.periodic();
         } else {
             turret.update(MANUAL_Turret);
@@ -100,6 +100,8 @@ public class shootertesting extends OpMode {
         telemetry.addData("Target_RPM: ", constants.shooter.TARGET_RPM);
         telemetry.addData("Target_Hood: ", constants.shooter.Hood_pos);
         telemetry.addData("lldist converted", Math.sqrt(Math.pow(llhandler.getLatestResult()[2], 2) - Math.pow(constants.APRIL_TAG_HEIGHT - constants.LIMELIGHT_HEIGHT, 2)));
+        telemetry.addData("Odo Distance",turret.getOdodistance_RED());
+        telemetry.addData("Distance Diff",Math.sqrt(Math.pow(llhandler.getLatestResult()[2], 2) - Math.pow(constants.APRIL_TAG_HEIGHT - constants.LIMELIGHT_HEIGHT, 2))-turret.getOdodistance_RED());
         telemetry.addData("Turret Angle", turret.getCurrentAngle());
         telemetry.addData("Turret Target", turret.getTargetAngle());
         telemetry.addData("Turret Error", turret.getError());

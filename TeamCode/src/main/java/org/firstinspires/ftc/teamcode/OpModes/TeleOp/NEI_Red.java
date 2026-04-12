@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.subsystems.turret;
 import org.firstinspires.ftc.teamcode.subsystems.intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter;
 import org.firstinspires.ftc.teamcode.util.LLHandler;
+import org.firstinspires.ftc.teamcode.util.SOTM;
 import org.firstinspires.ftc.teamcode.util.constants;
 import org.firstinspires.ftc.teamcode.util.storage;
 
@@ -45,7 +46,8 @@ public class NEI_Red extends OpMode {
     public static double MANUAL_TURRET = 0;
     public static boolean AUTO = true;
     public static boolean AUTO_AIM = true;
-    private final Pose goalpose = new Pose(storage.RED_X, storage.RED_Y);
+    private Pose goalpose = new Pose(storage.RED_X, storage.RED_Y);
+    private Pose SOTMpose = new Pose(storage.RED_X, storage.RED_Y);
 
     private int Mode = 0; // Short
 
@@ -63,8 +65,8 @@ public class NEI_Red extends OpMode {
     public static double AUTO_DRIVE_Y       = 58.5;
     public static double AUTO_DRIVE_HEADING = 21; // degrees, converted to radians on use
 
-    public static double AUTO_DRIVE_X2       = 86;
-    public static double AUTO_DRIVE_Y2       = 77;
+    public static double AUTO_DRIVE_X2       = 80;
+    public static double AUTO_DRIVE_Y2       = 80;
     public static double AUTO_DRIVE_HEADING2 = 0;
 
     private boolean automatedDrive = false;
@@ -131,10 +133,20 @@ public class NEI_Red extends OpMode {
 
         thread.start();
         timer.reset();
+
+        SOTM.setGoalPose(goalpose);
     }
 
     @Override
     public void loop() {
+
+        if (follower.getPose().getY()>=48){
+            goalpose=new Pose(storage.RED_X+2,storage.RED_Y);
+        }
+        else{
+            goalpose=new Pose(storage.RED_X,storage.RED_Y);
+        }
+        SOTM.setGoalPose(goalpose);
 
         // ── Auto Drive-to-Pose trigger ────────────────────────────────────────
         // gamepad2.options  → start following a path to the dashboard-configured pose
@@ -173,7 +185,8 @@ public class NEI_Red extends OpMode {
         follower.update();
 
         if (AUTO_AIM) {
-            turret.update(goalpose);
+            SOTM.calculate(follower.getVelocity().getXComponent(), follower.getVelocity().getYComponent());
+            turret.update(SOTM.getAdjustedGoal());
             turret.periodic();
         }
 
@@ -201,13 +214,13 @@ public class NEI_Red extends OpMode {
         }
 
         // Open stopper
-        if (gamepad1.left_bumper || ((follower.getPose().getY() >= 80) && (follower.getPose().getY() >= follower.getPose().getX()))) {
+        if (gamepad1.left_bumper) {
             shooter.setStopper(false);
         }
 
         // Switch modes / heading lock
         if (gamepad1.right_stick_button) {
-            targetHeading = Math.toRadians(25);
+            targetHeading = Math.toRadians(20);
             headingLock   = true;
             shooter.setStopper(true);
         } else if (gamepad2.right_trigger > 0.3) {
@@ -219,22 +232,23 @@ public class NEI_Red extends OpMode {
 
         // Human Player Zone reloc
         if (gamepad2.right_stick_button) {
-            follower.setY(7.5);
+            follower.setY(7.8);
         }
         if (gamepad2.left_stick_button){
             follower.setHeading(0);
+            follower.setX(136);
         }
 
         // Close Zone set-points
         if (gamepad2.square) {
             AUTO = false;
-            constants.shooter.TARGET_RPM = 1320;
-            constants.shooter.Hood_pos   = 0.30;
+            constants.shooter.TARGET_RPM = 1300;
+            constants.shooter.Hood_pos   = 0.291;
         }
         if (gamepad2.triangle) {
             AUTO = false;
-            constants.shooter.TARGET_RPM = 1500;
-            constants.shooter.Hood_pos   = 0.62;
+            constants.shooter.TARGET_RPM = 1420;
+            constants.shooter.Hood_pos   = 0.5075;
         }
         if (gamepad2.circle) {
             AUTO = false;
@@ -309,9 +323,13 @@ public class NEI_Red extends OpMode {
         shooter.setStopper(false);
     }
 
+
     public void updateTelemetry() {
         telemetry.addLine(follower.getPose().toString());
         telemetry.addData("Turret_delta",-constants.shooter.Goal_delta);
+
+        telemetry.addData("X-V-Vector",follower.getVelocity().getXComponent());
+        telemetry.addData("Y-V-Vector",follower.getVelocity().getYComponent());
 
         telemetry.addLine("≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡ROBOT≡≡≡≡≡≡≡≡≡≡≡≡≡≡");
         telemetry.addData("AUTO AIM ACTIVE",    AUTO_AIM);

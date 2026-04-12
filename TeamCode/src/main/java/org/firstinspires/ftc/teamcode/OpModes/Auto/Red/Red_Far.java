@@ -33,6 +33,7 @@ public class Red_Far extends OpMode {
     private boolean shotWaitStarted = false;
 
     private LLHandler llhandler;
+    private int alliance = 0;
 
     private Follower follower;
     private int pathState = 0;
@@ -40,21 +41,19 @@ public class Red_Far extends OpMode {
     // -------------------------------------------------------
     // POSES
     // -------------------------------------------------------
-    private final Pose startPose          = new Pose(114.4, 20, Math.toRadians(0));
-    private final Pose tinyMovePose       = new Pose(105, 20, Math.toRadians(0));
+    private final Pose startPose          = new Pose(88.8, 8, Math.toRadians(0));
+    private final Pose tinyMovePose       = new Pose(88.8, 12, Math.toRadians(0));
 
-    private final Pose scorePose          = new Pose(86, 20, Math.toRadians(0));
+    private final Pose scorePose          = new Pose(88.8, 12, Math.toRadians(0));
 
     // Third spike mark
-    private final Pose midSpike3          = new Pose(100, 35);
-    private final Pose spike3Pose         = new Pose(120, 40, Math.toRadians(0));
+    private final Pose midSpike3          = new Pose(91, 37);
+    private final Pose spike3Pose         = new Pose(120, 36, Math.toRadians(0));
 
     // Far field intake positions (no gate)
-    private final Pose midFarIntake1      = new Pose(106, 14);
-    private final Pose farIntakePose1     = new Pose(131, 11, Math.toRadians(0));
+    private final Pose farIntakePose1     = new Pose(134.5, 8, Math.toRadians(0));
 
-    private final Pose midFarIntake2      = new Pose(106, 18);
-    private final Pose farIntakePose2     = new Pose(131, 16, Math.toRadians(0));
+    private final Pose farIntakePose2     = new Pose(134.5, 24, Math.toRadians(0));
 
     // ---- PATH OBJECTS ----
     private PathChain PathTinyMove;
@@ -78,6 +77,9 @@ public class Red_Far extends OpMode {
         intake  = new intake();
         turret  = new turret();
 
+        llhandler = new LLHandler(hardwareMap, alliance);
+        llhandler.alliance(alliance);
+
         follower = Constants.createFollower(hardwareMap);
         follower.setPose(startPose);
 
@@ -87,17 +89,23 @@ public class Red_Far extends OpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
+        constants.intake.TRANSFER_POWER=1;
+
         buildPaths();
     }
 
     @Override
     public void start() {
+        llhandler.start();
         runtime.reset();
     }
 
     @Override
     public void loop() {
         loopTimer.reset();
+
+        llhandler.poll();
+
         follower.update();
         autonomousPathUpdate();
         shooter.update();
@@ -139,7 +147,7 @@ public class Red_Far extends OpMode {
                 .build();
 
         PathToFarIntake1 = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose, midFarIntake1, farIntakePose1))
+                .addPath(new BezierLine(scorePose, farIntakePose1))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), farIntakePose1.getHeading())
                 .build();
 
@@ -149,7 +157,7 @@ public class Red_Far extends OpMode {
                 .build();
 
         PathToFarIntake2 = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose, midFarIntake2, farIntakePose2))
+                .addPath(new BezierLine(scorePose, farIntakePose2))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), farIntakePose2.getHeading())
                 .build();
 
@@ -165,7 +173,7 @@ public class Red_Far extends OpMode {
 
             // ── STATE 0 : spin up + tiny move ───────────────────────────
             case 0:
-                follower.setMaxPower(0.4);
+                follower.setMaxPower(0.6);
                 intake.setIntake(constants.INTAKE_PRESETS.OFF);
                 shooter.flywheelPreset(constants.FLYWHEEL.ON);
                 shooter.setStopper(false);
@@ -283,7 +291,10 @@ public class Red_Far extends OpMode {
                         intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
                     }
                     if (shootTimer.seconds() >= shootingtime) {
+                        follower.setMaxPower(1);
                         shooter.setStopper(true);
+                        intake.setIntake(constants.INTAKE_PRESETS.ON);
+                        follower.followPath(PathToFarIntake1, false);
                         shotWaitStarted = false;
                         setPathState(9);
                     }
@@ -291,6 +302,89 @@ public class Red_Far extends OpMode {
                 break;
 
             case 9:
+                if (!follower.isBusy()) {
+                    // intake stays ON — just turn around and come back
+                    shooter.setStopper(false);
+                    intake.setIntake(constants.INTAKE_PRESETS.OFF);
+                    follower.followPath(PathFarIntake1Back, false);
+                    setPathState(10);
+                }
+                break;
+            case 10:
+                if (!follower.isBusy()) {
+                    if (!shotWaitStarted) {
+                        follower.setMaxPower(0.2);
+                        shootTimer.reset();
+                        shotWaitStarted = true;
+                        intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
+                    }
+                    if (shootTimer.seconds() >= shootingtime) {
+                        follower.setMaxPower(1);
+                        shooter.setStopper(true);
+                        intake.setIntake(constants.INTAKE_PRESETS.ON);
+                        follower.followPath(PathToFarIntake2, false);
+                        shotWaitStarted = false;
+                        setPathState(11);
+                    }
+                }
+                break;
+            case 11:
+                if (!follower.isBusy()) {
+                    // intake stays ON — just turn around and come back
+                    shooter.setStopper(false);
+                    intake.setIntake(constants.INTAKE_PRESETS.OFF);
+                    follower.followPath(PathFarIntake2Back, false);
+                    setPathState(12);
+                }
+                break;
+            case 12:
+                if (!follower.isBusy()) {
+                    if (!shotWaitStarted) {
+                        follower.setMaxPower(0.2);
+                        shootTimer.reset();
+                        shotWaitStarted = true;
+                        intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
+                    }
+                    if (shootTimer.seconds() >= shootingtime) {
+                        follower.setMaxPower(1);
+                        shooter.setStopper(true);
+                        intake.setIntake(constants.INTAKE_PRESETS.ON);
+                        follower.followPath(PathToFarIntake1, false);
+                        shotWaitStarted = false;
+                        setPathState(13);
+                    }
+                }
+                break;
+
+            case 13:
+                if (!follower.isBusy()) {
+                    // intake stays ON — just turn around and come back
+                    shooter.setStopper(false);
+                    intake.setIntake(constants.INTAKE_PRESETS.OFF);
+                    follower.followPath(PathFarIntake1Back, false);
+                    setPathState(14);
+                }
+                break;
+            case 14:
+                if (!follower.isBusy()) {
+                    if (!shotWaitStarted) {
+                        follower.setMaxPower(0.2);
+                        shootTimer.reset();
+                        shotWaitStarted = true;
+                        intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
+                    }
+                    if (shootTimer.seconds() >= shootingtime) {
+                        follower.setMaxPower(1);
+                        shooter.setStopper(true);
+                        shotWaitStarted = false;
+                        setPathState(15);
+                    }
+                }
+                break;
+
+
+            case 15:
+                constants.intake.TRANSFER_POWER=1;
                 intake.setIntake(constants.INTAKE_PRESETS.OFF);
                 shooter.flywheelPreset(constants.FLYWHEEL.OFF);
                 setPathState(-1);
