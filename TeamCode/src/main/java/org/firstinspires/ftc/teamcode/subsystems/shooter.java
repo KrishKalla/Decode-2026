@@ -208,7 +208,7 @@ public class shooter {
     }
 
     public void setHood ( double pos){
-        left.setPosition(pos);
+        left.setPosition(pos-0.015);
         right.setPosition(pos);
     }
 
