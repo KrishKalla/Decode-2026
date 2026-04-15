@@ -43,7 +43,7 @@ public class NEI_Blue extends OpMode {
 
     private volatile double servoUpdate;
 
-    public static double RPM_Constraint = 1600;
+    public static double RPM_Constraint = 1560;
     public static double  Dist_offset= 0.075;
     public static boolean AUTO = true;
     public static boolean AUTO_AIM = true;
@@ -105,7 +105,7 @@ public class NEI_Blue extends OpMode {
                         shooter.calculateParams(RPM_Constraint,0);
                     }
                     else if (AUTO){
-                        shooter.calculateParams(RPM_Constraint, 0);
+                        shooter.calculateParams(RPM_Constraint, turret.SOTM_dist_BLUE(SOTM.getAdjustedGoal())+Dist_offset);
                     }
                     else{
                         shooter.calculateParams(RPM_Constraint,0);
@@ -145,7 +145,7 @@ public class NEI_Blue extends OpMode {
     public void loop() {
 
         if (follower.getPose().getY()>=48){
-            goalpose=new Pose(storage.BLUE_X-1.5,storage.BLUE_Y);
+            goalpose=new Pose(storage.BLUE_X-2,storage.BLUE_Y);
         }
         else{
             goalpose=new Pose(storage.BLUE_X,storage.BLUE_Y);
@@ -273,11 +273,12 @@ public class NEI_Blue extends OpMode {
 
         // Close zone
         if (gamepad2.dpad_up) {
+            constants.intake.TRANSFER_POWER=1;
             RPM_Constraint=1560;
         }
         // Far zone
         if (gamepad2.dpad_down) {
-            constants.intake.TRANSFER_POWER=0.5;
+            constants.intake.TRANSFER_POWER=0.67;
             RPM_Constraint=2000;
         }
 
