@@ -165,12 +165,19 @@ public class intake {
                 setPowerR(constants.intake.TRANSFER_POWER);
                 setExtension(constants.INTAKE_EXTENSION.RETRACTED);
                 break;
-            case GATE:
+            case GATE_BLUE:
                 intakeState = "GATE INTAKE";
                 setDirection(1);
                 setPowerR(constants.intake.INTAKE_POWER);
                 setPowerL(constants.intake.INTAKE_POWER - transfer_reduction);
-                setExtension(constants.INTAKE_EXTENSION.GATE);
+                setExtension(constants.INTAKE_EXTENSION.GATE_BLUE);
+                break;
+            case GATE_RED:
+                intakeState = "GATE INTAKE";
+                setDirection(1);
+                setPowerR(constants.intake.INTAKE_POWER);
+                setPowerL(constants.intake.INTAKE_POWER - transfer_reduction);
+                setExtension(constants.INTAKE_EXTENSION.GATE_RED);
                 break;
         }
     }
@@ -187,7 +194,12 @@ public class intake {
                 servoL.setPosition(state.left);
                 servoR.setPosition(state.right);
                 break;
-            case GATE:
+            case GATE_BLUE:
+                extended = true;
+                servoL.setPosition(state.left);
+                servoR.setPosition(state.right);
+                break;
+            case GATE_RED:
                 extended = true;
                 servoL.setPosition(state.left);
                 servoR.setPosition(state.right);

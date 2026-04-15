@@ -10,7 +10,7 @@ public class blueFarPark extends LinearOpMode {
 
     // ── Tune these ────────────────────────────────────────────────
     static final double STRAFE_POWER  = 0.8;   // 0.0 – 1.0
-    static final double STRAFE_TIME   = 3;   // seconds
+    static final double STRAFE_TIME   = 2;   // seconds
     // ─────────────────────────────────────────────────────────────
 
     @Override

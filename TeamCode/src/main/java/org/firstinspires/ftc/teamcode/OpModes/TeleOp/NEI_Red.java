@@ -202,7 +202,7 @@ public class NEI_Red extends OpMode {
                 gamepad1.stopRumble();
             }
             if (gamepad1.right_stick_button) {
-                intake.setIntake(constants.INTAKE_PRESETS.GATE);
+                intake.setIntake(constants.INTAKE_PRESETS.GATE_RED);
             } else if (gamepad1.right_trigger > 0.3) {
                 intake.setIntake(constants.INTAKE_PRESETS.ON);
                 shooter.setStopper(true);
@@ -298,7 +298,7 @@ public class NEI_Red extends OpMode {
         automatedDrive = true;
 
         // Turn intake on and open stopper for the ride
-        intake.setIntake(constants.INTAKE_PRESETS.GATE);
+        intake.setIntake(constants.INTAKE_PRESETS.GATE_RED);
         shooter.setStopper(true);
     }
     private void startAutoDrive_Shoot() {

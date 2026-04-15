@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes.Auto.Red;
+package org.firstinspires.ftc.teamcode.OpModes.Auto.Blue;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -23,8 +23,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
-@Autonomous(name = "Red 21 Auto - RP")
-public class Red_21_RP extends OpMode {
+@Autonomous(name = "Blue 21 Auto - RP")
+public class Blue_21_RP extends OpMode {
 
     private ElapsedTime shootTimer = new ElapsedTime();
     private ElapsedTime runtime = new ElapsedTime();
@@ -51,21 +51,21 @@ public class Red_21_RP extends OpMode {
     private int pathState = 0;
 
     // Pose definitions
-    private final Pose startPose = new Pose(115.23, 125.38, Math.toRadians(0));
-    private final Pose scorePose = new Pose(86, 76, Math.toRadians(0));
-    private final Pose FirstscorePose = new Pose(93, 85, Math.toRadians(0));
-    private final Pose pickup1Pose = new Pose(120, 61, Math.toRadians(0));
-    private final Pose midPickup1 = new Pose(88.2, 60);
+    private final Pose startPose = new Pose(29.167, 126.5, Math.toRadians(180));
+    private final Pose scorePose = new Pose(144-86, 76, Math.toRadians(180));
+    private final Pose FirstscorePose = new Pose(144-93, 85, Math.toRadians(180));
+    private final Pose pickup1Pose = new Pose(24, 60, Math.toRadians(180));
+    private final Pose midPickup1 = new Pose(50, 60);
 
-    private final Pose gateApproachPose = new Pose(131, 58.5, Math.toRadians(23));
-    private final Pose midgatePose = new Pose(106,60);
+    private final Pose gateApproachPose = new Pose(14, 58, Math.toRadians(157));
+    private final Pose midgatePose = new Pose(144-106,60);
 
-    private final Pose midcenterPickupPose = new Pose(90,84);
-    private final Pose centerPickupPose = new Pose(120, 80, Math.toRadians(0));
+    private final Pose midcenterPickupPose = new Pose(54,82);
+    private final Pose centerPickupPose = new Pose(24, 81, Math.toRadians(180));
 
-    private final Pose midFarPickup = new Pose(86.271, 36);
-    private final Pose farPickupPose = new Pose(120, 40, Math.toRadians(0));
-    private final Pose parkPose = new Pose(80, 100, Math.toRadians(-45));
+    private final Pose midFarPickup = new Pose(144-86.271, 36);
+    private final Pose farPickupPose = new Pose(24, 40, Math.toRadians(180));
+    private final Pose parkPose = new Pose(58, 100, Math.toRadians(180+45));
 
     // ---- PATH OBJECTS ----
     private PathChain Path1;
@@ -82,7 +82,7 @@ public class Red_21_RP extends OpMode {
     private shooter shooter;
     private turret turret;
 
-    private Pose goalPose = new Pose(storage.RED_X, storage.RED_Y);
+    private Pose goalPose = new Pose(storage.BLUE_X, storage.BLUE_Y);
 
     @Override
     public void init() {

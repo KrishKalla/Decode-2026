@@ -53,7 +53,7 @@ public class NEI_Blue extends OpMode {
     private int Mode = 0; // Short
 
     // Heading Lock
-    double targetHeading = Math.toRadians(158);
+    double targetHeading = Math.toRadians(157);
     public static double heading_P = 0.3;
     public static double heading_D = 0;
     public static double heading_F = 0;
@@ -63,8 +63,8 @@ public class NEI_Blue extends OpMode {
     // ── Auto Drive-to-Pose ────────────────────────────────────────────────────
     // Tune these from FTC Dashboard while on the field
     public static double AUTO_DRIVE_X       = 13;
-    public static double AUTO_DRIVE_Y       = 58.5;
-    public static double AUTO_DRIVE_HEADING = 159; // degrees, converted to radians on use
+    public static double AUTO_DRIVE_Y       = 58;
+    public static double AUTO_DRIVE_HEADING = 157; // degrees, converted to radians on use
 
     public static double AUTO_DRIVE_X2       = 64;
     public static double AUTO_DRIVE_Y2       = 80;
@@ -109,7 +109,7 @@ public class NEI_Blue extends OpMode {
                         shooter.calculateParams(RPM_Constraint,0);
                     }
                     else {
-                        shooter.calculateParams(RPM_Constraint, 0);
+                        shooter.calculateParams(RPM_Constraint, turret.SOTM_dist_RED(SOTM.getAdjustedGoal())+Dist_offset);
                     }
                 }
             }
@@ -148,7 +148,7 @@ public class NEI_Blue extends OpMode {
             goalpose=new Pose(storage.BLUE_X-1.5,storage.BLUE_Y);
         }
         else{
-            goalpose=new Pose(storage.BLUE_X+2.5,storage.BLUE_Y);
+            goalpose=new Pose(storage.BLUE_X+3,storage.BLUE_Y);
         }
         SOTM.setGoalPose(goalpose);
 
@@ -202,7 +202,7 @@ public class NEI_Blue extends OpMode {
                 gamepad1.stopRumble();
             }
             if (gamepad1.right_stick_button) {
-                intake.setIntake(constants.INTAKE_PRESETS.GATE);
+                intake.setIntake(constants.INTAKE_PRESETS.GATE_BLUE);
             } else if (gamepad1.right_trigger > 0.3) {
                 intake.setIntake(constants.INTAKE_PRESETS.ON);
                 shooter.setStopper(true);
@@ -298,7 +298,7 @@ public class NEI_Blue extends OpMode {
         automatedDrive = true;
 
         // Turn intake on and open stopper for the ride
-        intake.setIntake(constants.INTAKE_PRESETS.GATE);
+        intake.setIntake(constants.INTAKE_PRESETS.GATE_BLUE);
         shooter.setStopper(true);
     }
     private void startAutoDrive_Shoot() {

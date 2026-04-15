@@ -33,7 +33,7 @@ public class Red_21_Safe extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime loopTimer = new ElapsedTime();
     private double shootingtime = 0.45;
-    private static double gateIntakeTime = 1.5;
+    private static double gateIntakeTime = 1.3;
     private boolean IsShot=false;
 
     private boolean Auto_hood = true;
@@ -109,8 +109,8 @@ public class Red_21_Safe extends OpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        constants.shooter.TARGET_RPM = 1450;
-        constants.shooter.Target_Hood = 0.65;
+        constants.shooter.TARGET_RPM = 1440;
+        constants.shooter.Target_Hood = 0.64;
         buildPaths();
     }
 
@@ -278,6 +278,7 @@ public class Red_21_Safe extends OpMode {
                 shooter.setStopper(false);
                 follower.followPath(Path1, false);
                 setPathState(1);
+                break;
 
             case 1:
                 if (!follower.isBusy()) {

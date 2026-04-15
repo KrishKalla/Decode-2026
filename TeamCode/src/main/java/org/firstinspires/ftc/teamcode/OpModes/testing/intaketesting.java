@@ -46,7 +46,7 @@ public class intaketesting extends OpMode {
             intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
         }
         else if (mode==4){
-            intake.setIntake(constants.INTAKE_PRESETS.GATE);
+            intake.setIntake(constants.INTAKE_PRESETS.GATE_BLUE);
         }
         intake.update();
         telemetry.addLine(intake.toString());

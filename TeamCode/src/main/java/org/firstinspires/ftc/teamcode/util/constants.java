@@ -33,7 +33,8 @@ public class constants {
         ON,
         OFF,
         REJECT,
-        GATE,
+        GATE_BLUE,
+        GATE_RED,
         TRANSFERING
     }
 
@@ -41,8 +42,9 @@ public class constants {
     public enum INTAKE_EXTENSION {
 
         RETRACTED(0.375, 0.35),
-        GATE(0.715,0.675),
-        EXTENDED(0.695, 0.67);
+        GATE_RED(0.72,0.68),
+        GATE_BLUE(0.705,0.695),
+        EXTENDED(0.705, 0.68);
 
         public final double left;
         public final double right;
