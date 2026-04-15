@@ -121,7 +121,11 @@ public class Red_21_RP extends OpMode {
         turret.update(goalPose);
         turret.periodic();
 
-        storage.lastRedAutoPose = follower.getPose();
+        if (follower.getPose().equals(new Pose(0, 0, 0))) {
+
+        } else{
+            storage.lastRedAutoPose = follower.getPose();
+        }
 
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());

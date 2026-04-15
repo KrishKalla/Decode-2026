@@ -114,7 +114,11 @@ public class Red_Far extends OpMode {
         turret.update(goalPose);
         turret.periodic();
 
-        storage.lastRedAutoPose = follower.getPose();
+        if (follower.getPose().equals(new Pose(0, 0, 0))) {
+
+        } else{
+            storage.lastRedAutoPose = follower.getPose();
+        }
 
         telemetry.addData("Path State", pathState);
         telemetry.addData("X", follower.getPose().getX());

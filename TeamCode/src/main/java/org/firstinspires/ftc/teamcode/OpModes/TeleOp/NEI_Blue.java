@@ -76,11 +76,7 @@ public class NEI_Blue extends OpMode {
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
-        if (alliance == 1) {
-            follower.setStartingPose(storage.lastBlueAutoPose);
-        } else {
-            follower.setStartingPose(storage.lastRedAutoPose);
-        }
+        follower.setStartingPose(storage.lastBlueAutoPose);
 
         follower.update();
 
@@ -105,12 +101,16 @@ public class NEI_Blue extends OpMode {
                     llhandler.poll();
                     shooter.update();
                     shooter.updateBatteryVoltage();
-                    if(!AUTO||Math.abs(follower.getVelocity().getXComponent() + follower.getVelocity().getYComponent())<=10){
+                    if(Math.abs(follower.getVelocity().getXComponent() + follower.getVelocity().getYComponent())<=10){
                         shooter.calculateParams(RPM_Constraint,0);
                     }
-                    else {
-                        shooter.calculateParams(RPM_Constraint, turret.SOTM_dist_RED(SOTM.getAdjustedGoal())+Dist_offset);
+                    else if (AUTO){
+                        shooter.calculateParams(RPM_Constraint, 0);
                     }
+                    else{
+                        shooter.calculateParams(RPM_Constraint,0);
+                    }
+
                 }
             }
         };
@@ -131,7 +131,7 @@ public class NEI_Blue extends OpMode {
 
         shooter.flywheelPreset(constants.FLYWHEEL.ON);
         shooter.hoodPreset(constants.HOOD.AUTO);
-        AUTO     = false;
+        AUTO     = true;
         AUTO_AIM = true;
         shooter.setStopper(true);
 
@@ -148,7 +148,7 @@ public class NEI_Blue extends OpMode {
             goalpose=new Pose(storage.BLUE_X-1.5,storage.BLUE_Y);
         }
         else{
-            goalpose=new Pose(storage.BLUE_X+3,storage.BLUE_Y);
+            goalpose=new Pose(storage.BLUE_X,storage.BLUE_Y);
         }
         SOTM.setGoalPose(goalpose);
 
@@ -273,10 +273,11 @@ public class NEI_Blue extends OpMode {
 
         // Close zone
         if (gamepad2.dpad_up) {
-            RPM_Constraint=1600;
+            RPM_Constraint=1560;
         }
         // Far zone
         if (gamepad2.dpad_down) {
+            constants.intake.TRANSFER_POWER=0.5;
             RPM_Constraint=2000;
         }
 

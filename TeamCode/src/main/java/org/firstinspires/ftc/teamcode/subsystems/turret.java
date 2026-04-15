@@ -145,14 +145,14 @@ public class turret {
     }
 
     public double SOTM_dist_RED(Pose SOTMpose){
-        double Y_offset = SOTMpose.getY()-8-follower.getPose().getY();
-        double X_offset = SOTMpose.getX()-8-follower.getPose().getX();
+        double Y_offset = SOTMpose.getY()-12-follower.getPose().getY();
+        double X_offset = SOTMpose.getX()-14-follower.getPose().getX();
         return 0.0254*Math.sqrt(Y_offset*Y_offset+X_offset*X_offset);
     }
 
     public double SOTM_dist_BLUE(Pose SOTMpose){
-        double Y_offset = 12-SOTMpose.getY();
-        double X_offset = 14-SOTMpose.getX();
+        double Y_offset = SOTMpose.getY()+12-follower.getPose().getY();
+        double X_offset = SOTMpose.getY()+14-follower.getPose().getY();
         return 0.0254*Math.sqrt(Y_offset*Y_offset+X_offset*X_offset);
     }
 

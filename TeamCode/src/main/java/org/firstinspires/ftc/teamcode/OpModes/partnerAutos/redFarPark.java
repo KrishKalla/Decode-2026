@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class redFarPark extends LinearOpMode {
 
     // ── Tune these ────────────────────────────────────────────────
-    static final double STRAFE_POWER  = 0.8;   // 0.0 – 1.0
-    static final double STRAFE_TIME   = 2;   // seconds
+    static final double STRAFE_POWER  = 0.5;   // 0.0 – 1.0
+    static final double STRAFE_TIME   = 0.5;   // seconds
     // ─────────────────────────────────────────────────────────────
 
     @Override
@@ -28,11 +28,12 @@ public class redFarPark extends LinearOpMode {
 
         // Strafe RIGHT:  FL=+, FR=-, BL=-, BR=+
         ElapsedTime timer = new ElapsedTime();
+        timer.reset();
         while (opModeIsActive() && timer.seconds() < STRAFE_TIME) {
-            frontLeft.setPower( STRAFE_POWER);
-            frontRight.setPower(-STRAFE_POWER);
-            backLeft.setPower(-STRAFE_POWER);
-            backRight.setPower( STRAFE_POWER);
+            frontLeft.setPower( -STRAFE_POWER);
+            frontRight.setPower(STRAFE_POWER);
+            backLeft.setPower(STRAFE_POWER);
+            backRight.setPower(-STRAFE_POWER);
         }
 
         // Stop all motors

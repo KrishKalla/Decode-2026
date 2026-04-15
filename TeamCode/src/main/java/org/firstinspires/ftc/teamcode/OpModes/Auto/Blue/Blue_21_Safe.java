@@ -130,7 +130,11 @@ public class Blue_21_Safe extends OpMode {
         turret.update(goalPose);
         turret.periodic();
 
-        storage.lastRedAutoPose = follower.getPose();
+        if (follower.getPose().equals(new Pose(0, 0, 0))) {
+
+        } else{
+            storage.lastBlueAutoPose = follower.getPose();
+        }
 
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());

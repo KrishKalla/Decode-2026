@@ -57,7 +57,7 @@ public class Blue_21_RP extends OpMode {
     private final Pose pickup1Pose = new Pose(24, 60, Math.toRadians(180));
     private final Pose midPickup1 = new Pose(50, 60);
 
-    private final Pose gateApproachPose = new Pose(14, 58, Math.toRadians(157));
+    private final Pose gateApproachPose = new Pose(13.7, 58, Math.toRadians(156));
     private final Pose midgatePose = new Pose(144-106,60);
 
     private final Pose midcenterPickupPose = new Pose(54,82);
@@ -120,8 +120,11 @@ public class Blue_21_RP extends OpMode {
 
         turret.update(goalPose);
         turret.periodic();
+        if (follower.getPose().equals(new Pose(0, 0, 0))) {
 
-        storage.lastRedAutoPose = follower.getPose();
+        } else{
+            storage.lastBlueAutoPose = follower.getPose();
+        }
 
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());
@@ -244,8 +247,8 @@ public class Blue_21_RP extends OpMode {
                         intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
                     }
                     if (shootTimer.seconds() >= shootingtime) {
-                        constants.shooter.TARGET_RPM = 1500;
-                        constants.shooter.Target_Hood = 0.69;
+                        constants.shooter.TARGET_RPM = 1490;
+                        constants.shooter.Target_Hood = 0.68;
                         follower.setMaxPower(1);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
                         shooter.setStopper(true);
@@ -294,7 +297,7 @@ public class Blue_21_RP extends OpMode {
                         shootTimer.reset();
                         shotWaitStarted = true;
                     }
-                    if (shootTimer.seconds() >= gateIntakeTime-0.4) {
+                    if (shootTimer.seconds() >= gateIntakeTime-0.5) {
                         follower.setMaxPower(1);
                         intake.setIntake(constants.INTAKE_PRESETS.OFF);
                         shooter.setStopper(false);
@@ -419,8 +422,9 @@ public class Blue_21_RP extends OpMode {
                         shooter.setStopper(true);
                         follower.setMaxPower(1);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
-                        constants.shooter.TARGET_RPM = 1430;
-                        constants.shooter.Target_Hood = 0.59;
+                        constants.shooter.TARGET_RPM = 1420;
+                        constants.shooter.Target_Hood = 0.62;
+                        constants.shooter.Goal_delta=2;
                         follower.followPath(Path12, false);
                         shotWaitStarted = false;
                         setPathState(12);

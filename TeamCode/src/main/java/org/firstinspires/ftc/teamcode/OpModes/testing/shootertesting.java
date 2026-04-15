@@ -65,7 +65,6 @@ public class shootertesting extends OpMode {
         shooter.updateBatteryVoltage();
 
         if (ON) {
-            shooter.calculateParams(2000,0);
             turret.update(goalPose);
             turret.periodic();
         } else {

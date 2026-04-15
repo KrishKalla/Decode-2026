@@ -9,10 +9,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class blueFarPark extends LinearOpMode {
 
     // ── Tune these ────────────────────────────────────────────────
-    static final double STRAFE_POWER  = 0.8;   // 0.0 – 1.0
-    static final double STRAFE_TIME   = 2;   // seconds
+    static final double STRAFE_POWER  = 0.5;   // 0.0 – 1.0
+    static final double STRAFE_TIME   = 0.5;   // seconds
     // ─────────────────────────────────────────────────────────────
-
     @Override
     public void runOpMode() {
         DcMotor frontLeft  = hardwareMap.get(DcMotor.class, "frontLeft");
@@ -28,11 +27,12 @@ public class blueFarPark extends LinearOpMode {
 
         // Strafe LEFT:  FL=-, FR=+, BL=+, BR=-
         ElapsedTime timer = new ElapsedTime();
-        while (opModeIsActive() && timer.seconds() < STRAFE_TIME) {
-            frontLeft.setPower(-STRAFE_POWER);
-            frontRight.setPower( STRAFE_POWER);
-            backLeft.setPower( STRAFE_POWER);
-            backRight.setPower(-STRAFE_POWER);
+        timer.reset();
+        while (opModeIsActive() && (timer.seconds() < STRAFE_TIME)) {
+            frontLeft.setPower(STRAFE_POWER);
+            frontRight.setPower( -STRAFE_POWER);
+            backLeft.setPower( -STRAFE_POWER);
+            backRight.setPower(STRAFE_POWER);
         }
 
         // Stop all motors
