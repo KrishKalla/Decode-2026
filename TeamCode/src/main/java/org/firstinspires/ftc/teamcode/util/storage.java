@@ -5,7 +5,7 @@ import com.pedropathing.geometry.Pose;
 
 @Config
 public class storage {
-    public static Pose lastBlueAutoPose = new Pose(29.167, 126.5, Math.toRadians(180));
+    public static Pose lastBlueAutoPose = new Pose(28.7, 126.5, Math.toRadians(180));
     public static Pose lastRedAutoPose = new Pose(115.75, 125.38,Math.toRadians(0));
 
     public static double BLUE_X = 4;

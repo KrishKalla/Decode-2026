@@ -43,9 +43,9 @@ public class NEI_Red extends OpMode {
 
     private volatile double servoUpdate;
 
-    public static double RPM_Constraint = 1600;
+    public static double RPM_Constraint = 1560;
     public static double  Dist_offset= 0.075;
-    public static boolean AUTO = true;
+    public static boolean AUTO = false;
     public static boolean AUTO_AIM = true;
     private Pose goalpose = new Pose(storage.RED_X, storage.RED_Y);
     private Pose SOTMpose = new Pose(storage.RED_X, storage.RED_Y);
@@ -62,8 +62,8 @@ public class NEI_Red extends OpMode {
 
     // ── Auto Drive-to-Pose ────────────────────────────────────────────────────
     // Tune these from FTC Dashboard while on the field
-    public static double AUTO_DRIVE_X       = 131;
-    public static double AUTO_DRIVE_Y       = 58.5;
+    public static double AUTO_DRIVE_X       = 130;
+    public static double AUTO_DRIVE_Y       = 58;
     public static double AUTO_DRIVE_HEADING = 21; // degrees, converted to radians on use
 
     public static double AUTO_DRIVE_X2       = 80;
@@ -105,11 +105,14 @@ public class NEI_Red extends OpMode {
                     llhandler.poll();
                     shooter.update();
                     shooter.updateBatteryVoltage();
-                    if(!AUTO||Math.abs(follower.getVelocity().getXComponent() + follower.getVelocity().getYComponent())<=10){
-                            shooter.calculateParams(RPM_Constraint,0);
+                    if(Math.abs(follower.getVelocity().getXComponent() + follower.getVelocity().getYComponent())<=10){
+                        shooter.calculateParams(RPM_Constraint,0);
                     }
-                    else {
-                        shooter.calculateParams(RPM_Constraint, 0);
+                    else if (AUTO){
+                        shooter.calculateParams(RPM_Constraint, turret.SOTM_dist_BLUE(SOTM.getAdjustedGoal())+Dist_offset);
+                    }
+                    else{
+                        shooter.calculateParams(RPM_Constraint,0);
                     }
                 }
             }
@@ -131,7 +134,7 @@ public class NEI_Red extends OpMode {
 
         shooter.flywheelPreset(constants.FLYWHEEL.ON);
         shooter.hoodPreset(constants.HOOD.AUTO);
-        AUTO     = false;
+        AUTO     = true;
         AUTO_AIM = true;
         shooter.setStopper(true);
 
@@ -251,13 +254,11 @@ public class NEI_Red extends OpMode {
         }
         if (gamepad2.triangle) {
             AUTO = false;
-            constants.shooter.TARGET_RPM = 1420;
-            constants.shooter.Hood_pos   = 0.5075;
+            constants.shooter.TARGET_RPM = 1480;
+            constants.shooter.Hood_pos   = 0.695;
         }
         if (gamepad2.circle) {
-            AUTO = false;
-            constants.shooter.TARGET_RPM = 1800;
-            constants.shooter.Hood_pos   = 0.74;
+            AUTO = true;
         }
         if (gamepad2.cross) {
             AUTO = false;
@@ -273,10 +274,12 @@ public class NEI_Red extends OpMode {
 
         // Close zone
         if (gamepad2.dpad_up) {
-            RPM_Constraint=1600;
+            constants.intake.TRANSFER_POWER=1;
+            RPM_Constraint=1560;
         }
         // Far zone
         if (gamepad2.dpad_down) {
+            constants.intake.TRANSFER_POWER=0.67;
             RPM_Constraint=2000;
         }
 

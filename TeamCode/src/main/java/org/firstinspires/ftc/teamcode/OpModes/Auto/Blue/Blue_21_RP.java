@@ -51,7 +51,7 @@ public class Blue_21_RP extends OpMode {
     private int pathState = 0;
 
     // Pose definitions
-    private final Pose startPose = new Pose(29.167, 126.5, Math.toRadians(180));
+    private final Pose startPose = new Pose(29.5, 126.5, Math.toRadians(180));
     private final Pose scorePose = new Pose(144-86, 76, Math.toRadians(180));
     private final Pose FirstscorePose = new Pose(144-93, 85, Math.toRadians(180));
     private final Pose pickup1Pose = new Pose(24, 60, Math.toRadians(180));
@@ -82,7 +82,8 @@ public class Blue_21_RP extends OpMode {
     private shooter shooter;
     private turret turret;
 
-    private Pose goalPose = new Pose(storage.BLUE_X, storage.BLUE_Y);
+    private final double autoBlueGoal = storage.BLUE_X;
+    private Pose goalPose = new Pose(autoBlueGoal-2, storage.BLUE_Y);
 
     @Override
     public void init() {
@@ -280,18 +281,19 @@ public class Blue_21_RP extends OpMode {
                     }
                     if (shootTimer.seconds() >= shootingtime) {
                         follower.setMaxPower(1);
-                        intake.setIntake(constants.INTAKE_PRESETS.ON);
+                        intake.setIntake(constants.INTAKE_PRESETS.GATE_BLUE);
                         shooter.setStopper(true);
                         shotWaitStarted = false;
                         follower.followPath(Path4, false);
                         setPathState(4);
+                        runtime.reset();
                     }
                 }
                 break;
 
             case 4:
                 // Wait at gate, then return to score (FIRST TIME)
-                if (!follower.isBusy()) {
+                if (!follower.isBusy()||runtime.seconds()>=3) {
                     if (!shotWaitStarted) {
                         follower.setMaxPower(0.2);
                         shootTimer.reset();
@@ -318,9 +320,10 @@ public class Blue_21_RP extends OpMode {
                     }
                     if (shootTimer.seconds() >= shootingtime) {
                         shooter.setStopper(true);
-                        intake.setIntake(constants.INTAKE_PRESETS.ON);
+                        intake.setIntake(constants.INTAKE_PRESETS.GATE_BLUE);
                         follower.followPath(Path4, false);
                         shotWaitStarted = false;
+                        runtime.reset();
                         setPathState(6);
                     }
                 }
@@ -328,7 +331,7 @@ public class Blue_21_RP extends OpMode {
 
             case 6:
                 // Wait at gate, then return to score (Second TIME)
-                if (!follower.isBusy()) {
+                if (!follower.isBusy()|| runtime.seconds()>=3) {
                     if (!shotWaitStarted) {
                         follower.setMaxPower(0.2);
                         shootTimer.reset();
@@ -355,9 +358,10 @@ public class Blue_21_RP extends OpMode {
                     }
                     if (shootTimer.seconds() >= shootingtime) {
                         shooter.setStopper(true);
-                        intake.setIntake(constants.INTAKE_PRESETS.ON);
+                        intake.setIntake(constants.INTAKE_PRESETS.GATE_BLUE);
                         follower.followPath(Path4, false);
                         shotWaitStarted = false;
+                        runtime.reset();
                         setPathState(8);
                     }
                 }
@@ -365,7 +369,7 @@ public class Blue_21_RP extends OpMode {
 
             case 8:
                 // Wait at gate, then return to score (Third TIME)
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() || runtime.seconds()>=3) {
                     if (!shotWaitStarted) {
                         follower.setMaxPower(0.2);
                         shootTimer.reset();

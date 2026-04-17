@@ -41,7 +41,6 @@ public class Red_21_RP extends OpMode {
     private static final int alliance = 1;
 
     //Moving While Shooting
-    public static double Power=0.5;
     public static double ShootingMoment=1.4;
     public static double ShootingHood=0.3;
     // ---- Pathing ----
@@ -57,7 +56,8 @@ public class Red_21_RP extends OpMode {
     private final Pose pickup1Pose = new Pose(120, 61, Math.toRadians(0));
     private final Pose midPickup1 = new Pose(88.2, 60);
 
-    private final Pose gateApproachPose = new Pose(131, 58.5, Math.toRadians(23));
+    private static Pose gateApproachPose = new Pose(130, 58, Math.toRadians(24));
+    private static Pose fakeApproachPose = new Pose(129, 58, Math.toRadians(24));
     private final Pose midgatePose = new Pose(106,60);
 
     private final Pose midcenterPickupPose = new Pose(90,84);
@@ -72,6 +72,7 @@ public class Red_21_RP extends OpMode {
     private PathChain Path2;
     private PathChain Path3;
     private PathChain Path4;
+    private PathChain Path5;
     private PathChain Path6;
     private PathChain Path7;
     private PathChain Path8;
@@ -82,7 +83,8 @@ public class Red_21_RP extends OpMode {
     private shooter shooter;
     private turret turret;
 
-    private Pose goalPose = new Pose(storage.RED_X, storage.RED_Y);
+    private final double autoRedGoal = storage.RED_X;
+    private Pose goalPose = new Pose(autoRedGoal, storage.RED_Y);
 
     @Override
     public void init() {
@@ -177,6 +179,14 @@ public class Red_21_RP extends OpMode {
                         )
                 ).setLinearHeadingInterpolation(scorePose.getHeading(), gateApproachPose.getHeading())
                 .build();
+        Path5 = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                scorePose,
+                                fakeApproachPose,
+                                fakeApproachPose
+                        )
+                ).setLinearHeadingInterpolation(scorePose.getHeading(), gateApproachPose.getHeading())
+                .build();
 
 
         // Path6: Gate back to score
@@ -266,6 +276,7 @@ public class Red_21_RP extends OpMode {
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
                     shooter.setStopper(false);
                     follower.followPath(Path3, false);
+                    runtime.reset();
                     setPathState(3);
                 }
                 break;
@@ -285,6 +296,7 @@ public class Red_21_RP extends OpMode {
                         shooter.setStopper(true);
                         shotWaitStarted = false;
                         follower.followPath(Path4, false);
+                        runtime.reset();
                         setPathState(4);
                     }
                 }
@@ -292,7 +304,7 @@ public class Red_21_RP extends OpMode {
 
             case 4:
                 // Wait at gate, then return to score (FIRST TIME)
-                if (!follower.isBusy()) {
+                if (!follower.isBusy()||runtime.seconds()>=2) {
                     if (!shotWaitStarted) {
                         follower.setMaxPower(0.2);
                         shootTimer.reset();
@@ -322,6 +334,7 @@ public class Red_21_RP extends OpMode {
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
                         follower.followPath(Path4, false);
                         shotWaitStarted = false;
+                        runtime.reset();
                         setPathState(6);
                     }
                 }
@@ -329,7 +342,7 @@ public class Red_21_RP extends OpMode {
 
             case 6:
                 // Wait at gate, then return to score (Second TIME)
-                if (!follower.isBusy()) {
+                if (!follower.isBusy()||runtime.seconds()>=2) {
                     if (!shotWaitStarted) {
                         follower.setMaxPower(0.2);
                         shootTimer.reset();
@@ -359,6 +372,7 @@ public class Red_21_RP extends OpMode {
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
                         follower.followPath(Path4, false);
                         shotWaitStarted = false;
+                        runtime.reset();
                         setPathState(8);
                     }
                 }
@@ -366,7 +380,7 @@ public class Red_21_RP extends OpMode {
 
             case 8:
                 // Wait at gate, then return to score (Third TIME)
-                if (!follower.isBusy()) {
+                if (!follower.isBusy()||runtime.seconds()>=2) {
                     if (!shotWaitStarted) {
                         follower.setMaxPower(0.2);
                         shootTimer.reset();
@@ -378,6 +392,7 @@ public class Red_21_RP extends OpMode {
                         shooter.setStopper(false);
                         follower.followPath(Path6, false);
                         shotWaitStarted = false;
+
                         setPathState(9);
                     }
                 }

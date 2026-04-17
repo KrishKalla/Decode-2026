@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.OpModes.Auto.Red.Red_Modular_Pathing;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter;
@@ -38,7 +37,7 @@ import org.firstinspires.ftc.teamcode.util.storage;
  */
 @Config
 @Autonomous(name = "Red 21 Auto - Safe (Modular)")
-public class Red_testing extends OpMode {
+public class Red_testing_21 extends OpMode {
 
     // ── Tunable timing (editable live via FTC Dashboard) ──────────────────
     public static double SHOOT_DWELL_S = 0.45;   // seconds to pause before shooting
@@ -153,6 +152,8 @@ public class Red_testing extends OpMode {
                 //   auto.modFinalCenterIntakeParkSafeAndShoot()
                 //   auto.modFinalFarIntakeParkFarAndShoot()
                 //   auto.modFinalGateIntakeParkGateAndShoot()
+                constants.shooter.TARGET_RPM = 1450;
+                constants.shooter.Target_Hood = 0.59;
                 if (auto.modFinalGateIntakeParkGateAndShoot())   pathState = 7;
                 break;
 

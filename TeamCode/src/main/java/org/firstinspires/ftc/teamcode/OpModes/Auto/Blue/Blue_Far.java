@@ -51,9 +51,9 @@ public class Blue_Far extends OpMode {
     private final Pose spike3Pose         = new Pose(24, 36, Math.toRadians(180));
 
     // Far field intake positions (no gate)
-    private final Pose farIntakePose1     = new Pose(7.3, 8, Math.toRadians(-90));
+    private final Pose farIntakePose1     = new Pose(11, 8, Math.toRadians(180));
 
-    private final Pose farIntakePose2     = new Pose(7.3, 24, Math.toRadians(-90));
+    private final Pose farIntakePose2     = new Pose(11, 24, Math.toRadians(180));
 
     // ---- PATH OBJECTS ----
     private PathChain PathTinyMove;
@@ -63,12 +63,16 @@ public class Blue_Far extends OpMode {
     private PathChain PathFarIntake1Back;
     private PathChain PathToFarIntake2;
     private PathChain PathFarIntake2Back;
+    private PathChain Shakeitoff1;
+    private PathChain Shakeitoff2;
 
     private intake intake;
     private shooter shooter;
     private turret turret;
 
-    private Pose goalPose = new Pose(storage.BLUE_X-3, storage.BLUE_Y);
+    private final double autoBlueGoal = storage.BLUE_X;
+
+    private Pose goalPose = new Pose(autoBlueGoal-3, storage.BLUE_Y);
 
     // -------------------------------------------------------
     @Override
@@ -117,7 +121,7 @@ public class Blue_Far extends OpMode {
         if (follower.getPose().equals(new Pose(0, 0, 0))) {
 
         } else{
-            storage.lastRedAutoPose = follower.getPose();
+            storage.lastBlueAutoPose = follower.getPose();
         }
 
         telemetry.addData("Path State", pathState);
@@ -168,6 +172,14 @@ public class Blue_Far extends OpMode {
         PathFarIntake2Back = follower.pathBuilder()
                 .addPath(new BezierLine(farIntakePose2, scorePose))
                 .setLinearHeadingInterpolation(farIntakePose2.getHeading(), scorePose.getHeading())
+                .build();
+        Shakeitoff1 = follower.pathBuilder()
+                .addPath(new BezierLine(farIntakePose1, farIntakePose2))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                .build();
+        Shakeitoff2 = follower.pathBuilder()
+                .addPath(new BezierLine(farIntakePose2, farIntakePose1))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                 .build();
     }
 
@@ -245,10 +257,17 @@ public class Blue_Far extends OpMode {
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
                         follower.followPath(PathToFarIntake1, false);
                         shotWaitStarted = false;
-                        setPathState(5);
+                        setPathState(99);
                     }
                 }
                 break;
+
+            case 99:
+                if (!follower.isBusy()) {
+                    follower.followPath(Shakeitoff1);
+                    setPathState(5);
+                }
+
 
             // ── STATE 5 : at far intake 1, just drive back (no wait) ────
             case 5:
@@ -276,10 +295,16 @@ public class Blue_Far extends OpMode {
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
                         follower.followPath(PathToFarIntake2, false);
                         shotWaitStarted = false;
-                        setPathState(7);
+                        setPathState(100);
                     }
                 }
                 break;
+
+            case 100:
+                if (!follower.isBusy()) {
+                    follower.followPath(Shakeitoff2);
+                    setPathState(7);
+                }
 
             // ── STATE 7 : at far intake 2, just drive back (no wait) ────
             case 7:
@@ -307,10 +332,15 @@ public class Blue_Far extends OpMode {
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
                         follower.followPath(PathToFarIntake1, false);
                         shotWaitStarted = false;
-                        setPathState(9);
+                        setPathState(101);
                     }
                 }
                 break;
+            case 101:
+                if (!follower.isBusy()) {
+                    follower.followPath(Shakeitoff1);
+                    setPathState(9);
+                }
 
             case 9:
                 if (!follower.isBusy()) {
@@ -335,10 +365,15 @@ public class Blue_Far extends OpMode {
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
                         follower.followPath(PathToFarIntake2, false);
                         shotWaitStarted = false;
-                        setPathState(11);
+                        setPathState(102);
                     }
                 }
                 break;
+            case 102:
+                if (!follower.isBusy()) {
+                    follower.followPath(Shakeitoff2);
+                    setPathState(11);
+                }
             case 11:
                 if (!follower.isBusy()) {
                     // intake stays ON — just turn around and come back

@@ -55,7 +55,7 @@ public class Blue_21_Safe extends OpMode {
     private int pathState = 0;
 
     // Pose definitions
-    private final Pose startPose = new Pose(29.167, 126.5, Math.toRadians(180));
+    private final Pose startPose = new Pose(28.7, 126.5, Math.toRadians(180));
     private final Pose scorePose = new Pose(144-86, 76, Math.toRadians(180));
     private final Pose FirstscorePose = new Pose(144-93, 85, Math.toRadians(180));
     private final Pose pickup1Pose = new Pose(24, 60, Math.toRadians(180));
@@ -90,7 +90,8 @@ public class Blue_21_Safe extends OpMode {
     private shooter shooter;
     private turret turret;
 
-    private Pose goalPose = new Pose(storage.BLUE_X, storage.BLUE_Y);
+    private final double autoBlueGoal = storage.BLUE_X;
+    private Pose goalPose = new Pose(autoBlueGoal-2, storage.BLUE_Y);
 
     @Override
     public void init() {

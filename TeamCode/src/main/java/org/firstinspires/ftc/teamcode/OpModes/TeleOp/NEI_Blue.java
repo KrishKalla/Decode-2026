@@ -131,7 +131,7 @@ public class NEI_Blue extends OpMode {
 
         shooter.flywheelPreset(constants.FLYWHEEL.ON);
         shooter.hoodPreset(constants.HOOD.AUTO);
-        AUTO     = true;
+        AUTO     = false;
         AUTO_AIM = true;
         shooter.setStopper(true);
 
@@ -251,13 +251,11 @@ public class NEI_Blue extends OpMode {
         }
         if (gamepad2.triangle) {
             AUTO = false;
-            constants.shooter.TARGET_RPM = 1420;
-            constants.shooter.Hood_pos   = 0.5075;
+            constants.shooter.TARGET_RPM = 1480;
+            constants.shooter.Hood_pos   = 0.695;
         }
         if (gamepad2.circle) {
-            AUTO = false;
-            constants.shooter.TARGET_RPM = 1800;
-            constants.shooter.Hood_pos   = 0.74;
+            AUTO = true;
         }
         if (gamepad2.cross) {
             AUTO = false;
@@ -334,6 +332,9 @@ public class NEI_Blue extends OpMode {
     public void updateTelemetry() {
         telemetry.addLine(follower.getPose().toString());
         telemetry.addData("Turret_delta",-constants.shooter.Goal_delta);
+
+        telemetry.addData("X-V-Vector",follower.getVelocity().getXComponent());
+        telemetry.addData("Y-V-Vector",follower.getVelocity().getYComponent());
 
         telemetry.addData("X-V-Vector",follower.getVelocity().getXComponent());
         telemetry.addData("Y-V-Vector",follower.getVelocity().getYComponent());
