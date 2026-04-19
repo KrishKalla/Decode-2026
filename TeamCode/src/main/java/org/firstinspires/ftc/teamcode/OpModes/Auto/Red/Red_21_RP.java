@@ -72,7 +72,6 @@ public class Red_21_RP extends OpMode {
     private PathChain Path2;
     private PathChain Path3;
     private PathChain Path4;
-    private PathChain Path5;
     private PathChain Path6;
     private PathChain Path7;
     private PathChain Path8;
@@ -179,14 +178,6 @@ public class Red_21_RP extends OpMode {
                         )
                 ).setLinearHeadingInterpolation(scorePose.getHeading(), gateApproachPose.getHeading())
                 .build();
-        Path5 = follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                scorePose,
-                                fakeApproachPose,
-                                fakeApproachPose
-                        )
-                ).setLinearHeadingInterpolation(scorePose.getHeading(), gateApproachPose.getHeading())
-                .build();
 
 
         // Path6: Gate back to score
@@ -208,14 +199,6 @@ public class Red_21_RP extends OpMode {
                 ).setLinearHeadingInterpolation(scorePose.getHeading(), centerPickupPose.getHeading())
                 .build();
 
-        // Path8: Center pickup back to score (MOVED HERE)
-        Path8 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                centerPickupPose,
-                                scorePose
-                        )
-                ).setLinearHeadingInterpolation(centerPickupPose.getHeading(), scorePose.getHeading())
-                .build();
 
 
         // Path12: Intake Third Row
@@ -231,10 +214,10 @@ public class Red_21_RP extends OpMode {
         // Path13: score far pickup
         Path13 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                farPickupPose,
+                                centerPickupPose,
                                 parkPose
                         )
-                ).setLinearHeadingInterpolation(parkPose.getHeading(), parkPose.getHeading())
+                ).setLinearHeadingInterpolation(centerPickupPose.getHeading(), parkPose.getHeading())
                 .build();
     }
 
@@ -399,7 +382,7 @@ public class Red_21_RP extends OpMode {
                 break;
 
             case 9:
-                // Score and go to CENTER pickup
+                // Gate
                 if (!follower.isBusy()) {
                     if (!shotWaitStarted) {
                         intake.setIntake(constants.INTAKE_PRESETS.TRANSFERING);
@@ -407,26 +390,39 @@ public class Red_21_RP extends OpMode {
                         shotWaitStarted = true;
                     }
                     if (shootTimer.seconds() >= shootingtime) {
+                        constants.shooter.TARGET_RPM = 1430;
+                        constants.shooter.Target_Hood = 0.59;
                         shooter.setStopper(true);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
-                        follower.followPath(Path7, false);
+                        follower.followPath(Path4, false);
                         shotWaitStarted = false;
-                        setPathState(10);
+                        runtime.reset();
+                        setPathState(99);
                     }
                 }
                 break;
 
-            case 10:
-                // Center pickup back to score
-                if (!follower.isBusy()) {
-                    intake.setIntake(constants.INTAKE_PRESETS.OFF);
-                    shooter.setStopper(false);
-                    follower.followPath(Path8, false);
-                    setPathState(11);
+            case 99:
+                // Wait at gate, then return to score (Fourth TIME)
+                if (!follower.isBusy()||runtime.seconds()>=2) {
+                    if (!shotWaitStarted) {
+                        follower.setMaxPower(0.2);
+                        shootTimer.reset();
+                        shotWaitStarted = true;
+                    }
+                    if (shootTimer.seconds() >= gateIntakeTime) {
+                        follower.setMaxPower(1);
+                        intake.setIntake(constants.INTAKE_PRESETS.OFF);
+                        shooter.setStopper(false);
+                        follower.followPath(Path6, false);
+                        shotWaitStarted = false;
+
+                        setPathState(11);
+                    }
                 }
                 break;
             case 11:
-                // Score and go to far pickup
+                // Score and go to center pick up
                 if (!follower.isBusy()) {
                     if (!shotWaitStarted) {
                         follower.setMaxPower(0.2);
@@ -438,16 +434,14 @@ public class Red_21_RP extends OpMode {
                         shooter.setStopper(true);
                         follower.setMaxPower(1);
                         intake.setIntake(constants.INTAKE_PRESETS.ON);
-                        constants.shooter.TARGET_RPM = 1430;
-                        constants.shooter.Target_Hood = 0.59;
-                        follower.followPath(Path12, false);
+                        follower.followPath(Path7, false);
                         shotWaitStarted = false;
                         setPathState(12);
                     }
                 }
                 break;
             case 12:
-                // Far pickup back to Park
+                // intake cenrter and back
                 if (!follower.isBusy()) {
                     intake.setIntake(constants.INTAKE_PRESETS.OFF);
                     shooter.setStopper(false);

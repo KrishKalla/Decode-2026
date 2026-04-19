@@ -396,13 +396,15 @@ public class Blue_21_RP extends OpMode {
                     }
                     if (shootTimer.seconds() >= shootingtime) {
                         shooter.setStopper(true);
-                        intake.setIntake(constants.INTAKE_PRESETS.ON);
-                        follower.followPath(Path7, false);
+                        intake.setIntake(constants.INTAKE_PRESETS.GATE_BLUE);
+                        follower.followPath(Path4, false);
                         shotWaitStarted = false;
-                        setPathState(10);
+                        runtime.reset();
+                        setPathState(8);
                     }
                 }
                 break;
+
 
             case 10:
                 // Center pickup back to score
@@ -424,14 +426,8 @@ public class Blue_21_RP extends OpMode {
                     }
                     if (shootTimer.seconds() >= shootingtime) {
                         shooter.setStopper(true);
-                        follower.setMaxPower(1);
-                        intake.setIntake(constants.INTAKE_PRESETS.ON);
-                        constants.shooter.TARGET_RPM = 1420;
-                        constants.shooter.Target_Hood = 0.62;
-                        constants.shooter.Goal_delta=2;
-                        follower.followPath(Path12, false);
                         shotWaitStarted = false;
-                        setPathState(12);
+                        setPathState(14);
                     }
                 }
                 break;
