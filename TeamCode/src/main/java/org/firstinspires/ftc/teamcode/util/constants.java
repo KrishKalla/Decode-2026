@@ -43,7 +43,7 @@ public class constants {
 
         RETRACTED(0.375, 0.395),
         GATE_RED(0.715,0.705),
-        GATE_BLUE(0.705,0.72),
+        GATE_BLUE(0.705,0.735),
         EXTENDED(0.705, 0.725);
 
         public final double left;
